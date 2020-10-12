@@ -1,0 +1,34 @@
+#Common configuration
+
+PORT=3001
+#Can be either [development, test, staging, production]
+SERVER_ENV=development
+HANDLE_REQUEST_RETRIES_TIME=0
+
+#----------------------------------------------
+#Sharetribe Flex environment
+
+#For admin integration API
+SHARETRIBE_FLEX_INTEGRATION_CLIENT_ID=
+SHARETRIBE_FLEX_INTEGRATION_SECRET_ID=
+
+#For client SDK 
+SHARETRIBE_SDK_CLIENT_ID=
+SHARETRIBE_SDK_SECRET_ID=
+SHARETRIBE_SDK_TRANSIT_VERBOSE=true
+SHARETRIBE_SDK_BASE_URL=https://flex-api.sharetribe.com
+
+#----------------------------------------------
+#AWS configuration
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+SERVER_AWS_REGION=
+
+#SES
+AWS_SES_REGION=
+
+#----------------------------------------------
+#Email configuration
+ADMIN_EMAIL_ADDRESS=
+SENDER_EMAIL_ADDRESS=

@@ -1,0 +1,46 @@
+{
+  "name": "tss-server",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "rm -rf build && babel -d ./build ./ --ignore node_modules,**/*.test.js",
+    "start": "npm run build && ENV=production node ./bin/www",
+    "watch": "nodemon ./bin/www --exec babel-node",
+    "dev": "ENV=development BABEL_ENABLE=true nodemon ./bin/www --exec babel-node --inspect",
+    "test": "jest"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.654.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "~1.4.3",
+    "core-js": "^3.6.5",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "decimal.js": "^10.1.1",
+    "dotenv": "^7.0.0",
+    "express": "~4.17.0",
+    "http": "0.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "morgan": "~1.9.0",
+    "node-fetch": "^2.6.0",
+    "regenerator-runtime": "^0.13.7",
+    "sharetribe-flex-integration-sdk": "^1.1.0",
+    "sharetribe-flex-sdk": "^1.11.0-alpha",
+    "stripe": "^8.39.0",
+    "transit-js": "^0.8.861"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "jest": "^26.4.2",
+    "nodemon": "^1.18.11"
+  },
+  "engines": {
+    "node": "12.16.3"
+  }
+}

@@ -1,0 +1,52 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.16.3
+#    machine: true
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - checkout
+      - run:
+          name: Get public IP
+          command: curl https://ipinfo.io/ip > ip_address && cat ip_address
+      - restore_cache:
+          name: Restore npm Package Cache
+          keys:
+            - npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
+            - npm-packages-{{ .Branch }}
+            - npm-packages-master
+            - npm-packages-
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - save_cache:
+          name: Save npm Package Cache
+          key: npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules/
+      - run:
+          name: Install AWS CLI
+          command: curl -O https://bootstrap.pypa.io/get-pip.py && sudo python2.7 get-pip.py && sudo pip install awscli
+      - run:
+          name: Install jq
+          command: sudo apt-get install jq
+      - run:
+          name: Copy Environment File
+          command: ./scripts/ci_encode_environments.sh
+      - run:
+          name: Run deploy script
+          command: ./scripts/deploy.sh
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - production
+
