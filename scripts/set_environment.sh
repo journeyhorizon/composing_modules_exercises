@@ -13,7 +13,7 @@ export ENV_NAME='STAGING'
 
 # todo: REPLACE HERE: environment for Test instance
 export AWS_PRIVATE_KEY_PATH=~/Desktop/projects/keys/surfer-market-test.pem
-export AWS_ECR_REPO_URL="550368332760.dkr.ecr.ap-southeast-2.amazonaws.com/server-test:${TAG_NAME}"
+export AWS_ECR_REPO_URL="550368332760.dkr.ecr.ap-southeast-2.amazonaws.com/server-dev:${TAG_NAME}"
 export AWS_INSTANCE_URL='ubuntu@52.63.100.138'
 export AWS_INSTANCE_REGION='ap-southeast-2'
 export AWS_SECURITY_GROUP_ID='sg-08fc7b7d8faf5932d'
