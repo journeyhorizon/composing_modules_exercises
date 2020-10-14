@@ -13,15 +13,15 @@ export ENV_NAME='STAGING'
 
 # todo: REPLACE HERE: environment for Test instance
 export AWS_PRIVATE_KEY_PATH=~/Desktop/projects/keys/surfer-market-test.pem
-export AWS_ECR_REPO_URL="415892923750.dkr.ecr.ap-southeast-2.amazonaws.com/server-test:${TAG_NAME}"
-export AWS_INSTANCE_URL='ubuntu@52.62.203.158'
+export AWS_ECR_REPO_URL="550368332760.dkr.ecr.ap-southeast-2.amazonaws.com/server-test:${TAG_NAME}"
+export AWS_INSTANCE_URL='ubuntu@52.63.100.138'
 export AWS_INSTANCE_REGION='ap-southeast-2'
-export AWS_SECURITY_GROUP_ID='sg-0c99ebd5875c47676'
-export AWS_ACCESS_KEY_PATH=~/Desktop/projects/keys/accessKeys_surfersmarket.csv
+export AWS_SECURITY_GROUP_ID='sg-08fc7b7d8faf5932d'
+export AWS_ACCESS_KEY_PATH=~/Desktop/projects/keys/accessKeys_seafarers.csv
 export AWS_ENV_USER_ACCESS_KEY_PATH=~/Desktop/projects/keys/accessKeys_env_user_credentials.csv
 export ENV_FILE_PATH='.env.staging'
 export ENV_NAME='STAGING'
-export AWS_ENV_SECRET_NAME='surfersMarket/server/staging/xMZRbw4K0syq6HS9'
+export AWS_ENV_SECRET_NAME='seafarers/server/staging/YsSzX1hn2UY4Hp6HsEvEr'
 export AWS_INSTANCE_DEPLOY_SCRIPT='./deploy-server.sh'
 
 if [ "$CIRCLECI" != "true" ]; then
