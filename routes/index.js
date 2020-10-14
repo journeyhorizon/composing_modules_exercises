@@ -7,8 +7,11 @@ const router = express.Router();
 const cors = require('cors');
 
 const whitelist = [
-  'https://stdemoyt.journeyh.io',
-  'https://stdemo.journeyh.io',
+  'https://test.theseafarers.shop',
+  'https://api-test.theseafarers.shop',
+  "https://theseafarers.shop",
+  "https://www.theseafarers.shop",
+  "https://api.theseafarers.shop",
   'https://journeyh.io',
   'http://localhost:3000',
   'https://flex-console.sharetribe.com',
