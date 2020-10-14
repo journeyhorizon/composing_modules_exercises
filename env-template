@@ -6,6 +6,11 @@ SERVER_ENV=development
 HANDLE_REQUEST_RETRIES_TIME=0
 
 #----------------------------------------------
+#For creating secure password
+
+PASSWORD_SECRET=
+
+#----------------------------------------------
 #Sharetribe Flex environment
 
 #For admin integration API
@@ -32,3 +37,5 @@ AWS_SES_REGION=
 #Email configuration
 ADMIN_EMAIL_ADDRESS=
 SENDER_EMAIL_ADDRESS=
+DEFAULT_PAGE_EMAIL_PREFIX=
+DEFAULT_PAGE_EMAIL_SUFFIX=@journeyh.io

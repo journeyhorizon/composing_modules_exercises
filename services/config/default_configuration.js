@@ -14,13 +14,18 @@ const sharetribeFlex = {
     secret: process.env.SHARETRIBE_SDK_SECRET_ID,
     transitVerbose: process.env.SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true'
   },
+  page: {
+    defaultEmailPrefix: process.env.DEFAULT_PAGE_EMAIL_PREFIX,
+    defaultEmailSuffix: process.env.DEFAULT_PAGE_EMAIL_SUFFIX,
+    secret: process.env.PASSWORD_SECRET
+  }
 };
 
 const email = {
   senderAddress: process.env.SENDER_EMAIL_ADDRESS
     ? process.env.SENDER_EMAIL_ADDRESS
     : "tri.nguyen@journeyh.io",
-  adminAddress: process.env.ADMIN_EMAIL_ADDRESS
+  adminAddress: process.env.ADMIN_EMAIL_ADDRESS,
 };
 
 const aws = {

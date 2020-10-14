@@ -108,6 +108,24 @@ const invokeTrustedTx = ({ simulate }) => ({
 
 const sdk = {};
 
+sdk.getTrustedSdk = (clientTokenStore) => {
+  const clientSdkInstance = createTrustedSdkInstance({
+    tokenStore: initiateTokenStore(clientTokenStore)
+  });
+
+  return clientSdkInstance.exchangeToken()
+    .then(response => {
+      // Setup a trusted sdk with the token we got from the exchange:
+      const token = response.data;
+      // Important! Do not use a cookieTokenStore here but a memoryStore
+      // instead so that we don't leak the token back to browser client.
+      const tokenStore = initiateTokenStore(token);
+      const trustedSdk = createTrustedSdkInstance({ tokenStore });
+
+      return trustedSdk;
+    });
+};
+
 sdk.trustedTransactions = {
   initiate: invokeTrustedTx({ simulate: false }),
   initiateSpeculative: invokeTrustedTx({ simulate: true }),
