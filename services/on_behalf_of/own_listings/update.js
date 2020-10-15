@@ -41,28 +41,6 @@ const handleUpdatePageListing = async ({
     data: publishResult
   };
 }
-//TODO: Wait for product creation
-const handleUpdateProductListing = async ({
-  data,
-  listing,
-  clientTokenStore,
-  clientQueryParams
-}) => {
-  const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
-  const { include = '', expand } = clientQueryParams;
-
-  const queryParams = {
-    expand: expand === 'true' ? true : false,
-    include: include.split(',')
-  };
-  const publishResult = await trustedSdk.ownListings
-    .update(data, queryParams);
-
-  return {
-    code: 200,
-    data: publishResult
-  };
-}
 
 const update = async ({
   data,
@@ -70,7 +48,7 @@ const update = async ({
   clientQueryParams
 }) => {
   const listing = await getListingData({ listingId: data.id.uuid });
-  const { publicData, metadata } = listing.attributes;
+  const { publicData } = listing.attributes;
   const {
     listingType
   } = publicData;
@@ -78,14 +56,6 @@ const update = async ({
   switch (listingType) {
     case PAGE_LISTING_TYPE: {
       return handleUpdatePageListing({
-        data,
-        listing,
-        clientTokenStore,
-        clientQueryParams
-      });
-    }
-    case PRODUCT_LISTING_TYPE: {
-      return handleUpdateProductListing({
         data,
         listing,
         clientTokenStore,

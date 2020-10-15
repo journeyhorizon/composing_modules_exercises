@@ -31,6 +31,32 @@ router.post('/publish_draft',
     next();
   }, { retries: config.retries }));
 
+router.post('/open',
+  handleAsyncWrapper(async (req, res, next) => {
+    const result = await OnBeHalfOfSdk
+      .ownListings.open({
+        data: res.locals.parsedBody,
+        clientTokenStore: res.locals.tokenStore,
+        clientQueryParams: req.query
+      });
+    res.locals.response = result.data;
+    res.status(result.code);
+    next();
+  }, { retries: config.retries }));
+
+router.post('/close',
+  handleAsyncWrapper(async (req, res, next) => {
+    const result = await OnBeHalfOfSdk
+      .ownListings.close({
+        data: res.locals.parsedBody,
+        clientTokenStore: res.locals.tokenStore,
+        clientQueryParams: req.query
+      });
+    res.locals.response = result.data;
+    res.status(result.code);
+    next();
+  }, { retries: config.retries }));
+
 router.post('/update',
   handleAsyncWrapper(async (req, res, next) => {
     const result = await OnBeHalfOfSdk

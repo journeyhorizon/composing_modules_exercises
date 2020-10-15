@@ -1,4 +1,4 @@
-import { denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
+import { denormalisedEntities, denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
 import { PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
 
 const { UUID } = sdkTypes;
@@ -17,28 +17,51 @@ const fetchAllPageProduct = async ({
       'price',
       'title',
       'publicData',
-      'metadata'
+      'metadata',
+      'images'
+    ],
+    include: ['images'],
+    'fields.image': [
+      // Listing page
+      'variants.landscape-crop',
+      'variants.landscape-crop2x',
+      'variants.landscape-crop4x',
+      'variants.landscape-crop6x',
+
+      // Social media
+      'variants.facebook',
+      'variants.twitter',
+
+      // Image carousel
+      'variants.scaled-small',
+      'variants.scaled-medium',
+      'variants.scaled-large',
+      'variants.scaled-xlarge',
+
+      // Avatars
+      'variants.square-small',
+      'variants.square-small2x',
     ],
     pub_listingType: PRODUCT_LISTING_TYPE,
     authorId
   }
   const res = await sdk.listings
     .query(params);
-
   const { meta } = res.data;
   const {
     totalPages
   } = meta;
-
+  
   if (page === totalPages) {
-    return res.data;
+    return res;
   }
   const nextData = await fetchAllPageProduct({
     authorId,
     page: page + 1
   });
-  res.data.data = res.data.data.concat(nextData.data);
-  return res.data;
+  res.data.data = res.data.data.concat(nextData.data.data);
+  res.data.included = res.data.included.concat(nextData.data.included)
+  return res;
 }
 
 const show = async ({
@@ -68,9 +91,8 @@ const show = async ({
   }
 
   const productsRes = await fetchAllPageProduct({ authorId: listing.author.id.uuid });
-
-  if (productsRes.data.length > 1) {
-    res.data.data.products = productsRes.data;
+  if (productsRes.data.data.length > 0) {
+    res.data.data.products = denormalisedResponseEntities(productsRes);
   }
 
   return res;

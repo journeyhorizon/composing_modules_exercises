@@ -1,5 +1,7 @@
 import show from "./listings/show";
+import close from "./own_listings/close";
 import createDraft from "./own_listings/createDraft";
+import open from "./own_listings/open";
 import publishDraft from "./own_listings/publishDraft";
 import update from "./own_listings/update";
 
@@ -7,7 +9,9 @@ const OnBeHalfOfSdk = {
   ownListings: {
     createDraft,
     publishDraft,
-    update
+    update,
+    close,
+    open
   },
   listings: {
     show

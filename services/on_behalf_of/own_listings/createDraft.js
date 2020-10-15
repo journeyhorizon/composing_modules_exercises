@@ -106,7 +106,7 @@ const handlePageListingCreation = async ({
   const pageUserRes = await sdk.currentUser
     .create({
       email: defaultEmail,
-      firstName: data.title, //TODO: Change here when connect with client
+      firstName: data.title, 
       lastName: "Page",
       password: generatePassword(config.sharetribeFlex.page.secret)
     });
