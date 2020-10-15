@@ -4,6 +4,7 @@ import { INVALID_TOKEN } from '../../services/error_type';
 
 const express = require('express');
 const router = express.Router();
+const publicRoute = require('./public');
 
 const transitJsonParser = (req, res, next) => {
   const data = req.body;
@@ -31,7 +32,11 @@ const tokenStoreParser = (req, res, next) => {
   next();
 };
 
+router.use(publicRoute);
+
 router.use(express.raw({ type: 'application/transit+json' }));
+
+router.use('/listings', require('./listings'));
 
 router.use(transitJsonParser);
 

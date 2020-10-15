@@ -1,3 +1,4 @@
+import show from "./listings/show";
 import createDraft from "./own_listings/createDraft";
 import publishDraft from "./own_listings/publishDraft";
 import update from "./own_listings/update";
@@ -7,6 +8,9 @@ const OnBeHalfOfSdk = {
     createDraft,
     publishDraft,
     update
+  },
+  listings: {
+    show
   }
 };
 

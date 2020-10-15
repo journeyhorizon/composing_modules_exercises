@@ -73,10 +73,7 @@ const handlePageAccountExisted = async ({
     }
   })
 
-  return {
-    code: 200,
-    data: listingCreationRes
-  };
+  return listingCreationRes;
 }
 
 const handlePageListingCreation = async ({
