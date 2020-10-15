@@ -1,51 +1,58 @@
 import { WRONG_PARAMS } from "../../error_type";
 import { sdk } from "../../sharetribe";
-import { getListingData } from "../../sharetribe_admin";
+import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
-import { PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
+import { LISTING_STATE_CLOSED, LISTING_STATE_PUBLISHED, PRODUCT_LISTING_TYPE } from "../types";
 
-const handlePublishPageListing = async ({
-  data,
-  listing,
-  clientTokenStore,
-  clientQueryParams
-}) => {
-  const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
-  const { include = '', expand } = clientQueryParams;
-
-  const queryParams = {
-    expand: expand === 'true' ? true : false,
-    include: include.split(',')
-  };
-  const publishResult = await trustedSdk.ownListings
-    .publishDraft(data, queryParams);
-
-  return {
-    code: 200,
-    data: publishResult
-  };
-}
-//TODO: Wait for product creation
 const handlePublishProductListing = async ({
   data,
   listing,
   clientTokenStore,
   clientQueryParams
 }) => {
-  const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
-  const { include = '', expand } = clientQueryParams;
+  const author = listing.author;
+  const pageListing = await getListingData({
+    listingId: author.attributes.profile.publicData.idListingPage
+  });
+  const {
+    state
+  } = pageListing.attributes;
 
-  const queryParams = {
-    expand: expand === 'true' ? true : false,
-    include: include.split(',')
-  };
-  const publishResult = await trustedSdk.ownListings
-    .publishDraft(data, queryParams);
+  const publishListing = async () => {
+    const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
+    const { include = '', expand } = clientQueryParams;
 
-  return {
-    code: 200,
-    data: publishResult
-  };
+    const queryParams = {
+      expand: expand === 'true' ? true : false,
+      include: include.split(',')
+    };
+
+    const publishResult = await trustedSdk.ownListings
+      .publishDraft(data, queryParams);
+
+    return publishResult;
+  }
+
+  const handleListingApprovalState = async () => {
+    try {
+      await integrationSdk.listings.approve(data);
+      if (state === LISTING_STATE_CLOSED) {
+        await integrationSdk.listings.close(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  if (state !== LISTING_STATE_PUBLISHED && state !== LISTING_STATE_CLOSED) {
+    return publishListing();
+  }
+
+  const publishResult = await publishListing();
+
+  handleListingApprovalState();
+
+  return publishResult;
 }
 
 const publishDraft = async ({
@@ -59,14 +66,6 @@ const publishDraft = async ({
     listingType
   } = publicData;
   switch (listingType) {
-    case PAGE_LISTING_TYPE: {
-      return handlePublishPageListing({
-        data,
-        listing,
-        clientTokenStore,
-        clientQueryParams
-      });
-    }
     case PRODUCT_LISTING_TYPE: {
       return handlePublishProductListing({
         data,

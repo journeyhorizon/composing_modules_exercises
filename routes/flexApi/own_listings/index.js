@@ -31,4 +31,17 @@ router.post('/publish_draft',
     next();
   }, { retries: config.retries }));
 
+router.post('/update',
+  handleAsyncWrapper(async (req, res, next) => {
+    const result = await OnBeHalfOfSdk
+      .ownListings.update({
+        data: res.locals.parsedBody,
+        clientTokenStore: res.locals.tokenStore,
+        clientQueryParams: req.query
+      });
+    res.locals.response = result.data;
+    res.status(result.code);
+    next();
+  }, { retries: config.retries }));
+
 module.exports = router;

@@ -1,12 +1,14 @@
 import createDraft from "./own_listings/createDraft";
 import publishDraft from "./own_listings/publishDraft";
+import update from "./own_listings/update";
 
 const OnBeHalfOfSdk = {
   ownListings: {
     createDraft,
     publishDraft,
+    update
   }
-}
+};
 
 const addFinalizeResponseFnc = (wrapper) => {
   return Object.entries(wrapper)

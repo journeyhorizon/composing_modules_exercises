@@ -109,7 +109,7 @@ const handlePageListingCreation = async ({
   const pageUserRes = await sdk.currentUser
     .create({
       email: defaultEmail,
-      firstName: data.publicData.pageName, //TODO: Change here when connect with client
+      firstName: data.title, //TODO: Change here when connect with client
       lastName: "Page",
       password: generatePassword(config.sharetribeFlex.page.secret)
     });
@@ -199,33 +199,23 @@ const createDraft = async ({
     include: include.split(',')
   };
 
-  if (listingType === PAGE_LISTING_TYPE) {
-    const { pageName } = publicData;
-    if (!pageName) {
-      return {
-        code: 400,
-        data: createFlexErrorObject({
-          status: 400,
-          message: WRONG_PARAMS,
-          messageCode: WRONG_PARAMS
-        })
-      };
-    }
-
-    return handlePageListingCreation({
-      sdk: trustedSdk,
-      currentUser,
-      data,
-      queryParams
-    });
-  } else {
-    return handleProductListingCreation({
-      sdk: trustedSdk,
-      currentUser,
-      data,
-      queryParams
-    })
+  if (listingType !== PAGE_LISTING_TYPE || !data.title) {
+    return {
+      code: 400,
+      data: createFlexErrorObject({
+        status: 400,
+        message: WRONG_PARAMS,
+        messageCode: WRONG_PARAMS
+      })
+    };
   }
+
+  return handlePageListingCreation({
+    sdk: trustedSdk,
+    currentUser,
+    data,
+    queryParams
+  });
 }
 
 const finalisedCreateDraftCall = async ({
