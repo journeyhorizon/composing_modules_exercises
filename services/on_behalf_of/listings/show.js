@@ -51,8 +51,8 @@ const fetchAllPageProduct = async ({
   const {
     totalPages
   } = meta;
-  
-  if (page === totalPages) {
+
+  if (page >= totalPages) {
     return res;
   }
   const nextData = await fetchAllPageProduct({
