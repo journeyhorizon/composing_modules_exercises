@@ -8,6 +8,7 @@ import { getListingData, getUserData, integrationSdk } from "../../sharetribe_ad
 import { createFlexErrorObject } from "../error";
 import { PAGE_LISTING_TYPE, TEAM_MEMBER_ADD, TEAM_MEMBER_REMOVE, TEAM_MEMBER_RESEND } from "../types";
 import { generatePassword } from "../utils";
+import cloneDeep from 'lodash/cloneDeep';
 
 const { UUID } = sdkTypes;
 
@@ -129,6 +130,12 @@ const authorizeTeamMembers = async ({
   });
 
   const handleInviteTeamMember = () => {
+    const currentPendingTeamMembers = author
+      .attributes
+      .profile
+      .metadata
+      .pendingTeamMembers;
+
     return Promise.all([
       handleMemberAuthorization({
         teamMembers: teamMembersToAdd,
@@ -137,7 +144,12 @@ const authorizeTeamMembers = async ({
       integrationSdk.users.updateProfile({
         id: listing.author.id,
         metadata: {
-          pendingTeamMembers: teamMembersToAdd.map(teamMember => teamMember.email)
+          pendingTeamMembers: Array.isArray(currentPendingTeamMembers)
+            ? [
+              ...currentPendingTeamMembers,
+              ...teamMembersToAdd.map(teamMember => teamMember.email)
+            ]
+            : teamMembersToAdd.map(teamMember => teamMember.email)
         }
       })
     ]);
@@ -208,7 +220,7 @@ const handleUpdatePageListing = async ({
     publicData = {}
   } = data;
 
-  let finalParams = data;
+  let finalParams = cloneDeep(data);
 
   if (publicData.email && listing.author.attributes.email !== publicData.email) {
     await trustedSdk.currentUser
