@@ -1,4 +1,6 @@
+import create from "./current_user/create";
 import show from "./listings/show";
+import ownListingsShow from "./own_listings/show";
 import close from "./own_listings/close";
 import createDraft from "./own_listings/createDraft";
 import open from "./own_listings/open";
@@ -11,7 +13,11 @@ const OnBeHalfOfSdk = {
     publishDraft,
     update,
     close,
-    open
+    open,
+    show: ownListingsShow
+  },
+  currentUser: {
+    create,
   },
   listings: {
     show

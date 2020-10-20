@@ -8,3 +8,6 @@ export const LISTING_STATE_DRAFT = 'draft';
 export const LISTING_STATE_PENDING_APPROVAL = 'pendingApproval';
 export const LISTING_STATE_PUBLISHED = 'published';
 export const LISTING_STATE_CLOSED = 'closed';
+export const TEAM_MEMBER_ADD = 'TEAM_MEMBER_ADD';
+export const TEAM_MEMBER_REMOVE = 'TEAM_MEMBER_REMOVE';
+export const TEAM_MEMBER_RESEND = 'TEAM_MEMBER_RESEND';

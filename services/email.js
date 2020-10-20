@@ -1,5 +1,5 @@
-import { PROVIDER_SIGN_UP } from './event';
 import config from './config';
+import { TEAM_MEMBER_INVITE } from './event';
 
 const fs = require('fs');
 const AWS = require('aws-sdk');
@@ -13,8 +13,8 @@ const NEED_NO_CALL_BACK = 'NEED_NO_CALL_BACK';
 
 const getHtmlContent = (type) => {
   switch (type) {
-    case PROVIDER_SIGN_UP:
-      return fs.readFileSync('email_templates/PROVIDER_SIGN_UP.html', "utf8");
+    case TEAM_MEMBER_INVITE:
+      return fs.readFileSync('email_templates/TEAM_MEMBER_INVITE.html', "utf8");
     default:
       break;
   }
@@ -22,10 +22,12 @@ const getHtmlContent = (type) => {
 
 const getEmailContent = (type, data = null) => {
   switch (type) {
-    case PROVIDER_SIGN_UP:
-      return getHtmlContent(PROVIDER_SIGN_UP)
-        .replace("REPLACE_USER_PATH",
-          `https://flex-console.sharetribe.com/users?id=${data.userId}`);
+    case TEAM_MEMBER_INVITE:
+      return getHtmlContent(TEAM_MEMBER_INVITE)
+        .split("REPLACE_FIRST_NAME").join(data.firstName)
+        .split("REPLACE_PAGE_NAME").join(data.pageName)
+        .split("REPLACE_MARKETPLACE_NAME").join(data.marketplaceName)
+        .split("REPLACE_VERIFICATION_LINK").join(data.verificationLink);
     default:
       break;
   }
@@ -33,8 +35,8 @@ const getEmailContent = (type, data = null) => {
 
 const getEmailSubject = (type, data = null) => {
   switch (type) {
-    case PROVIDER_SIGN_UP:
-      return "A new owner has just signed up!";
+    case TEAM_MEMBER_INVITE:
+      return `You have been invited to ${data.pageName} on ${data.marketplaceName}`;
     default:
       break;
   }
@@ -90,7 +92,7 @@ export const send = (receiver, TYPE, data = null, callback = null) => {
         });
       break;
     case NEED_NO_CALL_BACK:
-    case PROVIDER_SIGN_UP:
+    case TEAM_MEMBER_INVITE:
       sendEmail(params)
         .then((data) => {
           console.log(data);

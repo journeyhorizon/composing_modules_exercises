@@ -1,9 +1,194 @@
+import { generateToken } from "../../authentication";
+import config from "../../config";
+import { send } from "../../email";
 import { WRONG_PARAMS } from "../../error_type";
-import { sdk } from "../../sharetribe";
-import { getListingData } from "../../sharetribe_admin";
+import { TEAM_MEMBER_INVITE } from "../../event";
+import { sdk, types as sdkTypes } from "../../sharetribe";
+import { getListingData, getUserData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
-import { PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
+import { PAGE_LISTING_TYPE, TEAM_MEMBER_ADD, TEAM_MEMBER_REMOVE, TEAM_MEMBER_RESEND } from "../types";
 import { generatePassword } from "../utils";
+
+const { UUID } = sdkTypes;
+
+// const teamManagementObj = [
+//   {
+//     status: TEAM_MEMBER_REMOVE,
+//     email: 'test1@journeyh.io',
+//     id: new UUID('REMOVE_USER')
+//   },
+//   {
+//     status: TEAM_MEMBER_ADD,
+//     email: 'test2@journeyh.io'
+//   }
+// ];
+
+const removeTeamMembers = async ({
+  teamMembersToRemove,
+  listing
+}) => {
+  const { teamMemberIds } = listing.author.attributes.profile.publicData;
+  const newTeamMemberIds = teamMemberIds.filter(teamMemberId =>
+    !teamMembersToRemove.includes(teamMemberId));
+
+  const updateTeamMemberData = async () => teamMembersToRemove.length > 0
+    ? Promise.resolve()
+    : Promise.all(teamMembersToRemove.map(teamMember => {
+      return integrationSdk.users.updateProfile({
+        id: new UUID(teamMember.id),
+        metadata: {
+          pageAccountId: null
+        }
+      })
+    }))
+  return Promise.all([
+    integrationSdk.users.updateProfile({
+      id: listing.author.id,
+      publicData: {
+        teamMemberIds: newTeamMemberIds
+      }
+    }),
+    updateTeamMemberData()
+  ]);
+}
+
+const generateVerificationLink = ({
+  token,
+  listing,
+  email
+}) => {
+  return `${config.webCanonicalUrl}/verify-team-member?t=${token}&email=${email}&pageListingId=${listing.id.uuid}`;
+}
+
+const sendVerificationEmail = async ({
+  email,
+  verificationLink,
+  firstName,
+  marketplaceName,
+  pageName
+}) => {
+  return send(email, TEAM_MEMBER_INVITE, {
+    verificationLink,
+    firstName,
+    marketplaceName,
+    pageName
+  });
+}
+
+const handleMemberAuthorization = ({
+  teamMembers,
+  listing
+}) => {
+  return Promise.all(teamMembers.map(teamMember => {
+    const { email } = teamMember;
+    const jwtToken = generateToken({
+      email,
+      pageAccountId: listing.author.id.uuid,
+    });
+    const verificationLink = generateVerificationLink({
+      token: jwtToken,
+      listing,
+      email
+    });
+
+    //TODO: Move marketplace name to better config
+    return sendVerificationEmail({
+      email,
+      verificationLink,
+      firstName: email,
+      marketplaceName: config.env === 'production'
+        ? 'The Seafarers Shop'
+        : 'The Seafarers Shop Test',
+      pageName: listing.attributes.title
+    });
+  }))
+}
+
+const authorizeTeamMembers = async ({
+  teamMembersToAdd: clientTeamMembersToAdd,
+  teamMembersToResend: clientTeamMembersToResend,
+  listing
+}) => {
+  const author = listing.author;
+  const currentTeamMembers = await Promise.all(author
+    .attributes
+    .profile
+    .publicData
+    .teamMemberIds
+    .map(id => {
+      return getUserData({ userId: id })
+        .then(user => {
+          return user.attributes.email
+        });
+    }));
+  const teamMembersToAdd = clientTeamMembersToAdd.filter(teamMember => {
+    return !currentTeamMembers.includes(teamMember.email);
+  });
+  const teamMembersToResend = clientTeamMembersToResend.filter(teamMember => {
+    return !currentTeamMembers.includes(teamMember.email);
+  });
+
+  const handleInviteTeamMember = () => {
+    return Promise.all([
+      handleMemberAuthorization({
+        teamMembers: teamMembersToAdd,
+        listing
+      }),
+      integrationSdk.users.updateProfile({
+        id: listing.author.id,
+        metadata: {
+          pendingTeamMembers: teamMembersToAdd.map(teamMember => teamMember.email)
+        }
+      })
+    ]);
+  }
+
+  const handleResendInviteTeamMember = () => {
+    return handleMemberAuthorization({
+      teamMembers: teamMembersToResend,
+      listing
+    });
+  }
+
+  return Promise.all([
+    handleInviteTeamMember(),
+    handleResendInviteTeamMember()
+  ]);
+}
+
+const resendTeamMemberInvitation = async ({
+  teamMembersToResend,
+  listing
+}) => {
+  return handleMemberAuthorization({
+    teamMembers: teamMembersToResend,
+    listing
+  });
+};
+
+const handleTeamMemberManagement = ({
+  teamManagementObj,
+  listing,
+}) => {
+  const author = listing.author;
+  const { pendingTeamMembers = [] } = author.attributes.profile.metadata;
+  const teamMembersToRemove = teamManagementObj.filter(({ status }) => status === TEAM_MEMBER_REMOVE);
+  const teamMembersToAdd = teamManagementObj.filter(({ status, email }) =>
+    status === TEAM_MEMBER_ADD && !pendingTeamMembers.includes(email));
+  const teamMembersToResend = teamManagementObj.filter(({ status, email }) =>
+    status === TEAM_MEMBER_RESEND && pendingTeamMembers.includes(email));
+  return Promise.all([
+    authorizeTeamMembers({
+      teamMembersToAdd,
+      teamMembersToResend,
+      listing
+    }),
+    removeTeamMembers({
+      teamMembersToRemove,
+      listing
+    }),
+  ]);
+}
 
 const handleUpdatePageListing = async ({
   data,
@@ -23,6 +208,8 @@ const handleUpdatePageListing = async ({
     publicData = {}
   } = data;
 
+  let finalParams = data;
+
   if (publicData.email && listing.author.attributes.email !== publicData.email) {
     await trustedSdk.currentUser
       .changeEmail(
@@ -33,13 +220,17 @@ const handleUpdatePageListing = async ({
       );
   }
 
-  const publishResult = await trustedSdk.ownListings
-    .update(data, queryParams);
+  if (Array.isArray(publicData.teamManagementObj) && publicData.teamManagementObj.length > 0) {
+    finalParams.publicData.teamManagementObj = [];
+    await handleTeamMemberManagement({
+      teamManagementObj: publicData.teamManagementObj,
+      listing
+    });
+  }
+  const updateResult = await trustedSdk.ownListings
+    .update(finalParams, queryParams);
 
-  return {
-    code: 200,
-    data: publishResult
-  };
+  return updateResult;
 }
 
 const update = async ({

@@ -30,8 +30,8 @@ const loginMiddleware = handleAsyncWrapper(async (req, res, next) => {
   }
 }, { retries: config.retries })
 
-const generateToken = id =>
-  jwt.sign({ id }, config.iam.secret, {
+export const generateToken = data =>
+  jwt.sign(data, config.sharetribeFlex.page.secret, {
     expiresIn: '365 days'
   });
 

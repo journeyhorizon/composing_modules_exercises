@@ -35,6 +35,8 @@ const aws = {
   region: process.env.SERVER_AWS_REGION,
 };
 
+const webCanonicalUrl = process.env.WEB_CANONICAL_URL;
+
 const config = {
   env,
   nodeEnv,
@@ -42,6 +44,7 @@ const config = {
   sharetribeFlex,
   email,
   aws,
+  webCanonicalUrl,
 }
 
 export default config;

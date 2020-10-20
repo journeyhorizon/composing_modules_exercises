@@ -1,6 +1,7 @@
 import { createTransitConverters } from '../../services/serializer';
 import { typeHandlers } from '../../services/sharetribe';
 import { INVALID_TOKEN } from '../../services/error_type';
+import isEmpty from 'lodash/isEmpty';
 
 const express = require('express');
 const router = express.Router();
@@ -8,9 +9,13 @@ const publicRoute = require('./public');
 
 const transitJsonParser = (req, res, next) => {
   const data = req.body;
-  const { reader } = createTransitConverters(typeHandlers);
+  if (isEmpty(data)) {
+    res.locals.parsedBody = {};
+  } else {
+    const { reader } = createTransitConverters(typeHandlers);
 
-  res.locals.parsedBody = reader.read(data);
+    res.locals.parsedBody = reader.read(data);
+  }
   next();
 };
 
@@ -35,8 +40,6 @@ const tokenStoreParser = (req, res, next) => {
 router.use(publicRoute);
 
 router.use(express.raw({ type: 'application/transit+json' }));
-
-router.use('/listings', require('./listings'));
 
 router.use(transitJsonParser);
 
