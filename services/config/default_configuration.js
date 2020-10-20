@@ -18,7 +18,7 @@ const sharetribeFlex = {
     defaultEmailPrefix: process.env.DEFAULT_PAGE_EMAIL_PREFIX,
     defaultEmailSuffix: process.env.DEFAULT_PAGE_EMAIL_SUFFIX,
     secret: process.env.PASSWORD_SECRET,
-    teamVerificationExpireTime: 1
+    teamVerificationExpireTime: '7 days'
   }
 };
 

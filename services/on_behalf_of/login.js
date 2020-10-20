@@ -1,18 +1,20 @@
-import config from '../../config';
-import { INVALID_TOKEN, WRONG_PARAMS } from '../../error_type';
-import { denormalisedResponseEntities, sdk } from '../../sharetribe/index';
-import { getListingData, getUserData, integrationSdk } from '../../sharetribe_admin';
-import { createFlexErrorObject } from '../error';
+import config from '../config';
+import { INVALID_TOKEN, WRONG_PARAMS } from '../error_type';
+import { denormalisedResponseEntities, sdk } from '../sharetribe/index';
+import { getListingData, getUserData, integrationSdk } from '../sharetribe_admin';
+import { createFlexErrorObject } from './error';
 import jwt from 'jsonwebtoken';
+import { token } from 'morgan';
 
-const create = async ({
+const login = async ({
   data,
 }) => {
   const {
-    teamMemberAuthParams,
+    teamMemberAuthParams: rawTeamMemberAuthParams,
     ...params
   } = data;
-  if (!teamMemberAuthParams) {
+
+  if (!rawTeamMemberAuthParams) {
     return {
       code: 400,
       data: createFlexErrorObject({
@@ -23,12 +25,18 @@ const create = async ({
     };
   }
 
+  const teamMemberAuthParams = JSON.parse(rawTeamMemberAuthParams);
+
+  const loginResult = await sdk.login(params);
+  const currentUserRes = await sdk.currentUser.show();
+  const currentUser = denormalisedResponseEntities(currentUserRes)[0];
+
   const {
     verificationToken
   } = teamMemberAuthParams;
 
   const {
-    email: clientEmail,
+    username: clientEmail,
   } = params;
 
   const decryptData = () => {
@@ -66,8 +74,6 @@ const create = async ({
   }
 
   const currentPageAccount = await getUserData({ userId: pageAccountId });
-  const creationRes = await sdk.currentUser.create(params);
-  const createdUser = denormalisedResponseEntities(creationRes)[0];
 
   const updateTeamMetadata = async () => {
     return Promise.all([
@@ -76,7 +82,7 @@ const create = async ({
         publicData: {
           teamMemberIds: [
             ...currentPageAccount.attributes.profile.publicData.teamMemberIds,
-            createdUser.id.uuid
+            currentUser.id.uuid
           ],
         },
         metadata: {
@@ -92,7 +98,7 @@ const create = async ({
         }
       }),
       integrationSdk.users.updateProfile({
-        id: createdUser.id,
+        id: currentUser.id,
         metadata: {
           pageAccountId: currentPageAccount.id.uuid,
         }
@@ -129,7 +135,7 @@ const create = async ({
 
   updatePageListingData();
 
-  return creationRes;
+  return loginResult;
 }
 
-export default create;
+export default login;

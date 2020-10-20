@@ -6,6 +6,7 @@ import createDraft from "./own_listings/createDraft";
 import open from "./own_listings/open";
 import publishDraft from "./own_listings/publishDraft";
 import update from "./own_listings/update";
+import login from "./login";
 
 const OnBeHalfOfSdk = {
   ownListings: {
@@ -21,7 +22,8 @@ const OnBeHalfOfSdk = {
   },
   listings: {
     show
-  }
+  },
+  login
 };
 
 const addFinalizeResponseFnc = (wrapper) => {

@@ -16,7 +16,8 @@ export const createFlexErrorObject = ({
         id: new UUID(CUSTOM_ERROR_ID),
         status,
         title: message,
-        messageCode
+        messageCode,
+        code: messageCode
       }
     ]
   }
