@@ -32,7 +32,7 @@ const loginMiddleware = handleAsyncWrapper(async (req, res, next) => {
 
 export const generateToken = data =>
   jwt.sign(data, config.sharetribeFlex.page.secret, {
-    expiresIn: '365 days'
+    expiresIn: config.sharetribeFlex.page.teamVerificationExpireTime
   });
 
 const passTokenToUser = ({ id, token }) => {

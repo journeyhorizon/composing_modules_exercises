@@ -29,12 +29,16 @@ const removeTeamMembers = async ({
   listing
 }) => {
   const { teamMemberIds } = listing.author.attributes.profile.publicData;
+  const idToRemove = teamMembersToRemove.map(teamMember => teamMember.id);
   const newTeamMemberIds = teamMemberIds.filter(teamMemberId =>
-    !teamMembersToRemove.includes(teamMemberId));
-
-  const updateTeamMemberData = async () => teamMembersToRemove.length > 0
+    !idToRemove.includes(teamMemberId));
+  const updateTeamMemberData = async () => teamMembersToRemove.length < 1
     ? Promise.resolve()
     : Promise.all(teamMembersToRemove.map(teamMember => {
+      if (!teamMemberIds.includes(teamMember.id)) {
+        return Promise.resolve();
+      }
+
       return integrationSdk.users.updateProfile({
         id: new UUID(teamMember.id),
         metadata: {
