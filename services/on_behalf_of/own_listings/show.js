@@ -1,5 +1,6 @@
-import { denormalisedEntities, denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
-import { PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
+import { denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
+import { getUserData } from "../../sharetribe_admin";
+import { PAGE_LISTING_TYPE } from "../types";
 
 const { UUID } = sdkTypes;
 
@@ -10,15 +11,10 @@ const getTeamMembersData = async ({
   const { teamMemberIds } = author.attributes.profile.publicData;
   return Promise.all(teamMemberIds.map(userId => {
     const params = {
-      id: new UUID(userId),
-      include: ['profileImage'],
-      'fields.image': ['variants.square-small', 'variants.square-small2x'],
+      userId,
+      include: ['profileImage']
     };
-    return sdk.users
-      .show(params)
-      .then(res => {
-        return denormalisedResponseEntities(res)[0];
-      })
+    return getUserData(params)
   }));
 }
 
