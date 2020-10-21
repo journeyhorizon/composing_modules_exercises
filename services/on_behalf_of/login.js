@@ -2,7 +2,7 @@ import config from '../config';
 import { INVALID_TOKEN, WRONG_PARAMS } from '../error_type';
 import { denormalisedResponseEntities, sdk } from '../sharetribe/index';
 import { getListingData, getUserData, integrationSdk } from '../sharetribe_admin';
-import { createFlexErrorObject } from './error';
+import { ALREADY_IN_PAGE_ERROR, createFlexErrorObject } from './error';
 import jwt from 'jsonwebtoken';
 import { token } from 'morgan';
 
@@ -30,6 +30,17 @@ const login = async ({
   const loginResult = await sdk.login(params);
   const currentUserRes = await sdk.currentUser.show();
   const currentUser = denormalisedResponseEntities(currentUserRes)[0];
+
+  if (currentUser.attributes.profile.metadata.pageAccountId) {
+    return {
+      code: 409,
+      data: createFlexErrorObject({
+        status: 409,
+        message: ALREADY_IN_PAGE_ERROR,
+        messageCode: ALREADY_IN_PAGE_ERROR
+      })
+    };
+  }
 
   const {
     verificationToken
