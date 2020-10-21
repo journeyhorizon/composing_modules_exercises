@@ -2,13 +2,13 @@ import { generateToken } from "../../authentication";
 import config from "../../config";
 import { send } from "../../notification/email";
 import { WRONG_PARAMS } from "../../error_type";
-import { TEAM_MEMBER_INVITE } from "../../notification/email";
 import { sdk, types as sdkTypes } from "../../sharetribe";
 import { getListingData, getUserData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
 import { PAGE_LISTING_TYPE, TEAM_MEMBER_ADD, TEAM_MEMBER_REMOVE, TEAM_MEMBER_RESEND } from "../types";
 import { generatePassword } from "../utils";
 import cloneDeep from 'lodash/cloneDeep';
+import { TEAM_MEMBER_INVITE } from "../../event";
 
 const { UUID } = sdkTypes;
 
