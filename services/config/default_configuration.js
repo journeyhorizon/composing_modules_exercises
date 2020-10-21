@@ -29,6 +29,12 @@ const email = {
   adminAddress: process.env.ADMIN_EMAIL_ADDRESS,
 };
 
+const sms = {
+  accountSid: process.env.SMS_ACCOUNT_SID,
+  authToken: process.env.SMS_AUTH_TOKEN,
+  hostedNumber: process.env.SMS_HOSTED_NUMBER,
+}
+
 const aws = {
   ses: {
     region: process.env.AWS_SES_REGION
@@ -46,6 +52,7 @@ const config = {
   email,
   aws,
   webCanonicalUrl,
+  sms
 }
 
 export default config;

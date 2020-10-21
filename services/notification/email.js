@@ -1,5 +1,5 @@
-import config from './config';
-import { TEAM_MEMBER_INVITE } from './event';
+import config from '../config';
+import { TEAM_MEMBER_INVITE } from '../event';
 
 const fs = require('fs');
 const AWS = require('aws-sdk');
@@ -14,7 +14,7 @@ const NEED_NO_CALL_BACK = 'NEED_NO_CALL_BACK';
 const getHtmlContent = (type) => {
   switch (type) {
     case TEAM_MEMBER_INVITE:
-      return fs.readFileSync('email_templates/TEAM_MEMBER_INVITE.html', "utf8");
+      return fs.readFileSync('templates/emails/TEAM_MEMBER_INVITE.html', "utf8");
     default:
       break;
   }

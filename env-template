@@ -41,6 +41,12 @@ DEFAULT_PAGE_EMAIL_PREFIX=
 DEFAULT_PAGE_EMAIL_SUFFIX=@journeyh.io
 
 #----------------------------------------------
+#SMS configuration
+SMS_ACCOUNT_SID=
+SMS_AUTH_TOKEN=
+SMS_HOSTED_NUMBER=
+
+#----------------------------------------------
 #Website
 WEB_CANONICAL_URL=
 MARKETPLACE_NAME=

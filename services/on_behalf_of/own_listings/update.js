@@ -1,8 +1,8 @@
 import { generateToken } from "../../authentication";
 import config from "../../config";
-import { send } from "../../email";
+import { send } from "../../notification/email";
 import { WRONG_PARAMS } from "../../error_type";
-import { TEAM_MEMBER_INVITE } from "../../event";
+import { TEAM_MEMBER_INVITE } from "../../notification/email";
 import { sdk, types as sdkTypes } from "../../sharetribe";
 import { getListingData, getUserData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
