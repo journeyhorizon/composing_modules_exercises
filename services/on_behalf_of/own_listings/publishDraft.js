@@ -2,7 +2,7 @@ import { WRONG_PARAMS } from "../../error_type";
 import { sdk } from "../../sharetribe";
 import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
-import { LISTING_STATE_CLOSED, LISTING_STATE_PUBLISHED, PRODUCT_LISTING_TYPE } from "../types";
+import { LISTING_STATE_CLOSED, LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_PUBLISHED, PRODUCT_LISTING_TYPE } from "../types";
 
 const handlePublishProductListing = async ({
   data,
@@ -35,6 +35,9 @@ const handlePublishProductListing = async ({
 
   const handleListingApprovalState = async () => {
     try {
+      if (state === LISTING_STATE_PENDING_APPROVAL) {
+        return;
+      }
       await integrationSdk.listings.approve(data);
       if (state === LISTING_STATE_CLOSED) {
         await integrationSdk.listings.close(data);
