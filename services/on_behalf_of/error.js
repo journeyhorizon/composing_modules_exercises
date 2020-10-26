@@ -5,6 +5,7 @@ const CUSTOM_ERROR_ID = 'jh-custom-error-id';
 
 export const PAGE_EXISTED_ERROR = 'PAGE_EXISTED_ERROR';
 export const ALREADY_IN_PAGE_ERROR = 'ALREADY_IN_PAGE_ERROR';
+export const IS_PAGE_EMAIL_ERROR = 'IS_PAGE_EMAIL_ERROR';
 
 export const createFlexErrorObject = ({
   message,

@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(express.raw({ type: 'application/transit+json' }));
 
 router.use('/listings', require('./listings'));
+router.use('/password_reset', require('./password_reset'));
 
 const responseParser = (req, res, next) => {
   if (isEmpty(res.locals.response)) {
