@@ -208,7 +208,7 @@ const createDraft = async ({
   }
 
   return handlePageListingCreation({
-    sdk: trustedSdk,
+    trustedSdk,
     currentUser,
     data,
     queryParams
