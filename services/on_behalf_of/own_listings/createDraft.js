@@ -11,7 +11,6 @@ const { UUID } = sdkTypes;
 
 const handlePageAccountExisted = async ({
   pageAccountId,
-  trustedSdk,
   currentUser,
   data,
   queryParams
@@ -77,7 +76,6 @@ const handlePageAccountExisted = async ({
 }
 
 const handlePageListingCreation = async ({
-  trustedSdk,
   currentUser,
   data,
   queryParams
@@ -90,7 +88,6 @@ const handlePageListingCreation = async ({
   if (pageAccountId) {
     return handlePageAccountExisted({
       pageAccountId,
-      trustedSdk,
       currentUser,
       data,
       queryParams
@@ -208,7 +205,6 @@ const createDraft = async ({
   }
 
   return handlePageListingCreation({
-    trustedSdk,
     currentUser,
     data,
     queryParams
