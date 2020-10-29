@@ -24,11 +24,15 @@ export const ensureTransaction = (transaction, booking = null, listing = null, p
 // At this transition a PaymentIntent is created by Marketplace API.
 // After this transition, the actual payment must be made on client-side directly to Stripe.
 export const TRANSITION_REQUEST_PAYMENT = 'transition/request-payment';
+export const TRANSITION_CASH_REQUEST_PAYMENT = "transition/cash-request-payment";
+export const TRANSITION_RECORD_OFF_PLATFORM = 'transition/record-off-platform';
 
 // A customer can also initiate a transaction with an enquiry, and
 // then transition that with a request.
 export const TRANSITION_ENQUIRE = 'transition/enquire';
+export const TRANSITION_SEND_OFFER = "transition/send-offer";
 export const TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY = 'transition/request-payment-after-enquiry';
+export const TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY = "transition/cash-request-payment-after-enquiry";
 
 // Stripe SDK might need to ask 3D security from customer, in a separate front-end step.
 // Therefore we need to make another transition to Marketplace API,
@@ -39,19 +43,36 @@ export const TRANSITION_CONFIRM_PAYMENT = 'transition/confirm-payment';
 // the transaction will expire automatically.
 export const TRANSITION_EXPIRE_PAYMENT = 'transition/expire-payment';
 
+// For negotiation 
+export const TRANSITION_EDIT_OFFER = "transition/edit-offer";
+
+export const TRANSITION_DECLINE_OFFER = "transition/decline-offer";
+export const TRANSITION_SEND_NEW_OFFER = "transition/send-new-offer";
+
+export const TRANSITION_ACCEPT_OFFER = "transition/accept-offer";
+
+export const TRANSITION_EXPIRE_OFFER = "transition/expire-offer";
+export const TRANSITION_CANCEL_OFFER = "transition/cancel-offer";
+
 // When the provider accepts or declines a transaction from the
 // SalePage, it is transitioned with the accept or decline transition.
 export const TRANSITION_ACCEPT = 'transition/accept';
 export const TRANSITION_DECLINE = 'transition/decline';
+export const TRANSITION_CASH_ACCEPT = "transition/cash-accept";
+export const TRANSITION_CASH_DECLINE = "transition/cash-decline";
+
 
 // The backend automatically expire the transaction.
 export const TRANSITION_EXPIRE = 'transition/expire';
+export const TRANSITION_CASH_EXPIRE = "transition/cash-expire";
 
 // Admin can also cancel the transition.
 export const TRANSITION_CANCEL = 'transition/cancel';
+export const TRANSITION_CASH_CANCEL = "transition/cash-cancel";
 
 // The backend will mark the transaction completed.
 export const TRANSITION_COMPLETE = 'transition/complete';
+export const TRANSITION_CASH_COMPLETE = "transition/cash-complete";
 
 // Reviews are given through transaction transitions. Review 1 can be
 // by provider or customer, and review 2 will be the other party of
@@ -104,6 +125,13 @@ const STATE_DELIVERED = 'delivered';
 const STATE_REVIEWED = 'reviewed';
 const STATE_REVIEWED_BY_CUSTOMER = 'reviewed-by-customer';
 const STATE_REVIEWED_BY_PROVIDER = 'reviewed-by-provider';
+const STATE_REVIEW_OFFER = "review-offer";
+const STATE_OFFER_DECLINED = "offer-declined";
+const STATE_OFFER_CANCELED = "offer-canceled";
+const STATE_CASH_PREAUTHORIZED = "cash-preauthorized";
+const STATE_CASH_ACCEPTED = "cash-accepted";
+const STATE_CASH_DECLINED = "cash-declined";
+const STATE_CANCELLED = "cancelled";
 
 /**
  * Description of transaction process
@@ -118,7 +146,7 @@ const stateDescription = {
   // id is defined only to support Xstate format.
   // However if you have multiple transaction processes defined,
   // it is best to keep them in sync with transaction process aliases.
-  id: 'flex-default-process/release-1',
+  id: 'flex-hourly-default-process/release-1',
 
   // This 'initial' state is a starting point for new transaction
   initial: STATE_INITIAL,
@@ -129,11 +157,15 @@ const stateDescription = {
       on: {
         [TRANSITION_ENQUIRE]: STATE_ENQUIRY,
         [TRANSITION_REQUEST_PAYMENT]: STATE_PENDING_PAYMENT,
+        [TRANSITION_CASH_REQUEST_PAYMENT]: STATE_CASH_PREAUTHORIZED,
+        [TRANSITION_RECORD_OFF_PLATFORM]: STATE_REVIEWED
       },
     },
     [STATE_ENQUIRY]: {
       on: {
         [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY]: STATE_PENDING_PAYMENT,
+        [TRANSITION_SEND_OFFER]: STATE_REVIEW_OFFER,
+        [TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY]: STATE_CASH_PREAUTHORIZED
       },
     },
 
@@ -143,7 +175,18 @@ const stateDescription = {
         [TRANSITION_CONFIRM_PAYMENT]: STATE_PREAUTHORIZED,
       },
     },
-
+    [STATE_REVIEW_OFFER]: {
+      on: {
+        [TRANSITION_EDIT_OFFER]: STATE_REVIEW_OFFER,
+        [TRANSITION_DECLINE_OFFER]: STATE_OFFER_DECLINED,
+        [TRANSITION_CANCEL_OFFER]: STATE_OFFER_CANCELED,
+        [TRANSITION_EXPIRE_OFFER]: STATE_OFFER_CANCELED,
+        [TRANSITION_SEND_NEW_OFFER]: STATE_OFFER_DECLINED,
+        [TRANSITION_ACCEPT_OFFER]: STATE_ACCEPTED
+      }
+    },
+    [STATE_OFFER_DECLINED]: {},
+    [STATE_OFFER_CANCELED]: {},
     [STATE_PAYMENT_EXPIRED]: {},
     [STATE_PREAUTHORIZED]: {
       on: {
@@ -152,7 +195,20 @@ const stateDescription = {
         [TRANSITION_ACCEPT]: STATE_ACCEPTED,
       },
     },
-
+    [STATE_CASH_PREAUTHORIZED]: {
+      on: {
+        [TRANSITION_CASH_ACCEPT]: STATE_CASH_ACCEPTED,
+        [TRANSITION_CASH_DECLINE]: STATE_CASH_DECLINED,
+        [TRANSITION_CASH_EXPIRE]: STATE_CASH_DECLINED
+      }
+    },
+    [STATE_CASH_ACCEPTED]: {
+      on: {
+        [TRANSITION_CASH_CANCEL]: STATE_CANCELLED,
+        [TRANSITION_CASH_COMPLETE]: STATE_DELIVERED
+      }
+    },
+    [STATE_CASH_DECLINED]: {},
     [STATE_DECLINED]: {},
     [STATE_ACCEPTED]: {
       on: {
@@ -160,26 +216,11 @@ const stateDescription = {
         [TRANSITION_COMPLETE]: STATE_DELIVERED,
       },
     },
-
     [STATE_CANCELED]: {},
     [STATE_DELIVERED]: {
       on: {
-        [TRANSITION_EXPIRE_REVIEW_PERIOD]: STATE_REVIEWED,
-        [TRANSITION_REVIEW_1_BY_CUSTOMER]: STATE_REVIEWED_BY_CUSTOMER,
-        [TRANSITION_REVIEW_1_BY_PROVIDER]: STATE_REVIEWED_BY_PROVIDER,
-      },
-    },
-
-    [STATE_REVIEWED_BY_CUSTOMER]: {
-      on: {
-        [TRANSITION_REVIEW_2_BY_PROVIDER]: STATE_REVIEWED,
-        [TRANSITION_EXPIRE_PROVIDER_REVIEW_PERIOD]: STATE_REVIEWED,
-      },
-    },
-    [STATE_REVIEWED_BY_PROVIDER]: {
-      on: {
-        [TRANSITION_REVIEW_2_BY_CUSTOMER]: STATE_REVIEWED,
-        [TRANSITION_EXPIRE_CUSTOMER_REVIEW_PERIOD]: STATE_REVIEWED,
+        [TRANSITION_REVIEW_1_BY_CUSTOMER]: STATE_REVIEWED,
+        [TRANSITION_EXPIRE_REVIEW_PERIOD]: STATE_REVIEWED
       },
     },
     [STATE_REVIEWED]: { type: 'final' },
@@ -242,13 +283,16 @@ export const txIsPaymentExpired = tx =>
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
 export const txIsRequested = tx =>
-  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx)) ||
+  getTransitionsToState(STATE_CASH_PREAUTHORIZED).includes(txLastTransition(tx));
 
 export const txIsAccepted = tx =>
-  getTransitionsToState(STATE_ACCEPTED).includes(txLastTransition(tx));
+  getTransitionsToState(STATE_ACCEPTED).includes(txLastTransition(tx)) ||
+  getTransitionsToState(STATE_CASH_ACCEPTED).includes(txLastTransition(tx));
 
 export const txIsDeclined = tx =>
-  getTransitionsToState(STATE_DECLINED).includes(txLastTransition(tx));
+  getTransitionsToState(STATE_DECLINED).includes(txLastTransition(tx)) ||
+  getTransitionsToState(STATE_CASH_DECLINED).includes(txLastTransition(tx));
 
 export const txIsCanceled = tx =>
   getTransitionsToState(STATE_CANCELED).includes(txLastTransition(tx));
@@ -282,7 +326,8 @@ const hasPassedTransition = (transitionName, tx) =>
 const hasPassedStateFn = state => tx =>
   getTransitionsToState(state).filter(t => hasPassedTransition(t, tx)).length > 0;
 
-export const txHasBeenAccepted = hasPassedStateFn(STATE_ACCEPTED);
+export const txHasBeenAccepted = tx => hasPassedStateFn(STATE_ACCEPTED)(tx) ||
+  hasPassedStateFn(STATE_CASH_ACCEPTED)(tx);
 export const txHasBeenDelivered = hasPassedStateFn(STATE_DELIVERED);
 
 /**
@@ -353,7 +398,14 @@ export const txRoleIsCustomer = userRole => userRole === TX_TRANSITION_ACTOR_CUS
 // should go through the local API endpoints, or if using JS SDK is
 // enough.
 export const isPrivileged = transition => {
-  return [TRANSITION_REQUEST_PAYMENT, TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY].includes(
+  return [
+    TRANSITION_ACCEPT_OFFER,
+    TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
+    TRANSITION_REQUEST_PAYMENT,
+    TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
+    TRANSITION_CASH_REQUEST_PAYMENT,
+    TRANSITION_RECORD_OFF_PLATFORM
+  ].includes(
     transition
   );
 };

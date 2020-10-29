@@ -1,9 +1,73 @@
 import createLineItem from '../custom_pricing';
 import { getTransaction } from "../../sharetribe_admin";
 import {
+  TRANSITION_ACCEPT_OFFER,
+  TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
 } from '../processes';
-import config from "../../config";
+import { PRODUCT_LISTING_TYPE } from '../../on_behalf_of/types';
+import { denormalisedResponseEntities, sdk } from '../../sharetribe';
+
+const fetchAllPageProduct = async ({
+  authorId,
+  page = 1,
+  perPage = 100
+}) => {
+  const params = {
+    page,
+    per_page: perPage,
+    'fields.listing': [
+      'description',
+      'geolocation',
+      'price',
+      'title',
+      'publicData',
+      'metadata',
+      'images'
+    ],
+    include: ['images'],
+    'fields.image': [
+      // Listing page
+      'variants.landscape-crop',
+      'variants.landscape-crop2x',
+      'variants.landscape-crop4x',
+      'variants.landscape-crop6x',
+
+      // Social media
+      'variants.facebook',
+      'variants.twitter',
+
+      // Image carousel
+      'variants.scaled-small',
+      'variants.scaled-medium',
+      'variants.scaled-large',
+      'variants.scaled-xlarge',
+
+      // Avatars
+      'variants.square-small',
+      'variants.square-small2x',
+    ],
+    pub_listingType: PRODUCT_LISTING_TYPE,
+    authorId
+  }
+  const res = await sdk.listings
+    .query(params);
+  const { meta } = res.data;
+  const {
+    totalPages
+  } = meta;
+
+  if (page >= totalPages) {
+    return res;
+  }
+  const nextData = await fetchAllPageProduct({
+    authorId,
+    page: page + 1
+  });
+  res.data.data = res.data.data.concat(nextData.data.data);
+  res.data.included = res.data.included.concat(nextData.data.included)
+  return res;
+}
 
 
 //This func is no-op right now
@@ -24,23 +88,36 @@ const processTransitionParams = ({
   params,
 }) => {
   const requestToBookAfterEnquiryTransitions =
-    [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY];
-  if (!requestToBookAfterEnquiryTransitions.includes(transition) ||
-    !config.enableCustomCommission) {
+    [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
+      TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
+      TRANSITION_ACCEPT_OFFER];
+  if (!requestToBookAfterEnquiryTransitions.includes(transition)) {
     return Promise.resolve(params);
   }
+  const isNegotiation = transition === TRANSITION_ACCEPT_OFFER;
   return getTransaction({
     transactionId: typeof id === 'string'
       ? id
       : id.uuid
     , include: ['listing']
   })
-    .then(tx => {
-      return tx.listing;
+    .then(async () => {
+      if (isNegotiation) {
+        return {};
+      }
+      const productsRes = await fetchAllPageProduct({
+        authorId: authorId.uuid
+          ? authorId.uuid
+          : authorId
+      });
+
+      const products = denormalisedResponseEntities(productsRes);
+
+      return { products };
     })
-    .then(listing =>
+    .then(({ products }) =>
       Promise.all([
-        createLineItem({ listing, params }),
+        createLineItem({ products, params }),
         handleParamsCreation({ params, })
       ]))
     .then(([lineItems, params]) => {
