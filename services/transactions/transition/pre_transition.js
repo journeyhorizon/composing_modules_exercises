@@ -7,6 +7,7 @@ import {
 } from '../processes';
 import { PRODUCT_LISTING_TYPE } from '../../on_behalf_of/types';
 import { denormalisedResponseEntities, sdk } from '../../sharetribe';
+import { fetchFormattedPageProducts } from '../../sharetribe/utils';
 
 const fetchAllPageProduct = async ({
   authorId,
@@ -99,19 +100,15 @@ const processTransitionParams = ({
     transactionId: typeof id === 'string'
       ? id
       : id.uuid
-    , include: ['listing']
+    , include: ['listing', 'provider']
   })
-    .then(async () => {
+    .then(async (tx) => {
       if (isNegotiation) {
         return {};
       }
-      const productsRes = await fetchAllPageProduct({
-        authorId: authorId.uuid
-          ? authorId.uuid
-          : authorId
+      const products = await fetchFormattedPageProducts({
+        authorId: tx.provider.id.uuid
       });
-
-      const products = denormalisedResponseEntities(productsRes);
 
       return { products };
     })
