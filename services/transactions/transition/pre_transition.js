@@ -1,12 +1,13 @@
 import createLineItem from '../custom_pricing';
 import { getTransaction } from "../../sharetribe_admin";
 import {
-  TRANSITION_ACCEPT_OFFER,
+  TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+  TRANSITION_ACCEPT_OFFER_CASH_PAYMENT,
   TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
 } from '../processes';
 import { PRODUCT_LISTING_TYPE } from '../../on_behalf_of/types';
-import { denormalisedResponseEntities, sdk } from '../../sharetribe';
+import { sdk } from '../../sharetribe';
 import { fetchFormattedPageProducts } from '../../sharetribe/utils';
 
 const fetchAllPageProduct = async ({
@@ -91,11 +92,15 @@ const processTransitionParams = ({
   const requestToBookAfterEnquiryTransitions =
     [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
       TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
-      TRANSITION_ACCEPT_OFFER];
+      TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+      TRANSITION_ACCEPT_OFFER_CASH_PAYMENT];
   if (!requestToBookAfterEnquiryTransitions.includes(transition)) {
     return Promise.resolve(params);
   }
-  const isNegotiation = transition === TRANSITION_ACCEPT_OFFER;
+  const isNegotiationFlow = [
+    TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+    TRANSITION_ACCEPT_OFFER_CASH_PAYMENT
+  ].includes(transition);
   return getTransaction({
     transactionId: typeof id === 'string'
       ? id

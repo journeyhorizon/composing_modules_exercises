@@ -49,7 +49,9 @@ export const TRANSITION_EDIT_OFFER = "transition/edit-offer";
 export const TRANSITION_DECLINE_OFFER = "transition/decline-offer";
 export const TRANSITION_SEND_NEW_OFFER = "transition/send-new-offer";
 
-export const TRANSITION_ACCEPT_OFFER = "transition/accept-offer";
+export const TRANSITION_ACCEPT_OFFER_CARD_PAYMENT = "transition/accept-offer-card-payment";
+export const TRANSITION_ACCEPT_OFFER_CASH_PAYMENT = "transition/accept-offer-cash-payment";
+export const TRANSITION_ACCEPT_OFFER_MODAL = "transition/accept-offer-modal";
 
 export const TRANSITION_EXPIRE_OFFER = "transition/expire-offer";
 export const TRANSITION_CANCEL_OFFER = "transition/cancel-offer";
@@ -181,11 +183,15 @@ const stateDescription = {
         [TRANSITION_DECLINE_OFFER]: STATE_OFFER_DECLINED,
         [TRANSITION_CANCEL_OFFER]: STATE_OFFER_CANCELED,
         [TRANSITION_EXPIRE_OFFER]: STATE_OFFER_CANCELED,
-        [TRANSITION_SEND_NEW_OFFER]: STATE_OFFER_DECLINED,
-        [TRANSITION_ACCEPT_OFFER]: STATE_ACCEPTED
+        [TRANSITION_ACCEPT_OFFER_CARD_PAYMENT]: STATE_ACCEPTED,
+        [TRANSITION_ACCEPT_OFFER_CASH_PAYMENT]: STATE_CASH_ACCEPTED
       }
     },
-    [STATE_OFFER_DECLINED]: {},
+    [STATE_OFFER_DECLINED]: {
+      on: {
+        [TRANSITION_SEND_NEW_OFFER]: STATE_REVIEW_OFFER,
+      },
+    },
     [STATE_OFFER_CANCELED]: {},
     [STATE_PAYMENT_EXPIRED]: {},
     [STATE_PREAUTHORIZED]: {
@@ -283,12 +289,23 @@ export const txIsPaymentExpired = tx =>
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
 export const txIsRequested = tx =>
-  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx)) ||
+  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+
+export const txIsRequestedCash = tx =>
   getTransitionsToState(STATE_CASH_PREAUTHORIZED).includes(txLastTransition(tx));
 
 export const txIsAccepted = tx =>
   getTransitionsToState(STATE_ACCEPTED).includes(txLastTransition(tx)) ||
   getTransitionsToState(STATE_CASH_ACCEPTED).includes(txLastTransition(tx));
+
+export const txIsOffered = tx =>
+  getTransitionsToState(STATE_REVIEW_OFFER).includes(txLastTransition(tx));
+
+export const txIsDeclinedOffer = tx =>
+  getTransitionsToState(STATE_OFFER_DECLINED).includes(txLastTransition(tx));
+
+export const txIsCanceledOffer = tx =>
+  getTransitionsToState(STATE_OFFER_CANCELED).includes(txLastTransition(tx));
 
 export const txIsDeclined = tx =>
   getTransitionsToState(STATE_DECLINED).includes(txLastTransition(tx)) ||
@@ -330,6 +347,10 @@ export const txHasBeenAccepted = tx => hasPassedStateFn(STATE_ACCEPTED)(tx) ||
   hasPassedStateFn(STATE_CASH_ACCEPTED)(tx);
 export const txHasBeenDelivered = hasPassedStateFn(STATE_DELIVERED);
 
+export const txHasSentOffer = (tx) => {
+  return hasPassedStateFn(STATE_REVIEW_OFFER)(tx)
+}
+
 /**
  * Other transaction related utility functions
  */
@@ -353,16 +374,28 @@ export const getReview2Transition = isCustomer =>
 // The first transition and most of the expiration transitions made by system are not relevant
 export const isRelevantPastTransition = transition => {
   return [
+    TRANSITION_SEND_OFFER,
+    TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+    TRANSITION_ACCEPT_OFFER_CASH_PAYMENT,
+    TRANSITION_DECLINE_OFFER,
+    TRANSITION_CANCEL_OFFER,
     TRANSITION_ACCEPT,
     TRANSITION_CANCEL,
     TRANSITION_COMPLETE,
     TRANSITION_CONFIRM_PAYMENT,
+    TRANSITION_CASH_REQUEST_PAYMENT,
+    TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
     TRANSITION_DECLINE,
     TRANSITION_EXPIRE,
     TRANSITION_REVIEW_1_BY_CUSTOMER,
     TRANSITION_REVIEW_1_BY_PROVIDER,
     TRANSITION_REVIEW_2_BY_CUSTOMER,
     TRANSITION_REVIEW_2_BY_PROVIDER,
+    TRANSITION_CASH_ACCEPT,
+    TRANSITION_CASH_CANCEL,
+    TRANSITION_CASH_DECLINE,
+    TRANSITION_CASH_EXPIRE,
+    TRANSITION_CASH_COMPLETE,
   ].includes(transition);
 };
 
@@ -399,7 +432,8 @@ export const txRoleIsCustomer = userRole => userRole === TX_TRANSITION_ACTOR_CUS
 // enough.
 export const isPrivileged = transition => {
   return [
-    TRANSITION_ACCEPT_OFFER,
+    TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+    TRANSITION_ACCEPT_OFFER_CASH_PAYMENT,
     TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
     TRANSITION_REQUEST_PAYMENT,
     TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,

@@ -1,6 +1,6 @@
 import createLineItem from '../custom_pricing';
 import { types as sdkTypes } from '../../sharetribe';
-import { TRANSITION_ACCEPT_OFFER } from '../processes';
+import { TRANSITION_ACCEPT_OFFER_CARD_PAYMENT, TRANSITION_ACCEPT_OFFER_CASH_PAYMENT } from '../processes';
 import { fetchFormattedPageProducts } from '../../sharetribe/utils';
 
 const { UUID } = sdkTypes;
@@ -20,7 +20,10 @@ const execPreTransitionSpeculativeActions = async (fnParams) => {
   const { data, ...rest } = fnParams;
   const { id: txId, transition, params } = data;
 
-  const isNegotiationFlow = transition === TRANSITION_ACCEPT_OFFER;
+  const isNegotiationFlow = [
+    TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
+    TRANSITION_ACCEPT_OFFER_CASH_PAYMENT
+  ].includes(transition);
 
   const products = isNegotiationFlow
     ? null
