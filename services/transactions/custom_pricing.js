@@ -1,19 +1,29 @@
 import {
   LINE_ITEM_CUSTOMER_COMMISSION,
   LINE_ITEM_PROVIDER_COMMISSION,
-  LINE_ITEM_UNITS
+  LINE_ITEM_UNITS,
+  LINE_ITEM_DELIVERY,
 } from "./types";
+
+import { types as sdkTypes } from '../sharetribe';
+const { Money } = sdkTypes;
+const PREPAYMENT = 'prepayment';
 
 //Add business logic for calculating transaction here
 const createLineItems = ({ listingId, params, products }) => {
   // const { bookingStart, bookingEnd, bookingDisplayStart, bookingDisplayEnd, protectedData = {} } = params;
   const {
     lineItems: clientLineItems,
-    negotiatedTotal
+    negotiatedTotal,
+    protectedData,
   } = params;
 
-  const isNegotiation = !!negotiatedTotal;
+  const {
+    paymentMethod,
+    deliveryCharge,
+  } = protectedData || {};
 
+  const isNegotiation = !!negotiatedTotal;
   if (isNegotiation) {
     return [
       {
@@ -25,9 +35,9 @@ const createLineItems = ({ listingId, params, products }) => {
       },
       {
         code: LINE_ITEM_PROVIDER_COMMISSION,
-        unitPrice: price,
-        percentage: 15,
-        includeFor: ["customer"]
+        unitPrice: negotiatedTotal,
+        percentage: paymentMethod === PREPAYMENT ? -15 : -11,
+        includeFor: ["provider"]
       },
     ];
   }
@@ -37,23 +47,42 @@ const createLineItems = ({ listingId, params, products }) => {
     return result;
   }, {});
 
-  const serverLineItems = clientLineItems.map(item => {
-    const { productId, ...itemData } = item;
-    return {
-      ...itemData,
+  const serverLineItems = [];
+  let totalPriceAmount = 0;
+
+  for (const property in clientLineItems) {
+    const lineItem = {
+      quantity: clientLineItems[property],
       code: LINE_ITEM_UNITS,
-      unitPrice: productDataObj[productId].attributes.price,
+      unitPrice: productDataObj[property].attributes.price,
       includeFor: ["customer", "provider"]
     }
-  })
+    serverLineItems.push(lineItem);
+    totalPriceAmount += productDataObj[property].attributes.price.amount;
+  }
+
+  const firstIdProduct = Object.keys(clientLineItems)[0];
+  const currency = productDataObj[firstIdProduct].attributes.price.currency;
+
+  const deliveryLineItem = {
+    code: LINE_ITEM_DELIVERY,
+    unitPrice: deliveryCharge,
+    quantity: 1,
+    includeFor: ["customer", "provider"]
+  };
+
+  if (paymentMethod === PREPAYMENT && deliveryCharge && deliveryCharge.amount) {
+    serverLineItems.push(deliveryLineItem);
+    totalPriceAmount += deliveryCharge.amount;
+  }
 
   const lineItems = [
     ...serverLineItems,
     {
-      code: LINE_ITEM_CUSTOMER_COMMISSION,
-      unitPrice: price,
-      percentage: 10,
-      includeFor: ["customer"]
+      code: LINE_ITEM_PROVIDER_COMMISSION,
+      unitPrice: new Money(totalPriceAmount, currency),
+      percentage: paymentMethod === PREPAYMENT ? -15 : -11,
+      includeFor: ["provider"],
     }
   ];
 

@@ -108,7 +108,7 @@ const processTransitionParams = ({
     , include: ['listing', 'provider']
   })
     .then(async (tx) => {
-      if (isNegotiation) {
+      if (isNegotiationFlow) {
         return {};
       }
       const products = await fetchFormattedPageProducts({

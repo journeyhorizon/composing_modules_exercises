@@ -19,7 +19,7 @@ const handleParamsCreation = async ({ params }) => {
 const execPreTransitionSpeculativeActions = async (fnParams) => {
   const { data, ...rest } = fnParams;
   const { id: txId, transition, params } = data;
-
+  const { authorId } = params;
   const isNegotiationFlow = [
     TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
     TRANSITION_ACCEPT_OFFER_CASH_PAYMENT
