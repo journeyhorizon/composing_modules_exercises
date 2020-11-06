@@ -18,6 +18,7 @@ import {
   TRANSITION_SEND_NEW_OFFER,
   TRANSITION_SEND_OFFER
 } from '../transactions/processes';
+import fs from 'fs';
 
 const SMSClient = config.sms.accountSid
   ? new twilio(config.sms.accountSid, config.sms.authToken)

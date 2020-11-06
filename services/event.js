@@ -144,7 +144,7 @@ export const handleUserActionEvent = async ({
     metadata
   });
 
-  return Promise.all(listOfSMSData.map(({
+  await Promise.all(listOfSMSData.map(({
     receivedNumbers,
     data,
     type
@@ -155,4 +155,11 @@ export const handleUserActionEvent = async ({
       type
     });
   }));
+
+  return {
+    code: 200,
+    data: {
+      message: 'received'
+    }
+  };
 }
