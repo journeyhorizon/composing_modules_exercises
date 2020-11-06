@@ -112,10 +112,12 @@ const getListOfSMSData = ({
       if (isCustomer) {
         const params = createCustomerSMSParams();
         params.customerName = null;
+        params.currentUserName = transaction.customer.attributes.profile.displayName;
         return params;
       } else {
         const params = createProviderSMSParams();
         params.pageName = null;
+        params.currentUserName = transaction.listing.attributes.title;
         return params;
       }
     }

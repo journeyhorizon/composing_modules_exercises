@@ -93,6 +93,7 @@ const getSMSContent = (type, data = null) => {
     case MESSAGE_SENT:
       return getTextContent(MESSAGE_SENT)
         .split("REPLACE_SENDER_NAME").join(data.customerName || data.pageName)
+        .split("REPLACE_USER_NAME").join(data.currentUserName)
     default:
       break;
   }

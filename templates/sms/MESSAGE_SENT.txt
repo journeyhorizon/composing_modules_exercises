@@ -1,1 +1,1 @@
-Hello REPLACE_PAGE_NAME, you have a new message from REPLACE_SENDER_NAME. Reply now
+Hello REPLACE_USER_NAME, you have a new message from REPLACE_SENDER_NAME. Reply now
