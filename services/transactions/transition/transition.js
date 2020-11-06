@@ -1,15 +1,5 @@
-import { handleUserActionEvent, MESSAGE_SENT } from '../../event';
+import { handleUserActionEvent } from '../../event';
 import { sdk } from '../../sharetribe';
-import {
-  TRANSITION_ACCEPT,
-  TRANSITION_CASH_ACCEPT,
-  TRANSITION_CASH_DECLINE,
-  TRANSITION_DECLINE,
-  TRANSITION_DECLINE_OFFER,
-  TRANSITION_EDIT_OFFER,
-  TRANSITION_SEND_NEW_OFFER,
-  TRANSITION_SEND_OFFER
-} from '../processes';
 import execPreTransitActions from './pre_transition';
 
 const composeMRight = method => (...ms) => (
@@ -19,18 +9,6 @@ const composeMRight = method => (...ms) => (
 //Result of the previous function is the args of the current function
 const composePromises = composeMRight('then');
 
-const EVENT_ONLY_TRANSITION = [
-  TRANSITION_CASH_ACCEPT,
-  TRANSITION_CASH_DECLINE,
-  TRANSITION_ACCEPT,
-  TRANSITION_DECLINE,
-  TRANSITION_EDIT_OFFER,
-  TRANSITION_SEND_OFFER,
-  TRANSITION_SEND_NEW_OFFER,
-  TRANSITION_DECLINE_OFFER,
-  MESSAGE_SENT
-];
-
 const handlePrivilegeTransition = composePromises(
   execPreTransitActions,
   sdk.jh.trustedTransactions.transition
@@ -39,7 +17,7 @@ const handlePrivilegeTransition = composePromises(
 const transition = async (fnParams) => {
   const { id, transition, params } = fnParams;
 
-  const isEventHandleFlow = EVENT_ONLY_TRANSITION.includes(transition);
+  const isEventHandleFlow = params.isEventOnly;
 
   return isEventHandleFlow
     ? handleUserActionEvent({

@@ -3,16 +3,15 @@ import { send as handleSendingSMS } from "./notification/sms";
 import { getTransaction } from "./sharetribe_admin";
 import {
   TRANSITION_ACCEPT,
-  TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
   TRANSITION_ACCEPT_OFFER_CASH_PAYMENT,
   TRANSITION_CASH_ACCEPT,
   TRANSITION_CASH_DECLINE,
   TRANSITION_CASH_REQUEST_PAYMENT,
   TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
+  TRANSITION_CONFIRM_PAYMENT,
+  TRANSITION_CONFIRM_PAYMENT_OFFER,
   TRANSITION_DECLINE,
   TRANSITION_DECLINE_OFFER,
-  TRANSITION_REQUEST_PAYMENT,
-  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_SEND_NEW_OFFER,
   TRANSITION_SEND_OFFER
 } from "./transactions/processes";
@@ -83,8 +82,7 @@ const getListOfSMSData = ({
   }
 
   switch (action) {
-    case TRANSITION_REQUEST_PAYMENT:
-    case TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY:
+    case TRANSITION_CONFIRM_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY:
     case TRANSITION_DECLINE_OFFER: {
@@ -98,7 +96,7 @@ const getListOfSMSData = ({
     case TRANSITION_DECLINE: {
       return createCustomerSMSParams();
     }
-    case TRANSITION_ACCEPT_OFFER_CARD_PAYMENT:
+    case TRANSITION_CONFIRM_PAYMENT_OFFER:
     case TRANSITION_ACCEPT_OFFER_CASH_PAYMENT: {
       return [
         ...createCustomerSMSParams(ACCEPT_OFFER_CUSTOMER),
@@ -122,7 +120,8 @@ const getListOfSMSData = ({
       }
     }
     default: {
-      throw (new Error(`Unexpected SMS event ${action}`));
+      console.log(`Unhandled event ${action}`);
+      return [];
     }
   }
 }

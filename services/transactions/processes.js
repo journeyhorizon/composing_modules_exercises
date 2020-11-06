@@ -38,6 +38,7 @@ export const TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY = "transition/cash-re
 // Therefore we need to make another transition to Marketplace API,
 // to tell that the payment is confirmed.
 export const TRANSITION_CONFIRM_PAYMENT = 'transition/confirm-payment';
+export const TRANSITION_CONFIRM_PAYMENT_OFFER = 'transition/confirm-payment-offer';
 
 // If the payment is not confirmed in the time limit set in transaction process (by default 15min)
 // the transaction will expire automatically.
@@ -134,6 +135,7 @@ const STATE_CASH_PREAUTHORIZED = "cash-preauthorized";
 const STATE_CASH_ACCEPTED = "cash-accepted";
 const STATE_CASH_DECLINED = "cash-declined";
 const STATE_CANCELLED = "cancelled";
+const STATE_PENDING_PAYMENT_OFFER = 'pending-payment-offer';
 
 /**
  * Description of transaction process
@@ -183,9 +185,14 @@ const stateDescription = {
         [TRANSITION_DECLINE_OFFER]: STATE_OFFER_DECLINED,
         [TRANSITION_CANCEL_OFFER]: STATE_OFFER_CANCELED,
         [TRANSITION_EXPIRE_OFFER]: STATE_OFFER_CANCELED,
-        [TRANSITION_ACCEPT_OFFER_CARD_PAYMENT]: STATE_ACCEPTED,
+        [TRANSITION_ACCEPT_OFFER_CARD_PAYMENT]: STATE_PENDING_PAYMENT_OFFER,
         [TRANSITION_ACCEPT_OFFER_CASH_PAYMENT]: STATE_CASH_ACCEPTED
       }
+    },
+    [STATE_PENDING_PAYMENT_OFFER]: {
+      on: {
+        [TRANSITION_CONFIRM_PAYMENT_OFFER]: STATE_ACCEPTED,
+      },
     },
     [STATE_OFFER_DECLINED]: {
       on: {

@@ -13,8 +13,6 @@ import {
   TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_DECLINE,
   TRANSITION_DECLINE_OFFER,
-  TRANSITION_REQUEST_PAYMENT,
-  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_SEND_NEW_OFFER,
   TRANSITION_SEND_OFFER
 } from '../transactions/processes';
@@ -25,8 +23,7 @@ const SMSClient = config.sms.accountSid
 
 const getTextContent = (type) => {
   switch (type) {
-    case TRANSITION_REQUEST_PAYMENT:
-    case TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY:
+    case TRANSITION_CONFIRM_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY:
       return fs.readFileSync('templates/sms/TRANSITION_REQUEST_PAYMENT.txt', "utf8");
@@ -54,11 +51,10 @@ const getTextContent = (type) => {
 
 const getSMSContent = (type, data = null) => {
   switch (type) {
-    case TRANSITION_REQUEST_PAYMENT:
-    case TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY:
+    case TRANSITION_CONFIRM_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT:
     case TRANSITION_CASH_REQUEST_PAYMENT_AFTER_ENQUIRY:
-      return getTextContent(TRANSITION_REQUEST_PAYMENT)
+      return getTextContent(TRANSITION_CONFIRM_PAYMENT)
         .split("REPLACE_MARKETPLACE_NAME").join(data.marketplaceName);
     case TRANSITION_DECLINE_OFFER:
       return getTextContent(TRANSITION_DECLINE_OFFER)
