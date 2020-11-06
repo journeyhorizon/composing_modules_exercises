@@ -1,8 +1,8 @@
 import execPreInitiateActions from './initiate/pre_initiate';
 import execPreInitiateSpeculativeActions from './initiate/pre_initiate_speculative';
-import execPreTransitActions from './transition/pre_transition';
 import execPreTransitionSpeculativeActions from './transition/pre_transition_speculative';
 import { sdk } from "../sharetribe";
+import transition from './transition/transition';
 
 
 const composeMRight = method => (...ms) => (
@@ -26,10 +26,7 @@ const transactionWrapper = {
       execPreInitiateSpeculativeActions,
       sdk.jh.trustedTransactions.initiateSpeculative,
     ),
-    transition: composePromises(
-      execPreTransitActions,
-      sdk.jh.trustedTransactions.transition
-    ),
+    transition,
     transitionSpeculative: composePromises(
       execPreTransitionSpeculativeActions,
       sdk.jh.trustedTransactions.transitionSpeculative

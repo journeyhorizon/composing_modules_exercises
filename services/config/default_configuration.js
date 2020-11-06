@@ -19,7 +19,10 @@ const sharetribeFlex = {
     defaultEmailSuffix: process.env.DEFAULT_PAGE_EMAIL_SUFFIX,
     secret: process.env.PASSWORD_SECRET,
     teamVerificationExpireTime: '7 days'
-  }
+  },
+  marketplaceName: env === 'production'
+    ? "The Seafarers Shop"
+    : "The Seafarers Shop Test"
 };
 
 const email = {

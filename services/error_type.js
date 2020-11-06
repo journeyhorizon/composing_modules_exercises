@@ -12,6 +12,8 @@ export const LISTING_DOES_NOT_HAVE_PRICE = 'LISTING_DOES_NOT_HAVE_PRICE';
 export const NO_TOKEN_FOUND = 'NO_TOKEN_FOUND';
 export const INVALID_TOKEN = 'INVALID_TOKEN';
 
+export const SENDING_SMS_FAILED = `SENDING_SMS_FAILED`;
+
 export const getMissingErrorStringCode = type => ({
   EVENT_ERROR_TYPE: EVENT_NOT_FOUND
 })[type];
