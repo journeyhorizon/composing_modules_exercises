@@ -111,13 +111,13 @@ const getListOfSMSData = ({
 
       if (isCustomer) {
         const params = createCustomerSMSParams();
-        params.customerName = null;
-        params.currentUserName = transaction.customer.attributes.profile.displayName;
+        params[0].data.pageName = null;
+        params[0].data.currentUserName = transaction.listing.attributes.title;
         return params;
       } else {
         const params = createProviderSMSParams();
-        params.pageName = null;
-        params.currentUserName = transaction.listing.attributes.title;
+        params[0].data.customerName = null;
+        params[0].data.currentUserName = transaction.customer.attributes.profile.displayName;
         return params;
       }
     }

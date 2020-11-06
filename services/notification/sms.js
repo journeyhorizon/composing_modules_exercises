@@ -101,7 +101,7 @@ const getSMSContent = (type, data = null) => {
 
 const createSMSParams = ({
   content,
-  hostNumber = config.sms.hostedNumber,
+  hostNumber = config.sharetribeFlex.marketplaceName,
   receivedNumber
 }) => {
   return {
@@ -115,7 +115,11 @@ const sendSMS = params => {
   if (!SMSClient) {
     throw (new Error(`SMS client need to be initiated first`));
   }
-  return SMSClient.messages.create(params);
+  return SMSClient.messages.create(params)
+    .catch(e => {
+      params.from = config.sms.hostedNumber;
+      return SMSClient.messages.create(params);
+    });
 }
 
 export const send = ({
