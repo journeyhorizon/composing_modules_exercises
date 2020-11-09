@@ -8,6 +8,7 @@ import {
 import { types as sdkTypes } from '../sharetribe';
 const { Money } = sdkTypes;
 const PREPAYMENT = 'prepayment';
+const DELIVER_TO_SHIP = 'deliver_to_ship';
 
 //Add business logic for calculating transaction here
 const createLineItems = ({ listingId, params, products }) => {
@@ -21,6 +22,7 @@ const createLineItems = ({ listingId, params, products }) => {
   const {
     paymentMethod,
     deliveryCharge,
+    deliveryMethod,
   } = protectedData || {};
 
   const isNegotiation = !!negotiatedTotal;
@@ -71,7 +73,7 @@ const createLineItems = ({ listingId, params, products }) => {
     includeFor: ["customer", "provider"]
   };
 
-  if (paymentMethod === PREPAYMENT && deliveryCharge && deliveryCharge.amount) {
+  if (deliveryMethod === DELIVER_TO_SHIP && deliveryCharge && deliveryCharge.amount) {
     serverLineItems.push(deliveryLineItem);
     totalPriceAmount += deliveryCharge.amount;
   }
