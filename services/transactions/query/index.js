@@ -15,7 +15,8 @@ const query = async (fnParams) => {
     .query({
       userId: currentUser.id.uuid,
       createdAtStart: new Date(startDate),
-      createdAtEnd: new Date(endDate)
+      createdAtEnd: new Date(endDate),
+      include: ['customer', 'booking']
     });
   const queriedTransactions = denormalisedResponseEntities(queriedTransactionsRes);
   const sortedTransactions = queriedTransactions.reduce((result, tx) => {
