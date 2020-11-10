@@ -46,9 +46,18 @@ const getListOfSMSData = ({
   };
 
   const createProviderSMSParams = (type = null) => {
-    const providerPhoneNumbers = transaction.listing.attributes.publicData.phoneNumber;
+    const rawProviderPhoneNumbers = transaction.listing.attributes.publicData.phoneNumber;
 
-    if (!providerPhoneNumbers || providerPhoneNumbers.length < 1) {
+    if (!rawProviderPhoneNumbers || rawProviderPhoneNumbers.length < 1) {
+      console.error(`Provider ${transaction.provider.id.uuid} missing phone number`);
+      return;
+    }
+
+    const providerPhoneNumbers = rawProviderPhoneNumbers.filter(phoneNumberObj => {
+      return !!phoneNumberObj;
+    });
+
+    if (providerPhoneNumbers.length < 1) {
       console.error(`Provider ${transaction.provider.id.uuid} missing phone number`);
       return;
     }
