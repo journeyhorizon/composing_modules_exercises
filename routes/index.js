@@ -8,6 +8,10 @@ const cors = require('cors');
 
 const whitelist = [
   'https://test.theseafarers.shop',
+  'https://test.ship.shop',
+  'https://ship.shop',
+  'https://www.ship.shop',
+  'https://api.ship.shop',
   'https://api-test.theseafarers.shop',
   "https://theseafarers.shop",
   "https://www.theseafarers.shop",

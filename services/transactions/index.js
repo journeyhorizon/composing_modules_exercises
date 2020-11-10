@@ -3,6 +3,7 @@ import execPreInitiateSpeculativeActions from './initiate/pre_initiate_speculati
 import execPreTransitionSpeculativeActions from './transition/pre_transition_speculative';
 import { sdk } from "../sharetribe";
 import transition from './transition/transition';
+import query from './query';
 
 
 const composeMRight = method => (...ms) => (
@@ -31,6 +32,7 @@ const transactionWrapper = {
       execPreTransitionSpeculativeActions,
       sdk.jh.trustedTransactions.transitionSpeculative
     ),
+    query
   }
 };
 

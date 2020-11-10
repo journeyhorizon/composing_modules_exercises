@@ -6,6 +6,10 @@ export const LINE_ITEM_PROVIDER_COMMISSION = 'line-item/provider-commission';
 export const LINE_ITEM_DELIVERY = 'line-item/delivery';
 
 
+export const ON_PLATFORM_FILTER = 'ON_PLATFORM_FILTER';
+export const OFF_PLATFORM_FILTER = 'OFF_PLATFORM_FILTER';
+
+
 export const LINE_ITEMS = [
   LINE_ITEM_NIGHT,
   LINE_ITEM_DAY,

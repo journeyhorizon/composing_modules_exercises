@@ -57,3 +57,25 @@ export const uuidv4 = (options, buf, offset) => {
 
   return stringify(rnds);
 }
+
+export const transformClientQueryParams = clientQueryParams => {
+  return Object.entries(clientQueryParams).reduce((result, [key, value]) => {
+    if (!value.includes(',')) {
+      const numberOnlyReg = /^\d+$/;
+      if (numberOnlyReg.test(value)) {
+        result[key] = parseInt(value);
+      } else {
+        if (value === 'true') {
+          result[key] = true;
+        } else if (value === 'false') {
+          result[key] = false;
+        } else {
+          result[key] = value;
+        }
+      }
+    } else {
+      result[key] = value.split(',');
+    }
+    return result;
+  }, {});
+}
