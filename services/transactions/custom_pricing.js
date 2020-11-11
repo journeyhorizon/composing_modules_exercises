@@ -60,7 +60,7 @@ const createLineItems = ({ listingId, params, products }) => {
       includeFor: ["customer", "provider"]
     }
     serverLineItems.push(lineItem);
-    totalPriceAmount += productDataObj[property].attributes.price.amount;
+    totalPriceAmount += productDataObj[property].attributes.price.amount * clientLineItems[property];
   }
 
   const firstIdProduct = Object.keys(clientLineItems)[0];
