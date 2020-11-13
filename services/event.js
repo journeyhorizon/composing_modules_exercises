@@ -118,7 +118,7 @@ const getListOfSMSData = ({
       } = metadata;
       const isCustomer = transaction.customer.id.uuid === senderId;
 
-      if (isCustomer) {
+      if (!isCustomer) {
         const params = createCustomerSMSParams();
         if (params.length === 0) {
           return params;
@@ -166,6 +166,11 @@ export const handleUserActionEvent = async ({
     data,
     type
   }) => {
+    console.log({
+      receivedNumbers,
+      data,
+      type
+    })
     return handleSendingSMS({
       data,
       receivedNumbers,
