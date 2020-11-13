@@ -123,7 +123,7 @@ const getListOfSMSData = ({
         if (params.length === 0) {
           return params;
         }
-        params[0].data.pageName = null;
+        params[0].data.customerName = null;
         params[0].data.currentUserName = transaction.customer.attributes.profile.displayName;
         return params;
       } else {
@@ -131,7 +131,7 @@ const getListOfSMSData = ({
         if (params.length === 0) {
           return params;
         }
-        params[0].data.customerName = null;
+        params[0].data.pageName = null;
         params[0].data.currentUserName = transaction.listing.attributes.title;
         return params;
       }
