@@ -21,8 +21,8 @@ const sharetribeFlex = {
     teamVerificationExpireTime: '7 days'
   },
   marketplaceName: env === 'production'
-    ? "The Ship Shop"
-    : "The Ship Shop Test"
+    ? "Ship Shop"
+    : "Ship Shop Test"
 };
 
 const email = {
