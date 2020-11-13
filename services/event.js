@@ -50,7 +50,7 @@ const getListOfSMSData = ({
 
     if (!rawProviderPhoneNumbers || rawProviderPhoneNumbers.length < 1) {
       console.error(`Provider ${transaction.provider.id.uuid} missing phone number`);
-      return;
+      return [];
     }
 
     const providerPhoneNumbers = rawProviderPhoneNumbers.filter(phoneNumberObj => {
@@ -59,7 +59,7 @@ const getListOfSMSData = ({
 
     if (providerPhoneNumbers.length < 1) {
       console.error(`Provider ${transaction.provider.id.uuid} missing phone number`);
-      return;
+      return [];
     }
 
     return [{
@@ -78,7 +78,7 @@ const getListOfSMSData = ({
       typeof customerPhoneNumber !== 'string' ||
       !customerPhoneNumber.includes('+')) {
       console.error(`Customer ${transaction.customer.id.uuid} missing phone number`);
-      return;
+      return [];
     }
 
     return [{
@@ -120,11 +120,17 @@ const getListOfSMSData = ({
 
       if (isCustomer) {
         const params = createCustomerSMSParams();
+        if (params.length === 0) {
+          return params;
+        }
         params[0].data.pageName = null;
         params[0].data.currentUserName = transaction.listing.attributes.title;
         return params;
       } else {
         const params = createProviderSMSParams();
+        if (params.length === 0) {
+          return params;
+        }
         params[0].data.customerName = null;
         params[0].data.currentUserName = transaction.customer.attributes.profile.displayName;
         return params;
@@ -155,7 +161,7 @@ export const handleUserActionEvent = async ({
     metadata
   });
 
-  await Promise.all(listOfSMSData.map(({
+  listOfSMSData.forEach(({
     receivedNumbers,
     data,
     type
@@ -165,7 +171,7 @@ export const handleUserActionEvent = async ({
       receivedNumbers,
       type
     });
-  }));
+  });
 
   return {
     code: 200,
