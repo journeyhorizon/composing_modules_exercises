@@ -124,7 +124,7 @@ const getListOfSMSData = ({
           return params;
         }
         params[0].data.pageName = null;
-        params[0].data.currentUserName = transaction.listing.attributes.title;
+        params[0].data.currentUserName = transaction.customer.attributes.profile.displayName;
         return params;
       } else {
         const params = createProviderSMSParams();
@@ -132,7 +132,7 @@ const getListOfSMSData = ({
           return params;
         }
         params[0].data.customerName = null;
-        params[0].data.currentUserName = transaction.customer.attributes.profile.displayName;
+        params[0].data.currentUserName = transaction.listing.attributes.title;
         return params;
       }
     }
