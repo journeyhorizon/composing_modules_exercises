@@ -101,9 +101,7 @@ const handleMemberAuthorization = ({
       email,
       verificationLink,
       firstName: email,
-      marketplaceName: config.env === 'production'
-        ? 'The Seafarers Shop'
-        : 'The Seafarers Shop Test',
+      marketplaceName: config.sharetribeFlex.marketplaceName,
       pageName: listing.attributes.title
     });
   }))
