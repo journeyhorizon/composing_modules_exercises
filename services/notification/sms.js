@@ -16,7 +16,9 @@ import {
   TRANSITION_DECLINE,
   TRANSITION_DECLINE_OFFER,
   TRANSITION_SEND_NEW_OFFER,
-  TRANSITION_SEND_OFFER
+  TRANSITION_SEND_OFFER,
+  TRANSITION_SEND_OFFER_AFTER_CARD_DECLINED,
+  TRANSITION_SEND_OFFER_AFTER_CASH_DECLINED
 } from '../transactions/processes';
 import fs from 'fs';
 
@@ -34,6 +36,8 @@ const getTextContent = (type) => {
       return fs.readFileSync('templates/sms/TRANSITION_DECLINE_OFFER.txt', "utf8");
     case TRANSITION_SEND_OFFER:
     case TRANSITION_SEND_NEW_OFFER:
+    case TRANSITION_SEND_OFFER_AFTER_CASH_DECLINED:
+    case TRANSITION_SEND_OFFER_AFTER_CARD_DECLINED:
       return fs.readFileSync('templates/sms/TRANSITION_SEND_OFFER.txt', "utf8");
     case ACCEPT_OFFER_CUSTOMER:
       return fs.readFileSync('templates/sms/ACCEPT_OFFER_CUSTOMER.txt', "utf8");
@@ -66,6 +70,8 @@ const getSMSContent = (type, data = null) => {
         .split("REPLACE_MARKETPLACE_NAME").join(data.marketplaceName);
     case TRANSITION_SEND_OFFER:
     case TRANSITION_SEND_NEW_OFFER:
+    case TRANSITION_SEND_OFFER_AFTER_CASH_DECLINED:
+    case TRANSITION_SEND_OFFER_AFTER_CARD_DECLINED:
       return getTextContent(TRANSITION_SEND_OFFER)
         .split("REPLACE_CUSTOMER_NAME").join(data.customerName)
         .split("REPLACE_PAGE_NAME").join(data.pageName)

@@ -10,6 +10,8 @@ export const ensureTransaction = (transaction, booking = null, listing = null, p
   return { ...empty, ...transaction };
 };
 
+export const MESSAGE_SENT = 'MESSAGE_SENT';
+
 /**
  * Transitions
  *
@@ -44,11 +46,14 @@ export const TRANSITION_CONFIRM_PAYMENT_OFFER = 'transition/confirm-payment-offe
 // the transaction will expire automatically.
 export const TRANSITION_EXPIRE_PAYMENT = 'transition/expire-payment';
 
-// For negotiation 
+// For negotiation
 export const TRANSITION_EDIT_OFFER = "transition/edit-offer";
 
 export const TRANSITION_DECLINE_OFFER = "transition/decline-offer";
 export const TRANSITION_SEND_NEW_OFFER = "transition/send-new-offer";
+
+export const TRANSITION_SEND_OFFER_AFTER_CASH_DECLINED = "transition/send-offer-after-cash-declined";
+export const TRANSITION_SEND_OFFER_AFTER_CARD_DECLINED = "transition/send-offer-after-card-declined";
 
 export const TRANSITION_ACCEPT_OFFER_CARD_PAYMENT = "transition/accept-offer-card-payment";
 export const TRANSITION_ACCEPT_OFFER_CASH_PAYMENT = "transition/accept-offer-cash-payment";
@@ -134,7 +139,7 @@ const STATE_OFFER_CANCELED = "offer-canceled";
 const STATE_CASH_PREAUTHORIZED = "cash-preauthorized";
 const STATE_CASH_ACCEPTED = "cash-accepted";
 const STATE_CASH_DECLINED = "cash-declined";
-const STATE_CANCELLED = "cancelled";
+const STATE_CANCELLED = "canceled";
 const STATE_PENDING_PAYMENT_OFFER = 'pending-payment-offer';
 
 /**
@@ -162,7 +167,6 @@ const stateDescription = {
         [TRANSITION_ENQUIRE]: STATE_ENQUIRY,
         [TRANSITION_REQUEST_PAYMENT]: STATE_PENDING_PAYMENT,
         [TRANSITION_CASH_REQUEST_PAYMENT]: STATE_CASH_PREAUTHORIZED,
-        [TRANSITION_RECORD_OFF_PLATFORM]: STATE_REVIEWED
       },
     },
     [STATE_ENQUIRY]: {
@@ -221,11 +225,20 @@ const stateDescription = {
         [TRANSITION_CASH_COMPLETE]: STATE_DELIVERED
       }
     },
-    [STATE_CASH_DECLINED]: {},
-    [STATE_DECLINED]: {},
+    [STATE_CASH_DECLINED]: {
+      on: {
+        [TRANSITION_SEND_OFFER_AFTER_CASH_DECLINED]: STATE_REVIEW_OFFER,
+      }
+    },
+    [STATE_DECLINED]: {
+      on: {
+        [TRANSITION_SEND_OFFER_AFTER_CARD_DECLINED]: STATE_REVIEW_OFFER,
+      }
+    },
     [STATE_ACCEPTED]: {
       on: {
         [TRANSITION_CANCEL]: STATE_CANCELED,
+        [TRANSITION_CASH_CANCEL]: STATE_CANCELED,
         [TRANSITION_COMPLETE]: STATE_DELIVERED,
       },
     },
@@ -275,7 +288,14 @@ const getTransitionsToState = getTransitionsToStateFn(stateDescription);
 
 // This is needed to fetch transactions that need response from provider.
 // I.e. transactions which provider needs to accept or decline
-export const transitionsToRequested = getTransitionsToState(STATE_PREAUTHORIZED);
+export const transitionsToRequested = [
+  ...getTransitionsToState(STATE_PREAUTHORIZED),
+  ...getTransitionsToState(STATE_CASH_PREAUTHORIZED),
+];
+
+export const customerTransitionsToRequested = [
+  ...getTransitionsToState(STATE_REVIEW_OFFER),
+];
 
 /**
  * Helper functions to figure out if transaction is in a specific state.
@@ -296,7 +316,8 @@ export const txIsPaymentExpired = tx =>
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
 export const txIsRequested = tx =>
-  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx)) ||
+  getTransitionsToState(STATE_CASH_PREAUTHORIZED).includes(txLastTransition(tx));
 
 export const txIsRequestedCash = tx =>
   getTransitionsToState(STATE_CASH_PREAUTHORIZED).includes(txLastTransition(tx));
@@ -358,6 +379,8 @@ export const txHasSentOffer = (tx) => {
   return hasPassedStateFn(STATE_REVIEW_OFFER)(tx)
 }
 
+export const hasPassedTransitionSendOffer = (tx) => hasPassedTransition(TRANSITION_SEND_OFFER, tx);
+
 /**
  * Other transaction related utility functions
  */
@@ -382,10 +405,11 @@ export const getReview2Transition = isCustomer =>
 export const isRelevantPastTransition = transition => {
   return [
     TRANSITION_SEND_OFFER,
+    TRANSITION_CANCEL_OFFER,
+    TRANSITION_SEND_NEW_OFFER,
     TRANSITION_ACCEPT_OFFER_CARD_PAYMENT,
     TRANSITION_ACCEPT_OFFER_CASH_PAYMENT,
     TRANSITION_DECLINE_OFFER,
-    TRANSITION_CANCEL_OFFER,
     TRANSITION_ACCEPT,
     TRANSITION_CANCEL,
     TRANSITION_COMPLETE,
@@ -449,4 +473,22 @@ export const isPrivileged = transition => {
   ].includes(
     transition
   );
+};
+
+
+// Check if a transition is the kind that should not display
+// price when exporting CSV file.
+export const isTransitionWithoutPrice = transition => {
+  return [
+    TRANSITION_CANCEL_OFFER,
+    TRANSITION_DECLINE_OFFER,
+    TRANSITION_EXPIRE_OFFER,
+    TRANSITION_CANCEL,
+    TRANSITION_EXPIRE_PAYMENT,
+    TRANSITION_DECLINE,
+    TRANSITION_EXPIRE,
+    TRANSITION_CASH_CANCEL,
+    TRANSITION_CASH_DECLINE,
+    TRANSITION_CASH_EXPIRE,
+  ].includes(transition);
 };
