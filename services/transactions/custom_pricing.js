@@ -17,11 +17,11 @@ const createLineItems = ({ listingId, params, products }) => {
     lineItems: clientLineItems,
     negotiatedTotal,
     protectedData,
+    deliveryCharge,
   } = params;
 
   const {
     paymentMethod,
-    deliveryCharge,
     deliveryMethod,
   } = protectedData || {};
 
