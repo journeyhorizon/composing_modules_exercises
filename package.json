@@ -29,7 +29,7 @@
     "regenerator-runtime": "^0.13.7",
     "sharetribe-flex-integration-sdk": "^1.1.0",
     "sharetribe-flex-sdk": "^1.11.0-alpha",
-    "stripe": "^8.39.0",
+    "stripe": "^8.126.0",
     "transit-js": "^0.8.861",
     "twilio": "^3.50.0"
   },

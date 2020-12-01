@@ -25,6 +25,13 @@ const sharetribeFlex = {
     : "Ship Shop Test"
 };
 
+const stripe = {
+  endpointSecret: process.env.STRIPE_ENDPOINT_SECRET,
+  connectEndpointSecret: process.env.STRIPE_CONNECT_ENDPOINT_SECRET,
+  apiVersion: process.env.STRIPE_VERSION,
+  secret: process.env.STRIPE_SECRET
+};
+
 const email = {
   senderAddress: process.env.SENDER_EMAIL_ADDRESS
     ? process.env.SENDER_EMAIL_ADDRESS
@@ -47,6 +54,25 @@ const aws = {
 
 const webCanonicalUrl = process.env.WEB_CANONICAL_URL;
 
+const enableSubscription = process.env.ENABLE_SUBSCRIPTION === 'true';
+
+const subscription = enableSubscription
+  ? {
+    enable: true,
+    endSubscriptionTrialImmediately: env !== 'production' &&
+      process.env.STRIPE_SHOULD_END_SUBSCRIPTION_TRIAL_IMMEDIATELY === 'true'
+      ? true
+      : false,
+    trialPeriod: process.env.STRIPE_CUSTOMER_TRIAL_PERIOD
+      ? parseInt(process.env.STRIPE_CUSTOMER_TRIAL_PERIOD)
+      : null,
+    endSubscriptionImmediately: env !== 'production' &&
+      process.env.STRIPE_SHOULD_END_SUBSCRIPTION_IMMEDIATELY === 'true',
+  }
+  : {
+    enable: false
+  };
+
 const config = {
   env,
   nodeEnv,
@@ -55,7 +81,9 @@ const config = {
   email,
   aws,
   webCanonicalUrl,
-  sms
+  sms,
+  stripe,
+  subscription
 }
 
 export default config;

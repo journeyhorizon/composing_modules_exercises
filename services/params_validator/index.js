@@ -1,4 +1,4 @@
-import { WRONG_PARAMS } from "./error_type";
+import { WRONG_PARAMS } from "../error_type";
 
 const DEFAULT_SUPPORT_TYPE = [
 	'string',
@@ -19,16 +19,15 @@ const DEFAULT_SUPPORT_TYPE = [
  * 
  */
 
-export default class Validator {
-
+class Validator {
 	constructor(params) {
 		Object.keys(params).forEach(key => {
 			if (!params[`${key}`].type)
-				throw ('Invalid validation object, must have type for each object!');
+				throw (new Error('Invalid validation object, must have type for each object!'));
 			if (!DEFAULT_SUPPORT_TYPE.includes(params[`${key}`].type))
-				throw (`Invalid validation object type, must be one of [${DEFAULT_SUPPORT_TYPE.toString()}]`);
-			if (params[`${key}`].type === 'custom' && !params[`${key}`].definition)
-				throw ('Invalid custom validation object, must have definition for custom type');
+				throw (new Error(`Invalid validation object type, must be one of [${DEFAULT_SUPPORT_TYPE.toString()}]`));
+			if (params[`${key}`].type === 'custom' && (!params[`${key}`].definition && !params[`${key}`].customCheck))
+				throw (new Error(`Invalid custom validation object, must have definition or custom check for custom type, error at ${key}`));
 			this[`${key}`] = params[`${key}`];
 		});
 	}
@@ -43,12 +42,24 @@ export default class Validator {
 
 		const inputKeys = Object.keys(params);
 
+		const disallowedKeys = inputKeys.filter(inputtedKey => {
+			return !allowedKeys.includes(inputtedKey);
+		});
+
+		if (Array.isArray(disallowedKeys) && disallowedKeys.length > 0) {
+			return {
+				valid: false,
+				message: `Unexpected keys ${disallowedKeys}`,
+				errorCode: WRONG_PARAMS
+			}
+		}
+
 		inputKeys.forEach(key => {
 			if (!allowedKeys.includes(key)) {
 				checkResult = {
 					valid: false,
 					message: `Params key named ${key} not exist in definition`,
-					stringCode: WRONG_PARAMS
+					errorCode: WRONG_PARAMS
 				};
 				return;
 			}
@@ -56,25 +67,32 @@ export default class Validator {
 				checkResult = {
 					valid: false,
 					message: `Params key named ${key} type is incorrect, found ${typeof params[`${key}`]} need ${this[`${key}`].type}`,
-					stringCode: WRONG_PARAMS
+					errorCode: WRONG_PARAMS
 				}
+				return;
 			}
 			if (this[`${key}`].allow && !this[`${key}`].allow.includes(params[`${key}`])) {
 				checkResult = {
 					valid: false,
 					message: `Params key named ${key} need one of ${this[`${key}`].allow}`,
-					stringCode: WRONG_PARAMS
+					errorCode: WRONG_PARAMS
 				}
+				return;
 			}
-			if (this[`${key}`].customCheck && typeof this[`${key}`].customCheck === 'function') {
+			if (this[`${key}`].customCheck) {
 				if (this[`${key}`].required && !params[`${key}`]) {
 					checkResult = {
 						valid: false,
-						stringCode: WRONG_PARAMS,
+						errorCode: WRONG_PARAMS,
 						message: `Params key named ${key} is missing`
 					}
+					return;
 				} else {
-					checkResult = this[`${key}`].customCheck(params[`${key}`]);
+					const subCheckResult = this[`${key}`].customCheck(params[`${key}`], this[`${key}`]);
+					if (!subCheckResult.valid) {
+						checkResult = subCheckResult;
+						return;
+					}
 				}
 			}
 		});
@@ -84,11 +102,29 @@ export default class Validator {
 				checkResult = {
 					valid: false,
 					message: `Params key named ${key} is missing`,
-					stringCode: WRONG_PARAMS
+					errorCode: WRONG_PARAMS
 				}
 			}
-		})
+		});
 
 		return checkResult;
-	}
+	};
+
+
 }
+
+const composeValidators = (...validators) => (value, currentDeclaredAttribute) => {
+	for (let i = 0; i < validators.length; i++) {
+		const validationResult = validators[i](value, currentDeclaredAttribute);
+		if (!validationResult.valid) {
+			return validationResult
+		}
+	}
+	return {
+		valid: true
+	};
+}
+
+Validator.composeValidators = composeValidators;
+
+export default Validator;

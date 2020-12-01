@@ -4,6 +4,7 @@ import execPreTransitionSpeculativeActions from './transition/pre_transition_spe
 import { sdk } from "../sharetribe";
 import transition from './transition/transition';
 import query from './query';
+import { addFinalizeResponseFnc } from '../utils';
 
 
 const composeMRight = method => (...ms) => (
@@ -35,35 +36,6 @@ const transactionWrapper = {
     query
   }
 };
-
-const addFinalizeResponseFnc = (wrapper) => {
-  return Object.entries(wrapper)
-    .reduce((currentWrapper, [key, values]) => {
-      if (values instanceof Function) {
-        const fnc = values;
-        currentWrapper[key] = (...args) =>
-          fnc(...args)
-            .then(res => {
-              return {
-                code: res.status || res.code,
-                data: res.data
-              };
-            })
-            .catch(e => {
-              console.error(e);
-              return {
-                code: e.status || e.code
-                  ? e.status || e.code
-                  : 500,
-                data: e.data ? e.data : e.toString()
-              };
-            });
-      } else {
-        currentWrapper[key] = addFinalizeResponseFnc(values);
-      }
-      return currentWrapper;
-    }, {});
-}
 
 const finalizedTransactionWrapper = addFinalizeResponseFnc(transactionWrapper);
 
