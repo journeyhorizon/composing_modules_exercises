@@ -1,7 +1,8 @@
 import { Array } from "core-js";
 import {
   EMPTY_ARRAY_ERROR,
-  WRONG_PARAMS
+  WRONG_PARAMS,
+  WRONG_ARRAY_TYPE_ERROR
 } from "../error_type";
 import Validator from "../params_validator";
 
@@ -25,6 +26,35 @@ export const validateArray = (options = {}) => (value, currentDeclaredAttribute)
     const validateResult = subAttributesValidator.validate(value[i]);
     if (!validateResult.valid) {
       return validateResult;
+    }
+  }
+  return {
+    valid: true
+  };
+}
+
+export const validatePrimitiveArray = (options = {}) => (value, currentDeclaredAttribute) => {
+  if (options.optional && !value) {
+    return {
+      valid: true
+    };
+  }
+
+  if (!(value instanceof Array) || value.length < 1) {
+    return {
+      valid: false,
+      message: EMPTY_ARRAY_ERROR,
+      errorCode: EMPTY_ARRAY_ERROR
+    }
+  }
+
+  for (let i = 0; i < value.length; i++) {
+    if (typeof value[i] !== currentDeclaredAttribute.definition[0]) {
+      return {
+        valid: false,
+        message: WRONG_ARRAY_TYPE_ERROR,
+        errorCode: WRONG_ARRAY_TYPE_ERROR
+      }
     }
   }
   return {

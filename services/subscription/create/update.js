@@ -29,7 +29,8 @@ const updateFlexProfile = async ({
           return {
             ...pick(item, SUBSCRIPTION_ITEMS_ATTRIBUTES_TO_TAKE_FROM_STRIPE),
             currency: item.price.currency,
-            nickname: item.price.nickname
+            nickname: item.price.nickname,
+            billingScheme: item.price.billingScheme
           }
         }),
         type: OCEAN_PLAN,
@@ -38,7 +39,16 @@ const updateFlexProfile = async ({
           : []
       }
     }
-  });
+  })
+    .then(() => {
+      return {
+        code: 200,
+        data: {
+          id: subscription.id,
+          type: 'subscription'
+        }
+      }
+    });
 }
 
 export default updateFlexProfile;

@@ -7,6 +7,7 @@ import open from "./own_listings/open";
 import publishDraft from "./own_listings/publishDraft";
 import update from "./own_listings/update";
 import login from "./login";
+import company from "./company";
 import request from "./password_reset/request";
 import { addFinalizeResponseFnc } from "../utils";
 
@@ -28,6 +29,7 @@ const OnBeHalfOfSdk = {
   passwordReset: {
     request
   },
+  company,
   login
 };
 
