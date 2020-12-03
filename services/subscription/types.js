@@ -10,6 +10,7 @@ export const SUBSCRIPTION_INCOMPLETE_EXPIRED_STATE = 'incomplete_expired';
 export const SUBSCRIPTION_PAST_DUE_STATE = 'past_due';
 export const SUBSCRIPTION_UNPAID_STATE = 'unpaid';
 
+//Subscription type
 export const SUBSCRIPTION_BOOKING_TYPE = 'subscription-booking';
 export const SUBSCRIPTION_INVOICE_PERIOD_TYPE = 'subscription-invoice-period';
 export const SUBSCRIPTION_TYPE = 'subscription';
