@@ -20,18 +20,18 @@ const verifyCompanyCanStartNewSubscription = company => {
 
   const { stripeCustomer } = company;
 
-  if (!stripeCustomer ||
-    !stripeCustomer.invoiceSettings ||
-    !stripeCustomer.invoiceSettings.defaultPaymentMethod) {
-    throw ({
-      code: 404,
-      data: createFlexErrorObject({
-        status: 404,
-        message: NO_PAYMENT_METHOD_ERROR,
-        messageCode: NO_PAYMENT_METHOD_ERROR
-      })
-    });
-  }
+  // if (!stripeCustomer ||
+  //   !stripeCustomer.invoiceSettings ||
+  //   !stripeCustomer.invoiceSettings.defaultPaymentMethod) {
+  //   throw ({
+  //     code: 404,
+  //     data: createFlexErrorObject({
+  //       status: 404,
+  //       message: NO_PAYMENT_METHOD_ERROR,
+  //       messageCode: NO_PAYMENT_METHOD_ERROR
+  //     })
+  //   });
+  // }
 
   if (!subscription) {
     return { valid: true };
