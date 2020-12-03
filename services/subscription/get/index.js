@@ -5,7 +5,6 @@ import fetchStripeSubscription from "./fetch";
 import finalise from "./finalise";
 import { INVOICES_INCLUDE, UPCOMING_INVOICE_INCLUDE } from "./includable";
 import fetchInvoiceHistory from "./invoices";
-import normalise from "./normalise";
 import fetchUpcomingInvoice from "./upcoming_invoices";
 
 const ParamsValidator = new Validator({
@@ -41,7 +40,6 @@ const get = async (fnParams) => {
 
   const funcToCompose = [
     fetchStripeSubscription,
-    normalise,
   ];
 
   if (include) {

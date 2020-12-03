@@ -5,6 +5,7 @@ import { sdk } from "../sharetribe";
 import transition from './transition/transition';
 import query from './query';
 import { addFinalizeResponseFnc } from '../utils';
+import subscription from './subscription';
 
 
 const composeMRight = method => (...ms) => (
@@ -33,8 +34,9 @@ const transactionWrapper = {
       execPreTransitionSpeculativeActions,
       sdk.jh.trustedTransactions.transitionSpeculative
     ),
-    query
-  }
+    query,
+  },
+  subscription,
 };
 
 const finalizedTransactionWrapper = addFinalizeResponseFnc(transactionWrapper);

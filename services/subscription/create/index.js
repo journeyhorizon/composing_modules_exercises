@@ -1,11 +1,12 @@
 import { createFlexErrorObject } from "../../on_behalf_of/error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
-import { getUserData } from "../../sharetribe_admin";
 import { composePromises } from "../../utils";
 import fetchCustomer from "./fetch_user";
 import finalise from "./finalise";
 import init from "./init";
+import normaliseSubscriptionData from "./normalise";
+import fetchUpcomingInvoice from "./upcoming_invoice";
 import updateFlexProfile from "./update";
 import checkRequirement from "./verify";
 
@@ -76,6 +77,8 @@ const create = async (fnParams) => {
     checkRequirement,
     init(fnParams),
     updateFlexProfile,
+    normaliseSubscriptionData,
+    fetchUpcomingInvoice,
     finalise
   )(customerId);
 }

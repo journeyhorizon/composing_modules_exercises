@@ -1,7 +1,17 @@
 import { UNKNOWN_SUBSCRIPTION_PRICING_ERROR } from "../../error_type";
 import { createFlexErrorObject } from "../../on_behalf_of/error";
 import query from "../plan/query";
-import { SUBSCRIPTION_TRIAL_STATE } from "../types";
+import {
+  SUBSCRIPTION_ACTIVE_STATE,
+  SUBSCRIPTION_BOOKING_TYPE,
+  SUBSCRIPTION_TRIAL_STATE,
+  SUBSCRIPTION_TYPE
+} from "../types";
+import { types as sdkTypes } from '../../sharetribe';
+import moment from "moment";
+import config from "../../config";
+
+const { Money, UUID } = sdkTypes;
 
 const calculatePayinTotal = lineItems => {
   return lineItems.reduce((result, lineItem) => {
@@ -55,14 +65,17 @@ const calculateTotalTierPrice = (quantity, tiers) => {
   });
 }
 
-const handleCreateNewSubscription = async ({
+const handleEstimateSubscription = async ({
   company,
-  items
+  items,
+  disableTrial
 }) => {
   const plans = await query();
   const pricing = plans.data.reduce((result, plan) => {
     return [...result, ...plan.pricing];
   }, []);
+
+  let selectedPlanPricing = null;
   const lineItems = items.map(item => {
     const itemDetail = pricing.find(pricing => pricing.id === item.price);
     if (!itemDetail) {
@@ -76,33 +89,23 @@ const handleCreateNewSubscription = async ({
       });
     }
 
-    const { billingScheme, amount, currency, tiers } = itemDetail;
+    const { billingScheme, amount, currency: rawCurrency, tiers } = itemDetail;
+    const currency = rawCurrency.toUpperCase();
     if (billingScheme === 'per_unit') {
       return {
-        lineTotal: {
-          amount: amount * item.quantity,
-          currency
-        },
-        unitPrice: {
-          amount,
-          currency
-        },
+        lineTotal: new Money(amount * item.quantity, currency),
+        unitPrice: new Money(amount, currency),
         quantity: item.quantity,
         code: itemDetail.id
       };
     } else if (billingScheme === 'tiered') {
+      selectedPlanPricing = itemDetail;
       return {
-        lineTotal: {
-          amount: calculateTotalTierPrice(item.quantity, tiers),
-          currency
-        },
+        lineTotal: new Money(calculateTotalTierPrice(item.quantity, tiers), currency),
         quantity: item.quantity,
         unitPrice: tiers.map(tier => {
           return {
-            unitPrice: {
-              amount: tier.unitAmount,
-              currency
-            },
+            unitPrice: new Money(tier.unitAmount, currency),
             upTo: tiers.upTo
           }
         }),
@@ -119,15 +122,53 @@ const handleCreateNewSubscription = async ({
       });
     }
   });
+
+  const totalPayin = calculatePayinTotal(lineItems);
+
   return {
     data: {
-      id: 'simulate-subscription',
-      type: 'subscription',
-      status: SUBSCRIPTION_TRIAL_STATE,
-      attributes: {
-        lineItems,
-        payinTotal: calculatePayinTotal(lineItems)
-      }
+      data: {
+        id: new UUID('simulate-subscription'),
+        type: SUBSCRIPTION_TYPE,
+        status: disableTrial
+          ? SUBSCRIPTION_ACTIVE_STATE
+          : SUBSCRIPTION_TRIAL_STATE,
+        attributes: {
+          lineItems,
+          payinTotal: new Money(totalPayin.amount, totalPayin.currency),
+          payoutTotal: new Money(totalPayin.amount, totalPayin.currency)
+        },
+        relationships: {
+          booking: {
+            data: {
+              id: new UUID('estimate-booking-range'),
+              type: SUBSCRIPTION_BOOKING_TYPE
+            }
+          }
+        },
+      },
+      included: [
+        {
+          id: new UUID('estimate-booking-range'),
+          type: SUBSCRIPTION_BOOKING_TYPE,
+          start: moment().toDate(),
+          bookingStart: moment().toDate(),
+          end: disableTrial
+            ? moment()
+              .add(selectedPlanPricing.intervalCount, selectedPlanPricing.interval)
+              .toDate()
+            : moment()
+              .add(config.subscription.trialPeriod, 'days')
+              .toDate(),
+          bookingEnd: disableTrial
+            ? moment()
+              .add(selectedPlanPricing.intervalCount, selectedPlanPricing.interval)
+              .toDate()
+            : moment()
+              .add(config.subscription.trialPeriod, 'days')
+              .toDate()
+        }
+      ]
     }
   };
 }
@@ -166,12 +207,11 @@ const initSpeculate = (fnParams) => async (company) => {
     protectedData
   };
 
-  if (!subscription) {
-    return handleCreateNewSubscription(params);
-  } else {
-    //TODO: Implement
-    // return handleOverrideExistingSubscription(params);
+  if (subscription) {
+    params.disableTrial = true;
   }
+
+  return handleEstimateSubscription(params);
 }
 
 export default initSpeculate;

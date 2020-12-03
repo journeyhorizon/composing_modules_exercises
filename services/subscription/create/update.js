@@ -41,13 +41,7 @@ const updateFlexProfile = async ({
     }
   })
     .then(() => {
-      return {
-        code: 200,
-        data: {
-          id: subscription.id,
-          type: 'subscription'
-        }
-      }
+      return subscription;
     });
 }
 

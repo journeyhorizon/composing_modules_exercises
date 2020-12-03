@@ -28,9 +28,9 @@ const fetchUpcomingInvoice = async (subscription) => {
   subscription.data.relationships.upcomingInvoices = {
     data: {
       id,
-      type
-    },
-    relationships
+      type,
+      relationships
+    }
   };
 
   return subscription;
