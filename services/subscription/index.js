@@ -1,11 +1,14 @@
 import { addFinalizeResponseFnc } from "../utils";
 import create from "./create";
+import get from "./get";
 import plan from "./plan";
+import speculate from "./speculate";
 
 const sdk = {
-  // get,
+  get,
   // query,
   create,
+  speculate,
   // update,
   // cancel,
   plan,

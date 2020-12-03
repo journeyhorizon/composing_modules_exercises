@@ -4,10 +4,7 @@ import { validateArray, validateDefaultDefinition } from "../../params_validator
 import { composePromises } from "../../utils";
 import fetchCustomer from "./fetch_user";
 import finalise from "./finalise";
-import init from "./init";
-import normaliseSubscriptionData from "./normalise";
-import fetchUpcomingInvoice from "./upcoming_invoice";
-import updateFlexProfile from "./update";
+import initSpeculate from "./initSpeculate";
 import checkRequirement from "./verify";
 
 const ParamsValidator = new Validator({
@@ -56,7 +53,7 @@ const ParamsValidator = new Validator({
   }
 });
 
-const create = async (fnParams) => {
+const speculate = async (fnParams) => {
   const validateResult = ParamsValidator.validate(fnParams);
 
   if (!validateResult.valid) {
@@ -75,12 +72,9 @@ const create = async (fnParams) => {
   return composePromises(
     fetchCustomer,
     checkRequirement,
-    init(fnParams),
-    updateFlexProfile,
-    normaliseSubscriptionData,
-    fetchUpcomingInvoice,
+    initSpeculate(fnParams),
     finalise
   )(customerId);
 }
 
-export default create;
+export default speculate;

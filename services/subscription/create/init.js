@@ -1,29 +1,31 @@
-import { pick } from "lodash";
 import config from "../../config";
 import { stripe } from "../../stripe";
-import { convertObjToCamelCase } from "../../utils";
-import { SUBSCRIPTION_ATTRIBUTES_TO_TAKE_FROM_STRIPE } from "../attributes";
 
 const handleCreateNewSubscription = async ({
   company,
   items,
-  protectedData
+  protectedData,
+  disableTrial
 }) => {
-  return stripe.subscriptions.create({
+  const params = {
     customer: company.stripeCustomer.id,
     items,
-    trial_period_days: config.subscription.trialPeriod,
     metadata: {
       protectedData: JSON.stringify(protectedData),
       'sharetribe-user-id': company.id.uuid,
     }
-  })
-    .then(data => {
+  }
+
+  if (!disableTrial) {
+    params.trial_period_days = config.subscription.trialPeriod;
+  }
+
+  return stripe.subscriptions.create(params)
+    .then(subscription => {
       return {
-        subscription: convertObjToCamelCase(pick(data,
-          SUBSCRIPTION_ATTRIBUTES_TO_TAKE_FROM_STRIPE)),
         company,
-      };
+        subscription
+      }
     });
 }
 
@@ -61,12 +63,11 @@ const initSubscription = (fnParams) => async (company) => {
     protectedData
   };
 
-  if (!subscription) {
-    return handleCreateNewSubscription(params);
-  } else {
-    //TODO: Implement
-    // return handleOverrideExistingSubscription(params);
+  if (subscription) {
+    params.disableTrial = true;
   }
+
+  return handleCreateNewSubscription(params);
 }
 
 export default initSubscription;
