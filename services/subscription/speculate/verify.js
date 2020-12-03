@@ -61,23 +61,23 @@ const verifyCompanyCanStartNewSubscription = company => {
 
 
 const checkSubscriptionRequirement = async (customer) => {
-  const { publicData } = customer.attributes.profile;
-  const {
-    teamMemberIds
-  } = publicData;
-  const isCompanyAccount = !!teamMemberIds;
-  if (isCompanyAccount) {
-    verifyCompanyCanStartNewSubscription(customer);
-  } else {
-    throw ({
-      code: 400,
-      data: createFlexErrorObject({
-        status: 400,
-        message: NEED_COMPANY_ACCOUNT_TO_START_SUBSCRIPTION_ERROR,
-        messageCode: NEED_COMPANY_ACCOUNT_TO_START_SUBSCRIPTION_ERROR
-      })
-    });
-  }
+  // const { publicData } = customer.attributes.profile;
+  // const {
+  //   teamMemberIds
+  // } = publicData;
+  // const isCompanyAccount = !!teamMemberIds;
+  // if (isCompanyAccount) {
+  verifyCompanyCanStartNewSubscription(customer);
+  // } else {
+  //   throw ({
+  //     code: 400,
+  //     data: createFlexErrorObject({
+  //       status: 400,
+  //       message: NEED_COMPANY_ACCOUNT_TO_START_SUBSCRIPTION_ERROR,
+  //       messageCode: NEED_COMPANY_ACCOUNT_TO_START_SUBSCRIPTION_ERROR
+  //     })
+  //   });
+  // }
   return customer;
 }
 
