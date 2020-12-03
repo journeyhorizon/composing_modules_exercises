@@ -4,11 +4,14 @@ import transactionWrapper from '../../../services/transactions';
 import query from './query';
 import initiate from './initiate';
 import initiateSpeculative from './speculate';
+import show from './show';
 
 const express = require('express');
 const router = express.Router();
 
 router.get('/query', handleAsyncWrapper(query, { retries: config.retries }));
+
+router.get('/show', handleAsyncWrapper(show, { retries: config.retries }));
 
 router.post('/initiate',
   handleAsyncWrapper(initiate, { retries: config.retries }));

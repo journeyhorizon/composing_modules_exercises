@@ -15,29 +15,6 @@ const handlePageAccountExisted = async ({
   data,
   queryParams
 }) => {
-  const pageListingRes = await integrationSdk.listings.query({
-    authorId: pageAccountId,
-    pub_listingType: PAGE_EXISTED_ERROR
-  });
-
-  const pageListings = denormalisedResponseEntities(pageListingRes);
-
-  if (pageListings.length > 0) {
-    if (pageAccountId === currentUser.attributes.profile.metadata.pageAccountId) {
-      pageListingRes.data.data = pageListingRes.data.data[0];
-      return pageListingRes;
-    }
-    //TODO: Determine if we need to return 409 when team member try to create listing again or should we return the listing that the account already have
-    return {
-      code: 409,
-      data: createFlexErrorObject({
-        status: 409,
-        message: PAGE_EXISTED_ERROR,
-        messageCode: PAGE_EXISTED_ERROR
-      })
-    };
-  }
-
   let loginWithUniquePasswordFailed = false;
 
   const pageAccount = await getUserData({ userId: pageAccountId });
@@ -65,12 +42,22 @@ const handlePageAccountExisted = async ({
 
   const listingCreationRes = await sdk.ownListings.createDraft(data, queryParams);
 
+  const { metadata } = pageAccount.attributes.profile;
+  const {
+    pageListingId = []
+  } = metadata;
+
   await integrationSdk.users.updateProfile({
     id: pageAccountId,
     metadata: {
-      pageListingId: denormalisedResponseEntities(listingCreationRes)[0].id.uuid
+      pageListingId: typeof pageListingId === 'string'
+        ? [pageListingId, denormalisedResponseEntities(listingCreationRes)[0].id.uuid]
+        : [
+          ...pageListingId,
+          denormalisedResponseEntities(listingCreationRes)[0].id.uuid
+        ]
     }
-  })
+  });
 
   return listingCreationRes;
 }
@@ -103,7 +90,7 @@ const handlePageListingCreation = async ({
   const pageUserRes = await sdk.currentUser
     .create({
       email: defaultEmail,
-      firstName: data.title, 
+      firstName: data.title,
       lastName: "Page",
       password: generatePassword(config.sharetribeFlex.page.secret)
     });
@@ -152,21 +139,11 @@ const handlePageListingCreation = async ({
   await integrationSdk.users.updateProfile({
     id: pageUser.id,
     metadata: {
-      pageListingId: denormalisedResponseEntities(listingCreationRes)[0].id.uuid
+      pageListingId: [denormalisedResponseEntities(listingCreationRes)[0].id.uuid]
     }
   })
 
   return listingCreationRes;
-}
-
-const handleProductListingCreation = ({
-  sdk,
-  currentUser,
-  data,
-  queryParams
-}) => {
-  //TODO: implement this
-  return;
 }
 
 const cleanUpResAfterCall = async () => sdk
