@@ -1,9 +1,11 @@
 import speculate from "./speculate";
 import initiate from "./initiate";
+import show from "./show";
 
 const subscription = {
   initiate,
-  speculate
+  speculate,
+  show
 };
 
 export default subscription;

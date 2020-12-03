@@ -4,11 +4,17 @@ import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
 import { LISTING_STATE_CLOSED, LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_PUBLISHED, PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
 
-const fetchAllUserListing = async ({ authorId }) => {
-  const listingsRes = await integrationSdk.listings.query({
+const fetchAllUserListing = async ({ authorId, idListingPage }) => {
+  const params = {
     authorId,
     pub_listingType: PRODUCT_LISTING_TYPE
-  });
+  };
+
+  if (idListingPage) {
+    params.pub_idListingPage = idListingPage;
+  }
+
+  const listingsRes = await integrationSdk.listings.query(params);
   const listings = denormalisedResponseEntities(listingsRes);
   return listings;
 }
@@ -58,6 +64,37 @@ const updateListingStateData = ({
   });
 }
 
+const updateUserData = async ({
+  clientTokenStore,
+}) => {
+  const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
+  const currentUserRes = await trustedSdk.currentUser.show();
+  const currentUser = denormalisedResponseEntities(currentUserRes)[0];
+
+  const {
+    attributes: {
+      profile: {
+        metadata: {
+          subscription
+        }
+      }
+    }
+  } = currentUser;
+
+  const { activePorts } = subscription;
+
+  subscription.activePorts = activePorts
+    ? activePorts - 1
+    : 0;
+
+  await integrationSdk.users.updateProfile({
+    id: currentUser.id,
+    metadata: {
+      subscription
+    }
+  });
+}
+
 const handleClosePageListing = async ({
   data,
   listing,
@@ -77,6 +114,9 @@ const handleClosePageListing = async ({
     updateListingStateData({
       listingId: listing.id,
       stateMap: productListingStateMap
+    }),
+    updateUserData({
+      clientTokenStore,
     })
   ]);
 

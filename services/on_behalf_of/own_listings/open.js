@@ -1,8 +1,15 @@
 import { WRONG_PARAMS } from "../../error_type";
-import { sdk, types as sdkTypes } from "../../sharetribe";
-import { getListingData } from "../../sharetribe_admin";
+import { denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
+import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
-import { LISTING_STATE_PUBLISHED, PAGE_LISTING_TYPE } from "../types";
+import { LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_PUBLISHED, PAGE_LISTING_TYPE } from "../types";
+import {
+  SUBSCRIPTION_CANCELLED_STATE,
+  SUBSCRIPTION_INCOMPLETE_EXPIRED_STATE,
+  SUBSCRIPTION_INCOMPLETE_STATE,
+  SUBSCRIPTION_PAST_DUE_STATE,
+  SUBSCRIPTION_UNPAID_STATE
+} from "../../subscription/types";
 
 const { UUID } = sdkTypes;
 
@@ -12,8 +19,55 @@ const handleOpenPageListing = async ({
   clientTokenStore,
   clientQueryParams
 }) => {
-  const { stateMap } = listing.attributes.privateData;
   const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
+  const currentUserRes = await trustedSdk.currentUser.show();
+  const currentUser = denormalisedResponseEntities(currentUserRes)[0];
+
+  const {
+    attributes: {
+      profile: {
+        metadata: {
+          subscription
+        }
+      }
+    }
+  } = currentUser;
+
+  const {
+    status,
+    plans,
+    activePorts = 0
+  } = subscription;
+
+  const tieredPlan = plans.find(plan => plan.price.billingScheme === 'tiered');
+  const maximumPort = tieredPlan.price.quantity;
+
+  if (activePorts >= maximumPort ||
+    status === SUBSCRIPTION_CANCELLED_STATE ||
+    status === SUBSCRIPTION_INCOMPLETE_STATE ||
+    status === SUBSCRIPTION_INCOMPLETE_EXPIRED_STATE ||
+    status === SUBSCRIPTION_PAST_DUE_STATE ||
+    status === SUBSCRIPTION_UNPAID_STATE) {
+    return {
+      code: 403,
+      data: createFlexErrorObject({
+        status: 403,
+        message: MAXIMUM_ACTIVE_PORT_REACHED_ERROR,
+        messageCode: MAXIMUM_ACTIVE_PORT_REACHED_ERROR
+      })
+    };
+  }
+
+  subscription.activePorts = activePorts + 1;
+
+  await integrationSdk.users.updateProfile({
+    id: currentUser.id,
+    metadata: {
+      subscription
+    }
+  });
+
+  const { stateMap } = listing.attributes.privateData;
   const { include = '', expand } = clientQueryParams;
 
   const queryParams = {
@@ -56,7 +110,6 @@ const open = async ({
     //We let Flex handle how they want to display these error
     return trustedSdk.ownListings.open(data, queryParams);
   }
-
 
   switch (listingType) {
     case PAGE_LISTING_TYPE: {
