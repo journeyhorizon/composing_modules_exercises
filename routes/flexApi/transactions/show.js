@@ -16,7 +16,7 @@ const show = async (req, res, next) => {
         });
       res.locals.response = result.data;
       res.status(result.code);
-      return res.send({ data: result.data });
+      return res.send(result.data);
     }
     default: {
       res.locals.response = createFlexErrorObject({

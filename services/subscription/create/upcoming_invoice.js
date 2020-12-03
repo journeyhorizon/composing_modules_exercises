@@ -16,7 +16,8 @@ const fetchUpcomingInvoice = async (subscription) => {
 
   subscription.included = [
     ...subscription.included,
-    ...included
+    ...included,
+    data
   ];
 
   const {

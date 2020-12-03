@@ -25,16 +25,17 @@ const fetchInvoiceHistory = async (subscription) => {
       included
     } = normalisedInvoice;
 
-    subscription.included = [
-      ...subscription.included,
-      ...included
-    ];
-
     const {
       id,
       type,
       relationships
     } = data;
+
+    subscription.included = [
+      ...subscription.included,
+      ...included,
+      data
+    ];
 
     subscription.data.relationships.invoices.push({
       data: {
