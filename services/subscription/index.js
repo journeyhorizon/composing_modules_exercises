@@ -3,19 +3,18 @@ import create from "./create";
 import get from "./get";
 import plan from "./plan";
 import speculate from "./speculate";
+import update from "./update";
+import cancel from "./cancel";
+import resume from "./resume";
 
 const sdk = {
   get,
-  // query,
   create,
   speculate,
-  // update,
-  // cancel,
+  update,
+  cancel,
+  resume,
   plan,
-  // invoices: {
-  //   get,
-  //   query
-  // }
 };
 
 const subscriptionSdk = addFinalizeResponseFnc(sdk);
