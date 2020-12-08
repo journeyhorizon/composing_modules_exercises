@@ -9,7 +9,10 @@ import { convertObjToCamelCase } from "../../../utils";
 const QUERY_LIMIT = 100;
 
 const query = async () => {
-  const stripePlansRes = await stripe.plans.list({ limit: QUERY_LIMIT });
+  const stripePlansRes = await stripe.plans.list({
+    limit: QUERY_LIMIT,
+    active: true
+  });
   const stripePlans = stripePlansRes.data;
 
   const aggregatedPlan = stripePlans.reduce((aggregatedPlan, currentPlan) => {
