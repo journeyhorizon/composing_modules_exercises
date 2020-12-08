@@ -74,7 +74,7 @@ const update = async (fnParams) => {
 
   return composePromises(
     fetchCustomer,
-    checkRequirement,
+    checkRequirement(fnParams),
     updateSub(fnParams),
     updateFlexProfile,
     normaliseSubscriptionData,
