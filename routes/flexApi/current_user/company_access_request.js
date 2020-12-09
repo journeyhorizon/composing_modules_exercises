@@ -9,6 +9,7 @@ const handleCompanyAccessRequest = async (req, res, next) => {
   if (type === COMPANY_CREATION) {
     const result = await OnBeHalfOfSdk
       .company.create({
+        data: res.locals.parsedBody,
         clientTokenStore: res.locals.tokenStore,
       });
     res.locals.response = result.data;

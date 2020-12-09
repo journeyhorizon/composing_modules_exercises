@@ -40,11 +40,12 @@ const normaliseInvoice = ({ data: invoice }) => {
     periodEnd,
     periodStart,
     statusTransitions,
-    tax,
+    tax = 0,
     taxPercent,
     currency: rawCurrency,
     number,
     subtotal,
+    total,
     lines
   } = pickedInvoice;
 
@@ -57,13 +58,14 @@ const normaliseInvoice = ({ data: invoice }) => {
       attributes: {
         number,
         lineItems: createLineItem(lines.data),
-        payinTotal: new Money(subtotal, currency),
-        payoutTotal: new Money(subtotal, currency),
+        subtotal: new Money(subtotal, currency),
+        payinTotal: new Money(total, currency),
+        payoutTotal: new Money(total, currency),
         payDueTotal: new Money(amountDue, currency),
         paidTotal: new Money(amountPaid, currency),
         remainingTotal: new Money(amountRemaining, currency),
         statusTransitions,
-        tax,
+        tax: new Money(tax, currency),
         taxPercent,
       },
       relationships: {

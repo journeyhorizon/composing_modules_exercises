@@ -35,6 +35,7 @@ const updateTeamMetadata = async ({ companyAccount, currentUser }) => {
 };
 
 const create = async ({
+  data = {},
   clientTokenStore,
 }) => {
   const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
@@ -57,20 +58,30 @@ const create = async ({
     }
   }
 
+  const {
+    protectedData
+  } = data;
+
   const defaultEmail = `${config
     .sharetribeFlex.page
     .defaultEmailPrefix}+${uuidv4()}${config
       .sharetribeFlex.page
       .defaultEmailSuffix}`;
 
+  const params = {
+    email: defaultEmail,
+    firstName: "Marketplace",
+    lastName: "Company",
+    password: generatePassword(config.sharetribeFlex.page.secret),
+    displayName: "Marketplace Company"
+  };
+
+  if (protectedData) {
+    params.protectedData = protectedData
+  }
+
   const companyAccountRes = await sdk.currentUser
-    .create({
-      email: defaultEmail,
-      firstName: "Marketplace",
-      lastName: "Company",
-      password: generatePassword(config.sharetribeFlex.page.secret),
-      displayName: "Marketplace Company"
-    });
+    .create(params);
 
   const companyAccount = denormalisedResponseEntities(companyAccountRes)[0];
 
