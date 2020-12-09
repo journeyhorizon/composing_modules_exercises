@@ -11,7 +11,7 @@ const initiate = async ({
   return subscriptionSdk.create({
     customerId: currentUser.id.uuid,
     params: data.params
-  })
+  });
 }
 
 export default initiate;

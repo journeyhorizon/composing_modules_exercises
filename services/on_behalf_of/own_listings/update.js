@@ -96,7 +96,6 @@ const handleMemberAuthorization = ({
       email
     });
 
-    //TODO: Move marketplace name to better config
     return sendVerificationEmail({
       email,
       verificationLink,

@@ -4,14 +4,14 @@ import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
 import { LISTING_STATE_CLOSED, LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_PUBLISHED, PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../types";
 
-const fetchAllUserListing = async ({ authorId, idListingPage }) => {
+const fetchAllUserListing = async ({ authorId, pageListingId }) => {
   const params = {
     authorId,
     pub_listingType: PRODUCT_LISTING_TYPE
   };
 
-  if (idListingPage) {
-    params.pub_idListingPage = idListingPage;
+  if (pageListingId) {
+    params.pub_idListingPage = pageListingId;
   }
 
   const listingsRes = await integrationSdk.listings.query(params);
@@ -101,7 +101,10 @@ const handleClosePageListing = async ({
   clientTokenStore,
   clientQueryParams
 }) => {
-  const productListings = await fetchAllUserListing({ authorId: listing.author.id.uuid });
+  const productListings = await fetchAllUserListing({
+    authorId: listing.author.id.uuid,
+    pageListingId: listing.id.uuid
+  });
   const productListingStateMap = createProductListingStateMap(productListings);
   const [closeResult] = await Promise.all([
     closeListing({

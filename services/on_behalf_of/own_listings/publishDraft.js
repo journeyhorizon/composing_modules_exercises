@@ -119,7 +119,7 @@ const handlePublishPageListing = async ({
   } = subscription;
 
   const tieredPlan = plans.find(plan => plan.price.billingScheme === 'tiered');
-  const maximumPort = tieredPlan.price.quantity;
+  const maximumPort = tieredPlan.quantity;
 
   if (activePorts >= maximumPort ||
     status === SUBSCRIPTION_CANCELLED_STATE ||
