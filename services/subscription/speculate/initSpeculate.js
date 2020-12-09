@@ -13,8 +13,18 @@ import config from "../../config";
 
 const { Money, UUID } = sdkTypes;
 
-const calculatePayinTotal = lineItems => {
-  return lineItems.reduce((result, lineItem) => {
+const getCountryTaxList = () => {
+  return stripe.taxRates.list({
+    limit: LIMIT,
+    active: true
+  })
+    .then(res => {
+      return res.data;
+    });
+}
+
+const calculatePayment = (lineItems, taxObject) => {
+  const subtotal = lineItems.reduce((result, lineItem) => {
     return {
       currency: result.currency,
       amount: result.amount + lineItem.lineTotal.amount,
@@ -22,7 +32,28 @@ const calculatePayinTotal = lineItems => {
   }, {
     amount: 0,
     currency: lineItems[0].lineTotal.currency
-  })
+  });
+
+  const taxPercent = taxObject
+    ? taxObject.percentage
+    : 0;
+
+  const tax = {
+    amount: subtotal.amount * taxPercent / 100,
+    currency: subtotal.currency
+  }
+
+  const total = {
+    amount: subtotal.amount + (subtotal.amount * taxPercent / 100),
+    currency: subtotal.currency
+  };
+
+  return {
+    tax,
+    total,
+    taxPercent,
+    subtotal
+  };
 }
 
 const calculateTotalTierPrice = (quantity, tiers) => {
@@ -68,7 +99,8 @@ const calculateTotalTierPrice = (quantity, tiers) => {
 const handleEstimateSubscription = async ({
   company,
   items,
-  disableTrial
+  disableTrial,
+  countryCode,
 }) => {
   const plans = await query();
   const pricing = plans.data.reduce((result, plan) => {
@@ -123,9 +155,22 @@ const handleEstimateSubscription = async ({
     }
   });
 
-  const totalPayin = calculatePayinTotal(lineItems);
+  let taxObject = null;
 
-  return {
+  if (countryCode) {
+    const taxesConfigs = await getCountryTaxList();
+    taxObject = taxesConfigs.find(taxesConfig => {
+      return taxesConfig.metadata.countryCode === countryCode;
+    });
+  }
+  const {
+    subtotal,
+    tax,
+    taxPercent,
+    total
+  } = calculatePayment(lineItems, taxObject);
+
+  const returnedData = {
     data: {
       data: {
         id: new UUID('simulate-subscription'),
@@ -135,8 +180,16 @@ const handleEstimateSubscription = async ({
           : SUBSCRIPTION_TRIAL_STATE,
         attributes: {
           lineItems,
-          payinTotal: new Money(totalPayin.amount, totalPayin.currency),
-          payoutTotal: new Money(totalPayin.amount, totalPayin.currency)
+          number: 'simulate-subscription',
+          payinTotal: new Money(total.amount, total.currency),
+          payoutTotal: new Money(total.amount, total.currency),
+          subtotal: new Money(subtotal.amount,  subtotal.currency),
+          payDueTotal: new Money(total.amount,  total.currency),
+          paidTotal: new Money(0,  total.currency),
+          remainingTotal: new Money(total.amount,  total.currency),
+          statusTransitions: [],
+          tax: new Money(tax.amount, tax.currency),
+          taxPercent
         },
         relationships: {
           booking: {
@@ -170,14 +223,17 @@ const handleEstimateSubscription = async ({
         }
       ]
     }
-  };
+  }
+
+  return returnedData;
 }
 
 const initSpeculate = (fnParams) => async (company) => {
   const {
     params: {
       lineItems,
-      protectedData
+      protectedData,
+      countryCode: clientCountryCode
     }
   } = fnParams;
 
@@ -196,15 +252,21 @@ const initSpeculate = (fnParams) => async (company) => {
       profile: {
         metadata: {
           subscription
+        },
+        protectedData: {
+          countryCode: companyCountryCode
         }
       }
     }
   } = company;
 
+  const countryCode = companyCountryCode || clientCountryCode;
+
   const params = {
     company,
     items,
-    protectedData
+    protectedData,
+    countryCode,
   };
 
   if (subscription) {

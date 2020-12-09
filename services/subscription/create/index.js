@@ -24,20 +24,6 @@ const ParamsValidator = new Validator({
         type: 'custom',
         customCheck: () => ({ valid: true })
       },
-      location: {
-        type: 'custom',
-        definition: {
-          lat: {
-            type: 'string',
-            required: true
-          },
-          lng: {
-            type: 'string',
-            required: true
-          }
-        },
-        customCheck: validateArray({ optional: true }),
-      },
       lineItems: {
         type: 'custom',
         required: true,
