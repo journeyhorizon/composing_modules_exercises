@@ -10,6 +10,7 @@ import {
 import { types as sdkTypes } from '../../sharetribe';
 import moment from "moment";
 import config from "../../config";
+import { stripe } from "../../stripe";
 
 const { Money, UUID } = sdkTypes;
 
