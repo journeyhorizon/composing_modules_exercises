@@ -10,6 +10,7 @@ import { convertObjToCamelCase } from "../../../../utils";
 const updateFlexProfile = async ({
   company,
   subscription,
+  forcedClosePortIds
 }) => {
   const {
     attributes: {
@@ -23,6 +24,7 @@ const updateFlexProfile = async ({
   return integrationSdk.users.updateProfile({
     id: company.id,
     metadata: {
+      forcedClosePortIds,
       subscription: {
         ...subscriptionMetadata,
         activePorts: 0,

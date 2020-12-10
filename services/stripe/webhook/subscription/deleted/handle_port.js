@@ -72,6 +72,7 @@ const closeAllPortsListing = async ({
   const portListings = await fetchPageListings({
     authorId: company.id.uuid
   });
+
   portListings.forEach(async (portListing) => {
     const productListings = await fetchPageProductListings({
       authorId: company.id.uuid,
@@ -92,6 +93,8 @@ const closeAllPortsListing = async ({
       }),
     ]);
   })
+
+  return portListings.map(portListing => portListing.id.uuid);
 }
 
 export default closeAllPortsListing;

@@ -94,7 +94,8 @@ const closeAllPortsListing = async ({
   });
 
   return {
-    company
+    company,
+    forcedClosePortIds: portListings.map(portListing => portListing.id.uuid)
   };
 }
 

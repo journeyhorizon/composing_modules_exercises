@@ -91,11 +91,7 @@ const handleChangeEnterprise = fnParams => async (
     }
   } = company;
 
-  const {
-    type,
-  } = subscriptionMetadata || {};
-
-  if (!subscriptionMetadata || type === ENTERPRISE_PLAN) {
+  if (!subscriptionMetadata) {
     return updateProfile({
       fnParams,
       company

@@ -40,9 +40,21 @@ const openExistingPortsListing = async ({
     return { activePorts: openPortListings.length };
   }
 
-  const portListings = await fetchPageListings({
+  const { forcedClosePortIds = [] } = company.attributes.profile.metadata;
+
+  if (forcedClosePortIds.length === 0) {
+    return {
+      activePorts: forcedClosePortIds.length
+    };
+  }
+
+  const allPortListings = await fetchPageListings({
     authorId: company.id.uuid,
     state: LISTING_STATE_CLOSED
+  });
+
+  const portListings = allPortListings.filter(portListing => {
+    return forcedClosePortIds.includes(portListing.id.uuid);
   });
 
   const activePorts = maximumPort > portListings.length

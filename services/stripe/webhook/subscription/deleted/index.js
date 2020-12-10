@@ -24,13 +24,14 @@ const handleDeleteEvent = async ({
 
   const company = await getUserData({ userId: companyId });
 
-  await updateFlexProfile({
-    company,
-    subscription: subscriptionInUnderscore
+  const forcedClosePortIds = await closeAllPortsListing({
+    company
   });
 
-  await closeAllPortsListing({
-    company
+  await updateFlexProfile({
+    company,
+    subscription: subscriptionInUnderscore,
+    forcedClosePortIds
   });
 
   return {

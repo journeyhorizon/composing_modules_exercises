@@ -7,6 +7,7 @@ import { integrationSdk } from "../../../../sharetribe_admin";
 
 const updateProfile = ({
   company,
+  forcedClosePortIds
 }) => {
   const {
     attributes: {
@@ -19,6 +20,7 @@ const updateProfile = ({
   } = company;
 
   const metadata = {
+    forcedClosePortIds,
     subscription: {
       ...subscriptionMetadata,
       activePorts: 0,
