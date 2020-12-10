@@ -91,7 +91,11 @@ const closeAllPortsListing = async ({
         stateMap: productListingStateMap
       }),
     ]);
-  })
+  });
+
+  return {
+    company
+  };
 }
 
 export default closeAllPortsListing;

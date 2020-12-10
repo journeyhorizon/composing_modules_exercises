@@ -2,7 +2,7 @@ import Validator from "../../../../params_validator";
 import { composePromises } from "../../../../utils";
 import fetchCustomer from './fetch_user';
 import checkRequirement from './verify';
-import cancelPlan from './change';
+import cancelPlan from './cancel';
 import { createFlexErrorObject } from "../../../../on_behalf_of/error";
 
 const ParamsValidator = new Validator({
