@@ -21,6 +21,7 @@ const updateProfile = ({
   const metadata = {
     subscription: {
       ...subscriptionMetadata,
+      activePorts: 0,
       status: SUBSCRIPTION_CANCELLED_STATE,
       id: ENTERPRISE_PLAN,
       type: ENTERPRISE_PLAN,

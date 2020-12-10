@@ -14,6 +14,8 @@ import { stripe } from "../../stripe";
 
 const { Money, UUID } = sdkTypes;
 
+const LIMIT = 100;
+
 const getCountryTaxList = () => {
   return stripe.taxRates.list({
     limit: LIMIT,
