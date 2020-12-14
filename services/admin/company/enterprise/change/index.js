@@ -3,35 +3,16 @@ import { composePromises } from "../../../../utils";
 import { createFlexErrorObject } from "../../../error";
 import checkRequirement from './verify';
 import changePlan from './change';
-import verifyAdminRole from "../../verify_admin";
-import fetchCurrentUser from "../fetch_current_user";
-import fetchCustomer from "../fetch_customer";
+import fetchCompany from "../fetch_company";
 import updateItemInDynamoDB from './update_item_dynamo';
-import fetchAllDataInDynamoDB from './fetch_dynamo';
 import finalise from './finalise';
 
 const ParamsValidator = new Validator({
-  id: {
-    type: 'string',
-    required: true
-  },
   customerId: {
     type: 'string',
     required: true
   },
-  action: {
-    type: 'string',
-    required: true
-  },
   quantity: {
-    type: 'string',
-    required: true
-  },
-  page: {
-    type: 'string',
-    required: true
-  },
-  per_page: {
     type: 'string',
     required: true
   },
@@ -51,17 +32,15 @@ const change = async (fnParams) => {
     }
   }
 
-  const { id: userId, customerId } = fnParams;
+  const { customerId } = fnParams;
+
   return composePromises(
-    fetchCurrentUser,
-    verifyAdminRole,
-    fetchCustomer(customerId),
+    fetchCompany,
     checkRequirement(fnParams),
     changePlan(fnParams),
     updateItemInDynamoDB(fnParams),
-    fetchAllDataInDynamoDB,
-    finalise(fnParams),
-  )(userId);
+    finalise,
+  )(customerId);
 }
 
 export default change;

@@ -2,36 +2,17 @@ import Validator from "../../../../params_validator";
 import { composePromises } from "../../../../utils";
 import checkRequirement from './verify';
 import cancelPlan from './cancel';
-import fetchCurrentUser from '../fetch_current_user';
-import fetchCustomer from '../fetch_customer';
+import fetchCompany from '../fetch_company';
 import removeItemInDynamoDB from './remove_item_dynamo';
-import fetchAllDataInDynamoDB from './fetch_dynamo';
 import finalise from './finalise';
 import { createFlexErrorObject } from "../../../../on_behalf_of/error";
-import verifyAdminRole from "../../verify_admin";
 
 const ParamsValidator = new Validator({
-  id: {
-    type: 'string',
-    required: true
-  },
   customerId: {
     type: 'string',
     required: true
   },
-  action: {
-    type: 'string',
-    required: true
-  },
   quantity: {
-    type: 'string',
-    required: true
-  },
-  page: {
-    type: 'string',
-    required: true
-  },
-  per_page: {
     type: 'string',
     required: true
   },
@@ -51,17 +32,14 @@ const cancel = async (fnParams) => {
     }
   }
 
-  const { id: userId, customerId } = fnParams;
+  const { customerId } = fnParams;
   return composePromises(
-    fetchCurrentUser,
-    verifyAdminRole,
-    fetchCustomer(customerId),
+    fetchCompany,
     checkRequirement(fnParams),
     cancelPlan,
     removeItemInDynamoDB(fnParams),
-    fetchAllDataInDynamoDB,
-    finalise(fnParams),
-  )(userId);
+    finalise,
+  )(customerId);
 }
 
 export default cancel;

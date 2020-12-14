@@ -4,7 +4,8 @@ import { transformClientQueryParams } from '../../../services/utils';
 import { QUERY_USERS_ACTION, UPDATE_USER_ACTION, REMOVE_USER_ACTION } from './type';
 import { createFlexErrorObject } from '../../../services/on_behalf_of/error';
 import { WRONG_PARAMS } from '../../../services/error_type';
-import AdminSdk from '../../../services/admin';
+import OnBeHalfOfSdk from '../../../services/on_behalf_of';
+
 const express = require('express');
 const router = express.Router();
 
@@ -14,23 +15,32 @@ router.get('/show',
     const { action } = queryParams
     switch (action) {
       case QUERY_USERS_ACTION: {
-        const result = await AdminSdk
-          .company.enterprise.query(req.query);
+        const result = await OnBeHalfOfSdk
+          .company.enterprise.query({
+            clientQueryParams: req.query,
+            clientTokenStore: res.locals.tokenStore,
+          });
         res.locals.response = result.data;
         res.status(result.code);
         return res.send(result.data);
       }
-      // Includes: Add and Edit the user.
+      // Includes: Add and Edit the company user.
       case UPDATE_USER_ACTION: {
-        const result = await AdminSdk
-          .company.enterprise.change(req.query);
+        const result = await OnBeHalfOfSdk
+          .company.enterprise.change({
+            clientQueryParams: req.query,
+            clientTokenStore: res.locals.tokenStore,
+          });
         res.locals.response = result.data;
         res.status(result.code);
         return res.send(result.data);
       }
       case REMOVE_USER_ACTION: {
-        const result = await AdminSdk
-          .company.enterprise.cancel(req.query);
+        const result = await OnBeHalfOfSdk
+          .company.enterprise.cancel({
+            clientQueryParams: req.query,
+            clientTokenStore: res.locals.tokenStore,
+          });
         res.locals.response = result.data;
         res.status(result.code);
         return res.send(result.data);

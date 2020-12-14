@@ -1,50 +1,29 @@
-import Validator from "../../../../params_validator";
-import { validateDefaultDefinition } from "../../../../params_validator/validate_fnc";
+import { denormalisedResponseEntities, sdk, types as sdkTypes } from '../../../../sharetribe';
+import verifyAdminRole from "../../verify_admin";
+import adminSdk from '../../../../admin';
 import { composePromises } from "../../../../utils";
-import { createFlexErrorObject } from "../../../error";
-import fetchCustomer from './fetch_user';
-import checkRequirement from './verify';
-import changePlan from './change';
+import finalise from './finalise';
+import fetchAllDataInDynamoDB from '../../../../admin/company/enterprise/query/fetch_dynamo';
 
-const ParamsValidator = new Validator({
-  customerId: {
-    type: 'string',
-    required: true
-  },
-  params: {
-    type: 'custom',
-    required: true,
-    customCheck: validateDefaultDefinition(),
-    definition: {
-      quantity: {
-        type: 'number',
-        required: true
-      }
-    }
-  }
-});
+const changeEnterprisePlan = async ({
+  clientTokenStore,
+  clientQueryParams
+}) => {
+  const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
+  const currentUserRes = await trustedSdk.currentUser.show();
+  const currentUser = denormalisedResponseEntities(currentUserRes)[0];
 
-const change = async (fnParams) => {
-  const validateResult = ParamsValidator.validate(fnParams);
-
-  if (!validateResult.valid) {
-    return {
-      code: 400,
-      data: createFlexErrorObject({
-        status: 400,
-        message: validateResult.message,
-        messageCode: validateResult.errorCode
-      })
-    }
-  }
-
-  const { customerId } = fnParams;
+  verifyAdminRole(currentUser);
 
   return composePromises(
-    fetchCustomer,
-    checkRequirement(fnParams),
-    changePlan(fnParams),
-  )(customerId);
+    adminSdk.company.enterprise.change,
+    fetchAllDataInDynamoDB,
+    finalise(clientQueryParams),
+  )({
+    customerId: clientQueryParams.customerId,
+    quantity: clientQueryParams.quantity,
+  });
 }
 
-export default change;
+
+export default changeEnterprisePlan;
