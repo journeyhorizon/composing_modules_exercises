@@ -50,6 +50,9 @@ const aws = {
     region: process.env.AWS_SES_REGION
   },
   region: process.env.SERVER_AWS_REGION,
+  dynamodb: {
+    tableName: process.env.ENTERPRISE_CUSTOMER_TABLE,
+  },
 };
 
 const webCanonicalUrl = process.env.WEB_CANONICAL_URL;

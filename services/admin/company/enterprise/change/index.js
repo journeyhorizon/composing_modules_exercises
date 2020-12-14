@@ -1,27 +1,40 @@
 import Validator from "../../../../params_validator";
-import { validateDefaultDefinition } from "../../../../params_validator/validate_fnc";
 import { composePromises } from "../../../../utils";
-import fetchCustomer from './fetch_user';
+import { createFlexErrorObject } from "../../../error";
 import checkRequirement from './verify';
 import changePlan from './change';
-import { createFlexErrorObject } from "../../../../on_behalf_of/error";
+import verifyAdminRole from "../../verify_admin";
+import fetchCurrentUser from "../fetch_current_user";
+import fetchCustomer from "../fetch_customer";
+import updateItemInDynamoDB from './update_item_dynamo';
+import fetchAllDataInDynamoDB from './fetch_dynamo';
+import finalise from './finalise';
 
 const ParamsValidator = new Validator({
+  id: {
+    type: 'string',
+    required: true
+  },
   customerId: {
     type: 'string',
     required: true
   },
-  params: {
-    type: 'custom',
-    required: true,
-    customCheck: validateDefaultDefinition(),
-    definition: {
-      quantity: {
-        type: 'number',
-        required: true
-      }
-    }
-  }
+  action: {
+    type: 'string',
+    required: true
+  },
+  quantity: {
+    type: 'string',
+    required: true
+  },
+  page: {
+    type: 'string',
+    required: true
+  },
+  per_page: {
+    type: 'string',
+    required: true
+  },
 });
 
 const change = async (fnParams) => {
@@ -38,13 +51,17 @@ const change = async (fnParams) => {
     }
   }
 
-  const { customerId } = fnParams;
-
+  const { id: userId, customerId } = fnParams;
   return composePromises(
-    fetchCustomer,
+    fetchCurrentUser,
+    verifyAdminRole,
+    fetchCustomer(customerId),
     checkRequirement(fnParams),
     changePlan(fnParams),
-  )(customerId);
+    updateItemInDynamoDB(fnParams),
+    fetchAllDataInDynamoDB,
+    finalise(fnParams),
+  )(userId);
 }
 
 export default change;

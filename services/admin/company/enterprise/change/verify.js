@@ -50,11 +50,7 @@ const verifyCompanyCanUpgradeEnterprise = (company, fnParams) => {
     }
   }
 
-  const {
-    params: {
-      quantity
-    }
-  } = fnParams;
+  const { quantity } = fnParams;
 
   if (quantity < activePorts) {
     throw ({

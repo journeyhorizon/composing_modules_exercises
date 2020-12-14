@@ -15,6 +15,7 @@ export const INVALID_TOKEN = 'INVALID_TOKEN';
 export const EMPTY_ARRAY_ERROR = 'EMPTY_ARRAY_ERROR';
 export const WRONG_ARRAY_TYPE_ERROR = 'WRONG_ARRAY_TYPE_ERROR';
 export const INVALID_EMAIL_ERROR = 'INVALID_EMAIL_ERROR';
+export const INVALID_ROLE_ERROR = 'INVALID_ROLE_ERROR';
 
 //transactions
 export const INVALID_TRANSITION_ERROR = 'transaction-invalid-transition';
