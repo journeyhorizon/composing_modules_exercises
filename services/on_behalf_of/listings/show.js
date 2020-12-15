@@ -6,7 +6,8 @@ const { UUID } = sdkTypes;
 const fetchAllPageProduct = async ({
   authorId,
   page = 1,
-  perPage = 100
+  perPage = 100,
+  pageListingId
 }) => {
   const params = {
     page,
@@ -45,6 +46,11 @@ const fetchAllPageProduct = async ({
     pub_listingType: PRODUCT_LISTING_TYPE,
     authorId
   }
+
+  if (pageListingId) {
+    params.pub_idListingPage = pageListingId;
+  }
+
   const res = await sdk.listings
     .query(params);
   const { meta } = res.data;
@@ -57,6 +63,7 @@ const fetchAllPageProduct = async ({
   }
   const nextData = await fetchAllPageProduct({
     authorId,
+    pageListingId,
     page: page + 1
   });
   res.data.data = res.data.data.concat(nextData.data.data);
@@ -90,7 +97,10 @@ const show = async ({
     return res;
   }
 
-  const productsRes = await fetchAllPageProduct({ authorId: listing.author.id.uuid });
+  const productsRes = await fetchAllPageProduct({
+    authorId: listing.author.id.uuid,
+    pageListingId: id
+  });
   if (productsRes.data.data.length > 0) {
     res.data.data.products = denormalisedResponseEntities(productsRes);
   }
