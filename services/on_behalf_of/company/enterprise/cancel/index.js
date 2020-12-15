@@ -1,9 +1,9 @@
-import { denormalisedResponseEntities, sdk, types as sdkTypes } from '../../../../sharetribe';
+import { denormalisedResponseEntities, sdk } from '../../../../sharetribe';
 import verifyAdminRole from "../../verify_admin";
 import adminSdk from '../../../../admin';
 import { composePromises } from "../../../../utils";
 import finalise from './finalise';
-import fetchAllDataInDynamoDB from '../../../../admin/company/enterprise/query/fetch_dynamo';
+import handlePagination from './handle_pagination';
 
 const changeEnterprisePlan = async ({
   clientTokenStore,
@@ -17,8 +17,9 @@ const changeEnterprisePlan = async ({
 
   return composePromises(
     adminSdk.company.enterprise.cancel,
-    fetchAllDataInDynamoDB,
-    finalise(clientQueryParams),
+    adminSdk.company.enterprise.query,
+    handlePagination(clientQueryParams),
+    finalise,
   )({
     customerId: clientQueryParams.customerId,
     quantity: clientQueryParams.quantity,
