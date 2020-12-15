@@ -35,7 +35,7 @@ const openExistingPortsListing = async ({
   });
 
   if (openPortListings.length > 0) {
-    console.error(`Something is wrong with subscription, why there is an open port when the subscription has just been created?`);
+    console.error(`Something is wrong with enterprise subscription of ${company.id.uuid}, why there is an open port when the subscription has just been created?`);
     return {
       activePorts: openPortListings.length,
       company,
