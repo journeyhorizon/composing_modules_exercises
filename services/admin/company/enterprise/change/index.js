@@ -1,27 +1,21 @@
 import Validator from "../../../../params_validator";
-import { validateDefaultDefinition } from "../../../../params_validator/validate_fnc";
 import { composePromises } from "../../../../utils";
-import fetchCustomer from './fetch_user';
+import { createFlexErrorObject } from "../../../error";
 import checkRequirement from './verify';
 import changePlan from './change';
-import { createFlexErrorObject } from "../../../../on_behalf_of/error";
+import fetchCompany from "../fetch_company";
+import updateItemInDynamoDB from './update_item_dynamo';
+import finalise from './finalise';
 
 const ParamsValidator = new Validator({
   customerId: {
     type: 'string',
     required: true
   },
-  params: {
-    type: 'custom',
-    required: true,
-    customCheck: validateDefaultDefinition(),
-    definition: {
-      quantity: {
-        type: 'number',
-        required: true
-      }
-    }
-  }
+  quantity: {
+    type: 'string',
+    required: true
+  },
 });
 
 const change = async (fnParams) => {
@@ -41,9 +35,11 @@ const change = async (fnParams) => {
   const { customerId } = fnParams;
 
   return composePromises(
-    fetchCustomer,
+    fetchCompany,
     checkRequirement(fnParams),
     changePlan(fnParams),
+    updateItemInDynamoDB(fnParams),
+    finalise,
   )(customerId);
 }
 

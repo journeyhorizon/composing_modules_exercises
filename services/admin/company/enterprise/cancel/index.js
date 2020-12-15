@@ -1,12 +1,18 @@
 import Validator from "../../../../params_validator";
 import { composePromises } from "../../../../utils";
-import fetchCustomer from './fetch_user';
 import checkRequirement from './verify';
 import cancelPlan from './cancel';
+import fetchCompany from '../fetch_company';
+import removeItemInDynamoDB from './remove_item_dynamo';
+import finalise from './finalise';
 import { createFlexErrorObject } from "../../../../on_behalf_of/error";
 
 const ParamsValidator = new Validator({
   customerId: {
+    type: 'string',
+    required: true
+  },
+  quantity: {
     type: 'string',
     required: true
   },
@@ -27,11 +33,12 @@ const cancel = async (fnParams) => {
   }
 
   const { customerId } = fnParams;
-
   return composePromises(
-    fetchCustomer,
+    fetchCompany,
     checkRequirement(fnParams),
     cancelPlan,
+    removeItemInDynamoDB(fnParams),
+    finalise,
   )(customerId);
 }
 

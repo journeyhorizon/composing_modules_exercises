@@ -25,11 +25,7 @@ const openExistingPortsListing = async ({
   company,
   fnParams
 }) => {
-  const {
-    params: {
-      quantity
-    }
-  } = fnParams;
+  const { quantity } = fnParams;
 
   const maximumPort = quantity;
 
@@ -39,7 +35,7 @@ const openExistingPortsListing = async ({
   });
 
   if (openPortListings.length > 0) {
-    console.error(`Something is wrong with ${subscription.id}, why there is an open port when the subscription has just been created?`);
+    console.error(`Something is wrong with subscription, why there is an open port when the subscription has just been created?`);
     return {
       activePorts: openPortListings.length,
       company,
@@ -65,7 +61,7 @@ const openExistingPortsListing = async ({
   const portListings = allPortListings.filter(portListing => {
     return forcedClosePortIds.includes(portListing.id.uuid);
   });
-  
+
   const activePorts = maximumPort > portListings.length
     ? portListings.length
     : maximumPort;

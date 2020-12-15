@@ -1,3 +1,4 @@
+import AWS from 'aws-sdk';
 import config from "../config";
 
 const dynamodbService = new AWS.DynamoDB({

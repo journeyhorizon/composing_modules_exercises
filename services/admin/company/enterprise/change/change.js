@@ -9,11 +9,7 @@ const updateProfile = ({
   company,
   activePorts
 }) => {
-  const {
-    params: {
-      quantity
-    }
-  } = fnParams;
+  const { quantity } = fnParams;
 
   const {
     attributes: {
@@ -91,7 +87,11 @@ const handleChangeEnterprise = fnParams => async (
     }
   } = company;
 
-  if (!subscriptionMetadata) {
+  const {
+    type,
+  } = subscriptionMetadata || {};
+
+  if (!subscriptionMetadata || type === ENTERPRISE_PLAN) {
     return updateProfile({
       fnParams,
       company
