@@ -17,6 +17,9 @@ export const generateShortAttrKeyName = currentKey => {
 }
 
 export const createExpressionAttributeNames = attributes => {
+  if (!attributes) {
+    return null;
+  }
   const attrKeys = Object.keys(attributes);
   return attrKeys.reduce((result, currentKey) => {
     const shortName = `#${generateShortAttrKeyName(currentKey)}`;
@@ -26,6 +29,9 @@ export const createExpressionAttributeNames = attributes => {
 }
 
 export const createExpressionAttributeValues = attributes => {
+  if (!attributes) {
+    return null;
+  }
   const attrPairs = Object.entries(attributes);
   return attrPairs.reduce((result, [currentKey, currentValue]) => {
     const lowerShortName = `:${generateShortAttrKeyName(currentKey).toLowerCase()}`;
@@ -35,6 +41,9 @@ export const createExpressionAttributeValues = attributes => {
 }
 
 export const createUpdateExpression = attributes => {
+  if (!attributes) {
+    return null;
+  }
   const attrKeys = Object.keys(attributes);
   const assignedStrMap = attrKeys.map((currentKey) => {
     const keyShortName = `#${generateShortAttrKeyName(currentKey)}`;
@@ -46,6 +55,9 @@ export const createUpdateExpression = attributes => {
 
 // operation can be [AND, OR]
 export const createFilterExpression = (keyPairs, operation) => {
+  if (!keyPairs) {
+    return null;
+  }
   const attrPairs = Object.entries(keyPairs);
   return attrPairs.map(([currentKey, currentValue]) => {
     const lowerShortName = `:${generateShortAttrKeyName(currentKey).toLowerCase()}`;
