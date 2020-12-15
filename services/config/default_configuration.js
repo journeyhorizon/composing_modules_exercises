@@ -51,7 +51,7 @@ const aws = {
   },
   region: process.env.SERVER_AWS_REGION,
   dynamodb: {
-    tableName: process.env.ENTERPRISE_CUSTOMER_TABLE,
+    enterpriseTable: process.env.ENTERPRISE_CUSTOMER_TABLE,
   },
 };
 
