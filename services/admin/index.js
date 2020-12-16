@@ -5,6 +5,4 @@ const AdminSdk = {
   company,
 };
 
-const finalizedAdminSdk = addFinalizeResponseFnc(AdminSdk);
-
-export default finalizedAdminSdk;
+export default AdminSdk;
