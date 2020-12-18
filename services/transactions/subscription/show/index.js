@@ -2,6 +2,7 @@ import { denormalisedResponseEntities, sdk } from "../../../sharetribe";
 import { SUBSCRIPTION_NOT_FOUND_ERROR } from '../../../error_type';
 import subscriptionSdk from "../../../subscription";
 import { transformClientQueryParams } from "../../../utils";
+import { createFlexErrorObject } from "../../../on_behalf_of/error";
 
 const show = async ({
   clientTokenStore,
