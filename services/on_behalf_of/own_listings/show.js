@@ -1,6 +1,6 @@
 import { denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
 import { getUserData } from "../../sharetribe_admin";
-import { PAGE_LISTING_TYPE, SHOULD_FETCH_PRODUCTS, PRODUCT_LISTING_TYPE } from "../types";
+import { PAGE_LISTING_TYPE, LISTING_INCLUDE_PRODUCTS, PRODUCT_LISTING_TYPE } from "../types";
 import { integrationSdk } from "../../sharetribe_admin";
 
 const { UUID } = sdkTypes;
@@ -92,7 +92,7 @@ const show = async ({
   clientQueryParams,
   clientTokenStore,
 }) => {
-  const { id, options, ...rest } = clientQueryParams;
+  const { id, ...rest } = clientQueryParams;
 
   const createQueryParams = (queries) => {
     return Object.entries(queries).reduce((result, [currentKey, currentValue]) => {
@@ -115,7 +115,8 @@ const show = async ({
     return res;
   }
 
-  if (options.includes(SHOULD_FETCH_PRODUCTS)) {
+  const { include = [] } = additionalQueryParams;
+  if (include.includes(LISTING_INCLUDE_PRODUCTS)) {
     const productsRes = await fetchAllPageProduct({
       authorId: listing.author.id.uuid,
       pageListingId: listing.id.uuid,
