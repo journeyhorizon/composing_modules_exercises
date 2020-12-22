@@ -58,7 +58,7 @@ const transition = async ({
       return subscriptionSdk.cancel(fnParams);
     }
     case TRANSITION_RESTART_SUBSCRIPTION: {
-      return subscriptionSdk.restart(fnParams);
+      return subscriptionSdk.resume(fnParams);
     }
     default: {
       return {
