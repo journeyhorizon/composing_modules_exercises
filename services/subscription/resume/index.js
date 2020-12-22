@@ -22,6 +22,19 @@ const ParamsValidator = new Validator({
         type: 'custom',
         customCheck: () => ({ valid: true })
       },
+      lineItems: {
+        type: 'custom',
+        definition: [{
+          pricingId: {
+            type: 'string',
+            required: true
+          },
+          quantity: {
+            type: 'number',
+          }
+        }],
+        customCheck: validateArray({ optional: true }),
+      },
     }
   }
 });
