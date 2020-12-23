@@ -79,10 +79,11 @@ const handleUpdateSubscription = async ({
 }
 
 const updateSubscription = fnParams => async (company) => {
+  const { params } = fnParams;
   const {
     protectedData,
     lineItems
-  } = fnParams;
+  } = params;
 
   const items = lineItems
     ? lineItems.map(({
