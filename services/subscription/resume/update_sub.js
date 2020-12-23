@@ -97,13 +97,13 @@ const updateSubscription = fnParams => async (company) => {
     })
     : null;
 
-  const params = {
+  const inputParams = {
     protectedData,
     company,
     items
   };
 
-  return handleUpdateSubscription(params);
+  return handleUpdateSubscription(inputParams);
 }
 
 export default updateSubscription;
