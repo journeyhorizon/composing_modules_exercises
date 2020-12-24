@@ -1,4 +1,4 @@
-import { WRONG_PARAMS } from "../../error_type";
+import { MAXIMUM_ACTIVE_PORT_REACHED_ERROR, WRONG_PARAMS } from "../../error_type";
 import { denormalisedResponseEntities, sdk, types as sdkTypes } from "../../sharetribe";
 import { getListingData, integrationSdk } from "../../sharetribe_admin";
 import { createFlexErrorObject } from "../error";
