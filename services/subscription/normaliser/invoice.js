@@ -70,8 +70,10 @@ const normaliseInvoice = ({ data: invoice }) => {
       },
       relationships: {
         booking: {
-          id: new UUID(id),
-          type: SUBSCRIPTION_INVOICE_PERIOD_TYPE,
+          data: {
+            id: new UUID(id),
+            type: SUBSCRIPTION_INVOICE_PERIOD_TYPE,
+          }
         }
       }
     },
