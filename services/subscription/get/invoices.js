@@ -1,5 +1,4 @@
 import { stripe } from "../../stripe";
-import { composePromises } from "../../utils";
 import normaliser from "../normaliser";
 
 const LIMIT = 24;

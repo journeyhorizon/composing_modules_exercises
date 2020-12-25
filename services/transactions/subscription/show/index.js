@@ -1,8 +1,9 @@
 import { denormalisedResponseEntities, sdk } from "../../../sharetribe";
-import { SUBSCRIPTION_NOT_FOUND_ERROR } from '../../../error_type';
+import { SUBSCRIPTION_NOT_FOUND_ERROR, WRONG_SUBSCRIPTION_PLAN } from '../../../error_type';
 import subscriptionSdk from "../../../subscription";
 import { transformClientQueryParams } from "../../../utils";
 import { createFlexErrorObject } from "../../../on_behalf_of/error";
+import { ENTERPRISE_PLAN } from "../../../subscription/types";
 
 const show = async ({
   clientTokenStore,
@@ -31,6 +32,27 @@ const show = async ({
         messageCode: SUBSCRIPTION_NOT_FOUND_ERROR
       })
     };
+  }
+
+  const {
+    type,
+    pastSubscriptionIds
+  } = subscription;
+
+  let id = subscription.id;
+
+  if (type === ENTERPRISE_PLAN) {
+    if (!Array.isArray(pastSubscriptionIds) || pastSubscriptionIds < 1) {
+      return {
+        code: 400,
+        data: createFlexErrorObject({
+          code: 400,
+          message: WRONG_SUBSCRIPTION_PLAN,
+          messageCode: WRONG_SUBSCRIPTION_PLAN
+        })
+      };
+    }
+    id = pastSubscriptionIds[0];
   }
 
   const queryParams = transformClientQueryParams(clientQueryParams);
