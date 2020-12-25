@@ -15,7 +15,9 @@ const fetchInvoiceHistory = async (subscription) => {
 
   subscription.data.relationships = {
     ...subscription.data.relationships,
-    invoices: []
+    invoices: {
+      data: []
+    }
   };
 
   invoicesRes.data.forEach(invoice => {
@@ -37,12 +39,10 @@ const fetchInvoiceHistory = async (subscription) => {
       data
     ];
 
-    subscription.data.relationships.invoices.push({
-      data: {
-        id,
-        type,
-        relationships
-      }
+    subscription.data.relationships.invoices.data.push({
+      id,
+      type,
+      relationships
     })
   });
 
