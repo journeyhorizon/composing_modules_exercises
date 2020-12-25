@@ -1,15 +1,13 @@
-import { pick } from "lodash";
 import { stripe } from "../../stripe";
-import {
-  SUBSCRIPTION_HISTORY_TO_TAKE_FROM_STRIPE, SUBSCRIPTION_LINE_ITEM_TO_TAKE_FROM_STRIPE
-} from '../attributes';
+import { composePromises } from "../../utils";
 import normaliser from "../normaliser";
 
 const LIMIT = 24;
 
 const fetchInvoiceHistory = async (subscription) => {
   const invoicesRes = await stripe.invoices.list({
-    subscription: subscription.data.id.uuid,
+    // subscription: subscription.data.id.uuid,
+    customer: subscription.data.relationships.stripeCustomer.data.id.uuid,
     limit: LIMIT,
   });
 
@@ -45,7 +43,6 @@ const fetchInvoiceHistory = async (subscription) => {
       relationships
     })
   });
-
 
   return subscription;
 }
