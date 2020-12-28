@@ -87,7 +87,7 @@ const updateUserData = async ({
     ? activePorts - 1
     : 0;
 
-  await integrationSdk.users.updateProfile({
+  return integrationSdk.users.updateProfile({
     id: currentUser.id,
     metadata: {
       subscription

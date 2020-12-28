@@ -38,7 +38,11 @@ router.post('/token',
       Object.entries(resData.headers).map(([header, value]) => {
         res.set(header, value[0]);
       })
-      return res.status(resData.status).send(JSON.parse(resData.body));
+      try {
+        return res.status(resData.status).send(JSON.parse(resData.body));
+      } catch (e) {
+        return res.status(resData.status).send(resData.body);
+      }
     }
 
     const handleVerifyTeamMember = async () => {
