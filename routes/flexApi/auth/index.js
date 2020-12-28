@@ -41,6 +41,7 @@ router.post('/token',
       try {
         return res.status(resData.status).send(JSON.parse(resData.body));
       } catch (e) {
+        console.log(resData.body)
         return res.status(resData.status).send(resData.body);
       }
     }
