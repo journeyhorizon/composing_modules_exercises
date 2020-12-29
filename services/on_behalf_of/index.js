@@ -6,6 +6,7 @@ import createDraft from "./own_listings/createDraft";
 import open from "./own_listings/open";
 import publishDraft from "./own_listings/publishDraft";
 import update from "./own_listings/update";
+import query from "./own_listings/query";
 import login from "./login";
 import company from "./company";
 import request from "./password_reset/request";
@@ -18,7 +19,8 @@ const OnBeHalfOfSdk = {
     update,
     close,
     open,
-    show: ownListingsShow
+    show: ownListingsShow,
+    query,
   },
   currentUser: {
     create,
