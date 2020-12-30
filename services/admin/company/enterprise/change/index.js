@@ -47,7 +47,10 @@ const change = async (fnParams) => {
     funcs = [
       checkRequirement(fnParams),
       changePlan(fnParams),
-      updateItemInDynamoDB(fnParams),
+      updateItemInDynamoDB({
+        ...fnParams,
+        customerId: id
+      }),
       finalise,
     ];
   } else {
@@ -55,7 +58,10 @@ const change = async (fnParams) => {
       fetchCompany,
       checkRequirement(fnParams),
       changePlan(fnParams),
-      updateItemInDynamoDB(fnParams),
+      updateItemInDynamoDB({
+        ...fnParams,
+        customerId: id
+      }),
       finalise,
     ];
   }

@@ -39,7 +39,7 @@ export const createCompanyAccountMaybe = async ({
   await Promise.all([
     updateTeamMetadata({
       companyAccount,
-      currentUser
+      currentUser: data
     }),
     handlePageData({
       defaultEmail,
