@@ -5,7 +5,7 @@ import { createFlexErrorObject, PAGE_EXISTED_ERROR } from '../error';
 import { uuidv4 } from '../../utils';
 import { generatePassword } from '../utils';
 
-const handlePageData = async ({ defaultEmail, companyAccount }) => {
+export const handlePageData = async ({ defaultEmail, companyAccount }) => {
   await sdk.login({
     username: defaultEmail,
     password: generatePassword(config.sharetribeFlex.page.secret)
@@ -17,7 +17,7 @@ const handlePageData = async ({ defaultEmail, companyAccount }) => {
   });
 }
 
-const updateTeamMetadata = async ({ companyAccount, currentUser }) => {
+export const updateTeamMetadata = async ({ companyAccount, currentUser }) => {
   return Promise.all([
     integrationSdk.users.updateProfile({
       id: companyAccount.id,

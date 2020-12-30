@@ -1,0 +1,2 @@
+export const COMPANY_TYPE = 'COMPANY_TYPE';
+export const TEAM_MEMBER_TYPE = 'TEAM_MEMBER_TYPE';

@@ -6,6 +6,8 @@ import changePlan from './change';
 import fetchCompany from "../fetch_company";
 import updateItemInDynamoDB from './update_item_dynamo';
 import finalise from './finalise';
+import getAccountType from './get_account_type';
+import createCompanyAccountMaybe from './create_company_account_maybe';
 
 const ParamsValidator = new Validator({
   customerId: {
@@ -34,13 +36,33 @@ const change = async (fnParams) => {
 
   const { customerId } = fnParams;
 
-  return composePromises(
-    fetchCompany,
-    checkRequirement(fnParams),
-    changePlan(fnParams),
-    updateItemInDynamoDB(fnParams),
-    finalise,
+  const { id, data: company } = await composePromises(
+    getAccountType,
+    createCompanyAccountMaybe,
   )(customerId);
+
+  let funcs = [];
+
+  if (company) {
+    funcs = [
+      checkRequirement(fnParams),
+      changePlan(fnParams),
+      updateItemInDynamoDB(fnParams),
+      finalise,
+    ];
+  } else {
+    funcs = [
+      fetchCompany,
+      checkRequirement(fnParams),
+      changePlan(fnParams),
+      updateItemInDynamoDB(fnParams),
+      finalise,
+    ];
+  }
+
+  return composePromises(
+    ...funcs
+  )(company || id);
 }
 
 export default change;
