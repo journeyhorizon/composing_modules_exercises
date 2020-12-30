@@ -67,7 +67,7 @@ const handleOpenPageListing = async ({
     }
   });
 
-  const { stateMap } = listing.attributes.privateData;
+  const { stateMap = [] } = listing.attributes.privateData;
   const { include = '', expand } = clientQueryParams;
 
   const queryParams = {
@@ -85,7 +85,15 @@ const handleOpenPageListing = async ({
     }
   }));
 
-  return trustedSdk.ownListings.open(data, queryParams);
+  return trustedSdk.ownListings.open(data, queryParams)
+    .then(res => {
+      trustedSdk.ownListings.update({
+        privateData: {
+          stateMap: []
+        }
+      });
+      return res;
+    });
 }
 
 const open = async ({
