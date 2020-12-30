@@ -79,7 +79,11 @@ const handleOpenPageListing = async ({
     if (l.state === LISTING_STATE_PUBLISHED) {
       return trustedSdk.ownListings.open({
         id: new UUID(l.id)
-      });
+      })
+        .catch(e => {
+          //catch it in case the products are deleted
+          console.log(e);
+        });
     } else {
       return Promise.resolve();
     }
@@ -88,6 +92,7 @@ const handleOpenPageListing = async ({
   return trustedSdk.ownListings.open(data, queryParams)
     .then(res => {
       trustedSdk.ownListings.update({
+        id: listing.id,
         privateData: {
           stateMap: []
         }

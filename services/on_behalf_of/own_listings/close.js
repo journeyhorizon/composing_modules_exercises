@@ -44,7 +44,11 @@ const closeListing = async ({
 
   await Promise.all(productListings.map(l => {
     if (l.attributes.state === LISTING_STATE_PUBLISHED) {
-      return trustedSdk.ownListings.close({ id: l.id });
+      return trustedSdk.ownListings.close({ id: l.id })
+      .catch(e => {
+        //catch it incase the listing was deleted while we are trying to close it
+        console.log(e);
+      });
     }
     return Promise.resolve();
   }));

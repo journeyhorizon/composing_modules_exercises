@@ -4,7 +4,8 @@ import { PRODUCT_LISTING_TYPE } from "../on_behalf_of/types";
 export const fetchAllPageProduct = async ({
   authorId,
   page = 1,
-  perPage = 100
+  perPage = 100,
+  pageListingId
 }) => {
   const params = {
     page,
@@ -16,7 +17,8 @@ export const fetchAllPageProduct = async ({
       'title',
       'publicData',
       'metadata',
-      'images'
+      'images',
+      'state',
     ],
     include: ['images'],
     'fields.image': [
@@ -41,9 +43,14 @@ export const fetchAllPageProduct = async ({
       'variants.square-small2x',
     ],
     pub_listingType: PRODUCT_LISTING_TYPE,
-    authorId
+    authorId,
   }
-  const res = await sdk.listings
+
+  if (pageListingId) {
+    params.pub_idListingPage = pageListingId;
+  }
+
+  const res = await integrationSdk.listings
     .query(params);
   const { meta } = res.data;
   const {
@@ -55,6 +62,7 @@ export const fetchAllPageProduct = async ({
   }
   const nextData = await fetchAllPageProduct({
     authorId,
+    pageListingId,
     page: page + 1
   });
   res.data.data = res.data.data.concat(nextData.data.data);
