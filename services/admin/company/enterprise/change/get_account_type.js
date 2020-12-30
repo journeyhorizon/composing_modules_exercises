@@ -9,11 +9,21 @@ const getAccountType = async (customerId) => {
     pageAccountId
   } = metadata;
 
-  if (!!pageAccountId) {
+  const { publicData } = currentUser.attributes.profile;
+  const {
+    teamMemberIds
+  } = publicData;
+
+  if (!!teamMemberIds) {
     return {
       id: customerId,
       type: COMPANY_TYPE,
       data: currentUser
+    };
+  } else if (!!pageAccountId) {
+    return {
+      id: pageAccountId,
+      type: COMPANY_TYPE,
     };
   } else {
     return {
