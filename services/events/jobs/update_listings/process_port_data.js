@@ -33,23 +33,28 @@ const processPortData = async (events) => {
         auditData: {
           adminId,
         },
-        resource
+        resource,
+        previousValues
       }
     } = event;
 
-    const isCloseOpenDeleteAction = checkCloseOpenDeleteAction(event);
+    if (resource) {
+      const isCloseOpenDeleteAction = checkCloseOpenDeleteAction(event);
 
-    if (!isCloseOpenDeleteAction) {
-      return result;
+      if (!isCloseOpenDeleteAction) {
+        return result;
+      }
+
+      const isPortListing = resource.attributes.publicData.listingType === PAGE_LISTING_TYPE;
+
+      if (!isPortListing) {
+        return result;
+      }
     }
 
-    const isPortListing = resource.attributes.publicData.listingType === PAGE_LISTING_TYPE;
+    const listing = resource || previousValues;
 
-    if (!isPortListing) {
-      return result;
-    }
-
-    const authorId = resource.relationships.author.data.id.uuid;
+    const authorId = listing.relationships.author.data.id.uuid;
 
     if (result[authorId]) {
       if (adminId) {
