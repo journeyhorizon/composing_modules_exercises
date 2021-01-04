@@ -5,6 +5,10 @@ import eventSDK from '../../../services/events';
 const express = require('express');
 const router = express.Router();
 
+router.use(express.text({
+  type: 'text/*'
+}));
+
 router.post('/', handleAsyncWrapper(async (req, res, next) => {
   //TODO:JH remove this log after we have confirm AWS hook from prod
   console.log(req.body);
