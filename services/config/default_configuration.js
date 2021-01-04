@@ -7,7 +7,12 @@ const sharetribeFlex = {
     'https://flex-api.sharetribe.com',
   integration: {
     clientId: process.env.SHARETRIBE_FLEX_INTEGRATION_CLIENT_ID,
-    secret: process.env.SHARETRIBE_FLEX_INTEGRATION_SECRET_ID
+    secret: process.env.SHARETRIBE_FLEX_INTEGRATION_SECRET_ID,
+    interval: {
+      updateListings: process.env.SHARETRIBE_FLEX_INTERVAL_UPDATE_LISTINGS
+        ? parseInt(process.env.SHARETRIBE_FLEX_INTERVAL_UPDATE_LISTINGS)
+        : 60000,
+    }
   },
   clientSdk: {
     clientId: process.env.SHARETRIBE_SDK_CLIENT_ID,

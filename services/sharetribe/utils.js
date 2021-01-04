@@ -1,5 +1,29 @@
 import { denormalisedResponseEntities, sdk } from ".";
-import { PRODUCT_LISTING_TYPE } from "../on_behalf_of/types";
+import { PAGE_LISTING_TYPE, PRODUCT_LISTING_TYPE } from "../on_behalf_of/types";
+import { integrationSdk } from "../sharetribe_admin";
+
+export const fetchPortsNumber = async ({
+  authorId,
+  states
+}) => {
+  const params = {
+    page: 1,
+    per_page: 1,
+    pub_listingType: PAGE_LISTING_TYPE,
+    states,
+    authorId,
+  }
+
+  const res = await integrationSdk.listings
+    .query(params);
+
+  const { meta } = res.data;
+  const {
+    totalItems
+  } = meta;
+
+  return totalItems;
+}
 
 export const fetchAllPageProduct = async ({
   authorId,
@@ -73,12 +97,14 @@ export const fetchAllPageProduct = async ({
 export const fetchFormattedPageProducts = async ({
   authorId,
   page = 1,
-  perPage = 100
+  perPage = 100,
+  pageListingId
 }) => {
   const res = await fetchAllPageProduct({
     authorId,
     page,
-    perPage
+    perPage,
+    pageListingId
   });
 
   return denormalisedResponseEntities(res);

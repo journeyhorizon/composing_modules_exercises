@@ -8,6 +8,7 @@
     "start": "npm run build && ENV=production node ./bin/www",
     "watch": "nodemon ./bin/www --exec babel-node",
     "dev": "ENV=development BABEL_ENABLE=true nodemon ./bin/www --exec babel-node --inspect",
+    "jobs": "ENV=production BABEL_ENABLE=true babel-node ./scripts/process_event.js",
     "test": "jest"
   },
   "dependencies": {
@@ -27,7 +28,7 @@
     "morgan": "~1.9.0",
     "node-fetch": "^2.6.0",
     "regenerator-runtime": "^0.13.7",
-    "sharetribe-flex-integration-sdk": "^1.1.0",
+    "sharetribe-flex-integration-sdk": "^1.4.0",
     "sharetribe-flex-sdk": "^1.11.0-alpha",
     "stripe": "^8.126.0",
     "transit-js": "^0.8.861",
