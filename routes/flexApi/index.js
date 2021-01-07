@@ -46,9 +46,6 @@ router.use(transitJsonParser);
 router.use(tokenStoreParser);
 
 router.use('/transactions', require('./transactions'));
-router.use('/own_listings', require('./own_listings'));
-router.use('/current_user', require('./current_user'));
-router.use('/users', require('./users'));
 
 const responseParser = (req, res, next) => {
   res.setHeader('Content-Type', 'application/transit+json');

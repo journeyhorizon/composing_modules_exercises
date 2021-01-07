@@ -7,15 +7,6 @@ const router = express.Router();
 const cors = require('cors');
 
 const whitelist = [
-  'https://test.theseafarers.shop',
-  'https://test.ship.shop',
-  'https://ship.shop',
-  'https://www.ship.shop',
-  'https://api.ship.shop',
-  'https://api-test.theseafarers.shop',
-  "https://theseafarers.shop",
-  "https://www.theseafarers.shop",
-  "https://api.theseafarers.shop",
   'https://journeyh.io',
   'http://localhost:3000',
   'https://flex-console.sharetribe.com',
@@ -45,7 +36,6 @@ router.get('/', handleAsyncWrapper(async (req, res, next) => {
 }, { retries: config.retries }));
 
 router.use('/v1', require('./flex'));
-router.use('/internal/v1/api', require('./internalApi'));
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
