@@ -12,9 +12,9 @@ const handleDeleteEvent = async ({
   const {
     metadata,
   } = subscription;
-  const companyId = metadata.sharetribeUserId;
+  const userId = metadata.sharetribeUserId;
 
-  if (!companyId) {
+  if (!userId) {
     console.error(new Error(`Can not find sharetribe user id for subscription ${subscription.id}`));
     return {
       code: 200,
@@ -22,18 +22,10 @@ const handleDeleteEvent = async ({
     };
   }
 
-  const company = await getUserData({ userId: companyId });
+  const currentUser = await getUserData({ userId });
 
-  const forcedClosePortIds = await closeAllPortsListing({
-    company
-  });
-
-  await updateFlexProfile({
-    company,
-    subscription: subscriptionInUnderscore,
-    forcedClosePortIds
-  });
-
+  //TODO: Put logic for handling subscription deletion callback here
+  
   return {
     code: 200,
     data: 'received'

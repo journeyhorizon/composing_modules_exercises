@@ -1,6 +1,5 @@
 import { getUserData } from "../../../../sharetribe_admin";
 import { convertObjToCamelCase } from "../../../../utils";
-import updateFlexProfile from "./update_profile";
 
 const handleUpdateEvent = async ({
   subscription: subscriptionInUnderscore
@@ -11,9 +10,9 @@ const handleUpdateEvent = async ({
   const {
     metadata,
   } = subscription;
-  const companyId = metadata.sharetribeUserId;
+  const userId = metadata.sharetribeUserId;
 
-  if (!companyId) {
+  if (!userId) {
     console.error(new Error(`Can not find sharetribe user id for subscription ${subscription.id}`));
     return {
       code: 200,
@@ -21,12 +20,9 @@ const handleUpdateEvent = async ({
     };
   }
 
-  const company = await getUserData({ userId: companyId });
+  const currentUser = await getUserData({ userId });
 
-  await updateFlexProfile({
-    company,
-    subscription: subscriptionInUnderscore
-  });
+  //TODO: Put logic for handling subscription logic hook here
 
   return {
     code: 200,
