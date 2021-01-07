@@ -3,8 +3,8 @@ import {
   NO_PAYMENT_METHOD_ERROR,
   SUBSCRIPTION_NOT_FOUND_ERROR,
   SUBSCRIPTION_ALREADY_CANCELED_ERROR,
-} from "../../error_type";
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+} from "../../error";
+import { createFlexErrorObject } from "../../error";
 import {
   SUBSCRIPTION_INCOMPLETE_EXPIRED_STATE,
   SUBSCRIPTION_CANCELLED_STATE,

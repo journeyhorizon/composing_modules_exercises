@@ -1,16 +1,13 @@
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
-import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
+import { validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import fetchCustomer from "./fetch_user";
 import finalise from "./finalise";
-import checkRequirement from "./verify";
 import cancelSub from './update_sub';
-import updateFlexProfile from './update_profile';
 import normaliseSubscriptionData from './normalise';
 
 const ParamsValidator = new Validator({
-  customerId: {
+  subscriptionId: {
     type: 'string',
     required: true
   },
@@ -40,16 +37,16 @@ const cancel = async (fnParams) => {
     }
   }
 
-  const { customerId } = fnParams;
+  const { subscriptionId, params } = fnParams;
 
   return composePromises(
-    fetchCustomer,
-    checkRequirement,
     cancelSub(fnParams),
-    updateFlexProfile,
     normaliseSubscriptionData,
     finalise
-  )(customerId);
+  )({
+    ...params,
+    subscriptionId,
+  });
 }
 
 export default cancel;

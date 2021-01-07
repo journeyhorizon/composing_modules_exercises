@@ -1,8 +1,8 @@
 import { denormalisedResponseEntities, sdk } from "../../../sharetribe";
-import { SUBSCRIPTION_NOT_FOUND_ERROR, WRONG_SUBSCRIPTION_PLAN } from '../../../error_type';
+import { SUBSCRIPTION_NOT_FOUND_ERROR, WRONG_SUBSCRIPTION_PLAN } from '../../../error';
 import subscriptionSdk from "../../../subscription";
 import { transformClientQueryParams } from "../../../utils";
-import { createFlexErrorObject } from "../../../on_behalf_of/error";
+import { createFlexErrorObject } from "../../../error";
 import { ENTERPRISE_PLAN } from "../../../subscription/types";
 
 const show = async ({

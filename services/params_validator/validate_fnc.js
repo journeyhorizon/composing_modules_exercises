@@ -3,7 +3,7 @@ import {
   EMPTY_ARRAY_ERROR,
   WRONG_PARAMS,
   WRONG_ARRAY_TYPE_ERROR
-} from "../error_type";
+} from "../error";
 import Validator from "../params_validator";
 
 export const validateArray = (options = {}) => (value, currentDeclaredAttribute) => {

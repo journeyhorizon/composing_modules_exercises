@@ -1,4 +1,4 @@
-const { SERVER_FAILED_UNEXPECTEDLY } = require("./error_type");
+const { SERVER_FAILED_UNEXPECTEDLY } = require("./error");
 const { handleAsyncWrapper } = require("./request_handle_wrapper");
 
 describe('Handle request processing failed on server', () => {

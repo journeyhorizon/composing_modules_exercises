@@ -2,8 +2,8 @@ import { handleAsyncWrapper } from '../../../services/request_handle_wrapper';
 import config from '../../../services/config';
 import { transformClientQueryParams } from '../../../services/utils';
 import { QUERY_USERS_ACTION, UPDATE_USER_ACTION, REMOVE_USER_ACTION } from './type';
-import { createFlexErrorObject } from '../../../services/on_behalf_of/error';
-import { WRONG_PARAMS } from '../../../services/error_type';
+import { createFlexErrorObject } from '../../../services/error';
+import { WRONG_PARAMS } from '../../../services/error';
 import OnBeHalfOfSdk from '../../../services/on_behalf_of';
 
 const express = require('express');

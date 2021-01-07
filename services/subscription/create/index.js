@@ -1,4 +1,4 @@
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
@@ -7,7 +7,6 @@ import finalise from "./finalise";
 import init from "./init";
 import normaliseSubscriptionData from "./normalise";
 import fetchUpcomingInvoice from "./upcoming_invoice";
-import updateFlexProfile from "./update";
 import checkRequirement from "./verify";
 
 const ParamsValidator = new Validator({
@@ -62,7 +61,6 @@ const create = async (fnParams) => {
     fetchCustomer,
     checkRequirement,
     init(fnParams),
-    updateFlexProfile,
     normaliseSubscriptionData,
     fetchUpcomingInvoice,
     finalise

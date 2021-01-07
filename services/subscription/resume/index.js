@@ -1,4 +1,4 @@
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";

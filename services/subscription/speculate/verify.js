@@ -2,8 +2,8 @@ import {
   SUBSCRIPTION_ALREADY_EXIST_ERROR,
   NEED_COMPANY_ACCOUNT_TO_START_SUBSCRIPTION_ERROR,
   NO_PAYMENT_METHOD_ERROR
-} from "../../error_type";
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+} from "../../error";
+import { createFlexErrorObject } from "../../error";
 import {
   SUBSCRIPTION_TRIAL_STATE,
   SUBSCRIPTION_ACTIVE_STATE,

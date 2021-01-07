@@ -1,5 +1,5 @@
 import Validator from ".";
-import { WRONG_PARAMS } from "../error_type";
+import { WRONG_PARAMS } from "../error";
 import { validateDate, validateDefaultDefinition } from "./validate_fnc";
 
 //These should be in types.js

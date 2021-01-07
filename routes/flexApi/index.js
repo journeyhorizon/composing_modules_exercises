@@ -1,6 +1,6 @@
 import { createTransitConverters } from '../../services/serializer';
 import { typeHandlers } from '../../services/sharetribe';
-import { INVALID_TOKEN } from '../../services/error_type';
+import { INVALID_TOKEN } from '../../services/error';
 import isEmpty from 'lodash/isEmpty';
 
 const express = require('express');

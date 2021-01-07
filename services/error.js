@@ -1,3 +1,8 @@
+import { types as sdkTypes } from '../sharetribe/index';
+
+const { UUID } = sdkTypes;
+const CUSTOM_ERROR_ID = 'jh-custom-error-id';
+
 //Common
 export const WRONG_PARAMS = 'WRONG_PARAMS';
 export const USER_NOT_FOUND = 'USER_NOT_FOUND';
@@ -6,7 +11,7 @@ export const BAD_REQUEST = 'BAD_REQUEST';
 export const FETCHING_USER_DATA_FAILED = 'FETCHING_USER_DATA_FAILED';
 export const SERVER_FAILED_UNEXPECTEDLY = 'SERVER_FAILED_UNEXPECTEDLY';
 export const EVENT_NOT_FOUND = 'EVENT_NOT_FOUND';
-export const EVENT_ERROR_TYPE = 'EVENT_ERROR_TYPE';
+export const EVENT_error = 'EVENT_error';
 export const NOT_PROVIDER = 'NOT_PROVIDER';
 export const HAVE_NOT_CONNECTED_STRIPE_ACCOUNT = 'HAVE_NOT_CONNECTED_STRIPE_ACCOUNT';
 export const LISTING_DOES_NOT_HAVE_PRICE = 'LISTING_DOES_NOT_HAVE_PRICE';
@@ -36,5 +41,27 @@ export const NEW_PORT_QUANTITY_IS_SMALLER_THAN_CURRENT_ACTIVE_PORT_ERROR = 'NEW_
 export const SENDING_SMS_FAILED = `SENDING_SMS_FAILED`;
 
 export const getMissingErrorStringCode = type => ({
-  EVENT_ERROR_TYPE: EVENT_NOT_FOUND
+  EVENT_error: EVENT_NOT_FOUND
 })[type];
+
+export const PAGE_EXISTED_ERROR = 'PAGE_EXISTED_ERROR';
+export const ALREADY_IN_PAGE_ERROR = 'ALREADY_IN_PAGE_ERROR';
+export const IS_PAGE_EMAIL_ERROR = 'IS_PAGE_EMAIL_ERROR';
+
+export const createFlexErrorObject = ({
+  message,
+  messageCode,
+  status
+}) => {
+  return {
+    errors: [
+      {
+        id: new UUID(CUSTOM_ERROR_ID),
+        status,
+        title: message,
+        messageCode,
+        code: messageCode
+      }
+    ]
+  }
+}

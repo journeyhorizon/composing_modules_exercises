@@ -1,8 +1,8 @@
 import { transformClientQueryParams } from "../../../services/utils";
 import { SUBSCRIPTION_TYPE } from "./types";
 import transactionWrapper from '../../../services/transactions';
-import { createFlexErrorObject } from "../../../services/on_behalf_of/error";
-import { WRONG_PARAMS } from "../../../services/error_type";
+import { createFlexErrorObject } from "../../../services/error";
+import { WRONG_PARAMS } from "../../../services/error";
 
 const show = async (req, res, next) => {
   const queryParams = transformClientQueryParams(req.query);

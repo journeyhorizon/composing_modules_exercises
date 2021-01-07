@@ -1,4 +1,4 @@
-import { WRONG_PARAMS } from "../error_type";
+import { WRONG_PARAMS } from "../error";
 
 const DEFAULT_SUPPORT_TYPE = [
 	'string',

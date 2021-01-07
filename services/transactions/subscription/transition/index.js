@@ -2,14 +2,14 @@ import { denormalisedResponseEntities, sdk } from "../../../sharetribe";
 import {
   SUBSCRIPTION_NOT_FOUND_ERROR,
   INVALID_TRANSITION_ERROR
-} from '../../../error_type';
+} from '../../../error';
 import subscriptionSdk from "../../../subscription";
 import {
   TRANSITION_CANCEL_SUBSCRIPTION,
   TRANSITION_RESTART_SUBSCRIPTION,
   TRANSITION_UPDATE_SUBSCRIPTION
 } from "../transitions";
-import { createFlexErrorObject } from "../../../on_behalf_of/error";
+import { createFlexErrorObject } from "../../../error";
 
 const transition = async ({
   data,

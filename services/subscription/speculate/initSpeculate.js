@@ -1,5 +1,5 @@
-import { UNKNOWN_SUBSCRIPTION_PRICING_ERROR } from "../../error_type";
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+import { UNKNOWN_SUBSCRIPTION_PRICING_ERROR } from "../../error";
+import { createFlexErrorObject } from "../../error";
 import query from "../plan/query";
 import {
   SUBSCRIPTION_ACTIVE_STATE,

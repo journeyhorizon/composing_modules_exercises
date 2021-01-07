@@ -1,4 +1,4 @@
-import { SERVER_FAILED_UNEXPECTEDLY } from "./error_type";
+import { SERVER_FAILED_UNEXPECTEDLY } from "./error";
 
 export const handleAsyncWrapper = (func, { retries }) =>
   async (req, res, next) =>
