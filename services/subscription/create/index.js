@@ -2,6 +2,7 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
+import handleCreateSubscriptionForConnect from "./connect";
 import fetchCustomer from "./fetch_user";
 import finalise from "./finalise";
 import init from "./init";
@@ -9,7 +10,7 @@ import normaliseSubscriptionData from "./normalise";
 import fetchUpcomingInvoice from "./upcoming_invoice";
 import checkRequirement from "./verify";
 
-const ParamsValidator = new Validator({
+const NormalParamsValidator = new Validator({
   customerId: {
     type: 'string',
     required: true
@@ -41,8 +42,98 @@ const ParamsValidator = new Validator({
   }
 });
 
+const ConnectParamsValidator = new Validator({
+  customerId: {
+    type: 'string',
+    required: true
+  },
+  providerId: {
+    type: 'string',
+    required: true
+  },
+  params: {
+    type: 'custom',
+    required: true,
+    customCheck: validateDefaultDefinition(),
+    definition: {
+      bookingStartTime: {
+        type: 'number'
+      },
+      bookingEndTime: {
+        type: 'number'
+      },
+      commissionPercentage: {
+        type: 'number'
+      },
+      protectedData: {
+        type: 'custom',
+        customCheck: () => ({ valid: true })
+      },
+      lineItems: {
+        type: 'custom',
+        required: true,
+        definition: [{
+          pricingId: {
+            type: 'string',
+          },
+          quantity: {
+            type: 'number',
+          },
+          priceData: {
+            type: 'custom',
+            customCheck: validateDefaultDefinition({ optional: true }),
+            definition: {
+              listingId: {
+                type: 'string',
+                required: true
+              },
+              interval: {
+                type: 'custom',
+                required: true,
+                customCheck: validateDefaultDefinition(),
+                definition: {
+                  period: {
+                    type: 'number',
+                    required: true,
+                    allow: ['day', 'week', 'month', 'year'] //TODO: Move this into configuration
+                  },
+                  count: {
+                    type: 'number',
+                    required: true
+                  }
+                }
+              },
+              price: {
+                type: 'custom',
+                required: true,
+                customCheck: validateDefaultDefinition(),
+                definition: {
+                  amount: {
+                    type: 'number',
+                    required: true
+                  },
+                  currency: {
+                    type: 'string',
+                    required: true
+                  }
+                }
+              }
+            }
+          }
+        }],
+        customCheck: validateArray(),
+      },
+    }
+  }
+});
+
 const create = async (fnParams) => {
-  const validateResult = ParamsValidator.validate(fnParams);
+  const { customerId, providerId } = fnParams;
+
+  const validateResult =
+    providerId
+      ? ConnectParamsValidator.validate(fnParams)
+      : NormalParamsValidator.validate(fnParams);
 
   if (!validateResult.valid) {
     return {
@@ -55,16 +146,16 @@ const create = async (fnParams) => {
     }
   }
 
-  const { customerId } = fnParams;
-
-  return composePromises(
-    fetchCustomer,
-    checkRequirement,
-    init(fnParams),
-    normaliseSubscriptionData,
-    fetchUpcomingInvoice,
-    finalise
-  )(customerId);
+  return providerId
+    ? handleCreateSubscriptionForConnect(fnParams)
+    : composePromises(
+      fetchCustomer,
+      checkRequirement,
+      init(fnParams),
+      normaliseSubscriptionData,
+      fetchUpcomingInvoice,
+      finalise
+    )(customerId);
 }
 
 export default create;
