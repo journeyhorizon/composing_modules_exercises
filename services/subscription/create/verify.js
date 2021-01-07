@@ -1,7 +1,7 @@
 import {
   NO_PAYMENT_METHOD_ERROR
-} from "../../error_type";
-import { createFlexErrorObject } from "../../on_behalf_of/error";
+} from "../../error";
+import { createFlexErrorObject } from "../../error";
 
 const checkSubscriptionRequirement = async (customer) => {
   const { stripeCustomer } = customer;

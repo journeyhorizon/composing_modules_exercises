@@ -1,4 +1,4 @@
-import { types as sdkTypes } from '../sharetribe/index';
+import { types as sdkTypes } from 'sharetribe-flex-integration-sdk';
 
 const { UUID } = sdkTypes;
 const CUSTOM_ERROR_ID = 'jh-custom-error-id';

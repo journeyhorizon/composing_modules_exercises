@@ -1,7 +1,5 @@
 import { getUserData } from "../../../../sharetribe_admin";
 import { convertObjToCamelCase } from "../../../../utils";
-import updateFlexProfile from "./update_profile";
-import closeAllPortsListing from "./handle_port";
 
 const handleDeleteEvent = async ({
   subscription: subscriptionInUnderscore
