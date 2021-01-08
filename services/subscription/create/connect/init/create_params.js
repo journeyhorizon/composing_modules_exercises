@@ -70,13 +70,14 @@ const createSubscriptionParams = async ({
     customer: customer.stripeCustomer.id,
     items,
     transfer_data: {
-      destination: provider.stripeAccount.attributes.stripeAccountId
+      destination: provider.stripeAccount.attributes.stripeAccountId,
     },
     metadata: {
       protectedData: protectedData ? JSON.stringify(protectedData) : {},
       'sharetribe-user-id': customer.id.uuid,
       'sharetribe-provider-id': provider.id.uuid,
-    }
+    },
+    // on_behalf_of: provider.stripeAccount.attributes.stripeAccountId
   };
 
   if (bookingStartTime) {
