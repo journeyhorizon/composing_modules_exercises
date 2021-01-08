@@ -78,6 +78,7 @@ const ConnectParamsValidator = new Validator({
           },
           quantity: {
             type: 'number',
+            required: true
           },
           priceData: {
             type: 'custom',
@@ -93,7 +94,7 @@ const ConnectParamsValidator = new Validator({
                 customCheck: validateDefaultDefinition(),
                 definition: {
                   period: {
-                    type: 'number',
+                    type: 'string',
                     required: true,
                     allow: ['day', 'week', 'month', 'year'] //TODO: Move this into configuration
                   },

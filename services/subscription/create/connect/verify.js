@@ -1,12 +1,12 @@
-import { HAVE_NOT_CONNECTED_STRIPE_ACCOUNT } from '../../../error';
-import * as checkCustomerRequirement from '../verify';
+import { createFlexErrorObject, HAVE_NOT_CONNECTED_STRIPE_ACCOUNT } from '../../../error';
+import checkCustomerRequirement from '../verify';
 
 const checkSubscriptionRequirement = async ({ customer, provider }) => {
   checkCustomerRequirement(customer);
 
-  const { stripeCustomer } = provider;
+  const { stripeAccount } = provider;
 
-  if (!stripeCustomer ||
+  if (!stripeAccount ||
     !provider.attributes.stripeConnected) {
     throw ({
       code: 404,

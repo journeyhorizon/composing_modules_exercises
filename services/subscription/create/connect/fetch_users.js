@@ -1,3 +1,4 @@
+import { getUserData } from '../../../sharetribe_admin';
 import fetchCustomer from '../fetch_user';
 
 const fetchProvider = async (userId) => {
