@@ -1,9 +1,11 @@
-import { sdk, types as sdkTypes } from '../../../services/sharetribe';
-import { SUBSCRIPTION_TYPE } from './types';
+import { sdk, types as sdkTypes } from '../services/sharetribe';
+import { SUBSCRIPTION_TYPE } from '../routes/flexApi/transactions/types';
 
 const { UUID } = sdkTypes;
 
-//Pseudo code
+/**
+ * sdk endpoint should be set to the server
+ */
 const clientSubscriptionInitiate = async () => {
   const paramsSendToServer = {
     providerId: new UUID('authorId'), //Normal string would also be ok
