@@ -15,7 +15,11 @@ const initiate = async ({
   };
 
   if (data.params.providerId) {
-    params.providerId = data.params.providerId;
+    //Since in some marketplace the author and the actual provider could be different so we split them out
+    //We can change the logic here to fetch the listing's author instead of asking client's input
+    params.providerId = typeof data.params.providerId === 'string'
+      ? data.params.providerId
+      : data.params.providerId.uuid;
     delete data.params.providerId;
   }
 

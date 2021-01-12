@@ -20,27 +20,6 @@ const transition = async ({
   const currentUser = denormalisedResponseEntities(currentUserRes)[0];
 
   const {
-    attributes: {
-      profile: {
-        metadata: {
-          subscription
-        }
-      }
-    }
-  } = currentUser;
-
-  if (!subscription || !subscription.id) {
-    return {
-      code: 404,
-      data: createFlexErrorObject({
-        code: 404,
-        message: SUBSCRIPTION_NOT_FOUND_ERROR,
-        messageCode: SUBSCRIPTION_NOT_FOUND_ERROR
-      })
-    };
-  }
-
-  const {
     transition,
     params
   } = data;

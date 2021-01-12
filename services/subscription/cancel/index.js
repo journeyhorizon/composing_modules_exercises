@@ -2,12 +2,13 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import finalise from "./finalise";
+import finalise from "../update/finalise";
 import cancelSub from './update_sub';
-import normaliseSubscriptionData from './normalise';
+import normaliseSubscriptionData from '../update/normalise';
+import fetchSubscription from '../update/fetch_subscription';
 
 const ParamsValidator = new Validator({
-  subscriptionId: {
+  id: {
     type: 'string',
     required: true
   },
@@ -37,16 +38,14 @@ const cancel = async (fnParams) => {
     }
   }
 
-  const { subscriptionId, params } = fnParams;
+  const { id, params } = fnParams;
 
   return composePromises(
-    cancelSub(fnParams),
+    fetchSubscription,
+    cancelSub(params),
     normaliseSubscriptionData,
     finalise
-  )({
-    ...params,
-    subscriptionId,
-  });
+  )(id);
 }
 
 export default cancel;
