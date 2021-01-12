@@ -17,6 +17,7 @@ const clientSubscriptionInitiate = async () => {
         {
           quantity: 1,
           priceData: {
+            //For the sake of flexibility, we do not require the listing's author to be the provider
             listingId: '5ff7d62d-ad1e-435c-b3d2-0f3797388fc6',
             interval: {
               period: 'month',
