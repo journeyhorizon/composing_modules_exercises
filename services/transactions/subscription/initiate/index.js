@@ -8,10 +8,18 @@ const initiate = async ({
   const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
   const currentUserRes = await trustedSdk.currentUser.show();
   const currentUser = denormalisedResponseEntities(currentUserRes)[0];
-  return subscriptionSdk.create({
+
+  const params = {
     customerId: currentUser.id.uuid,
     params: data.params
-  });
+  };
+
+  if (data.params.providerId) {
+    params.providerId = data.params.providerId;
+    delete data.params.providerId;
+  }
+
+  return subscriptionSdk.create(params);
 }
 
 export default initiate;
