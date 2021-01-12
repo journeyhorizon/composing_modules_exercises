@@ -1,7 +1,7 @@
 import { composePromises } from "../../../utils";
-import finalise from "../finalise";
-import normaliseSubscriptionData from "../normalise";
-import fetchUpcomingInvoice from "../upcoming_invoice";
+import finalise from "../../common_functions/finalise";
+import normaliseSubscriptionData from "../../common_functions/normalise_subscription_data";
+import fetchUpcomingInvoice from "../../common_functions/fetch_upcoming_invoice";
 import fetchUsersData from "./fetch_users";
 import checkRequirement from "./verify";
 import init from "./init";
