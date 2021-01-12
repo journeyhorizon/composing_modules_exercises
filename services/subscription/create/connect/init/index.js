@@ -9,7 +9,6 @@ const initSubscription = (fnParams) => async ({
   
   return composePromises(
     createSubscriptionParams,
-    traceAsync('test'),
     async (params) => stripe.subscriptions.create(params)
   )({
     fnParams,
