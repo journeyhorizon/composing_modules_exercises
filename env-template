@@ -25,8 +25,9 @@ STRIPE_SECRET=
 STRIPE_VERSION=2020-03-02
 STRIPE_ENDPOINT_SECRET=
 STRIPE_CONNECT_ENDPOINT_SECRET=
+#This is for user to admin subscription
+STRIPE_CUSTOMER_TRIAL_PERIOD=
 
 #----------------------------------------------
 #Website
 WEB_CANONICAL_URL=
-MARKETPLACE_NAME=

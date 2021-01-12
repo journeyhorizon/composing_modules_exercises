@@ -1,7 +1,6 @@
 import { handleAsyncWrapper } from '../services/request_handle_wrapper';
 import config from '../services/config';
 
-const cookieParser = require('cookie-parser');
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
@@ -36,11 +35,5 @@ router.get('/', handleAsyncWrapper(async (req, res, next) => {
 }, { retries: config.retries }));
 
 router.use('/v1', require('./flex'));
-
-router.use(express.json());
-router.use(express.urlencoded({ extended: false }));
-router.use(cookieParser());
-router.use('/api', require('./api'));
-
 
 module.exports = router;
