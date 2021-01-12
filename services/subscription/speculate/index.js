@@ -2,8 +2,8 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import fetchCustomer from "./fetch_user";
-import finalise from "./finalise";
+import fetchCustomer from "../common_functions/fetch_user_with_stripe_customer";
+import finalise from "../common_functions/finalise";
 import initSpeculate from "./initSpeculate";
 import checkRequirement from "./verify";
 

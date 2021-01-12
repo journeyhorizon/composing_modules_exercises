@@ -1,5 +1,5 @@
 import { getUserData } from '../../../sharetribe_admin';
-import fetchCustomer from '../fetch_user';
+import fetchCustomer from '../../common_functions/fetch_user_with_stripe_customer';
 
 const fetchProvider = async (userId) => {
   return getUserData({ userId, include: ['stripeAccount'] });

@@ -3,7 +3,7 @@ import Validator from "../../../params_validator";
 import { validatePrimitiveArray } from "../../../params_validator/validate_fnc";
 import { composePromises } from "../../../utils";
 import fetchStripePlanAssociatedWithProduct from "./fetch_plan";
-import finalise from "./finalise";
+import finalise from "../../common_functions/finalise";
 
 const ParamsValidator = new Validator({
   id: {

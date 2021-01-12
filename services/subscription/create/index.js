@@ -3,11 +3,11 @@ import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
 import handleCreateSubscriptionForConnect from "./connect";
-import fetchCustomer from "./fetch_user";
-import finalise from "./finalise";
+import fetchCustomer from "../common_functions/fetch_user_with_stripe_customer";
+import finalise from "../common_functions/finalise";
 import init from "./init";
-import normaliseSubscriptionData from "./normalise";
-import fetchUpcomingInvoice from "./upcoming_invoice";
+import normaliseSubscriptionData from "../common_functions/normalise_subscription_data";
+import fetchUpcomingInvoice from "../common_functions/fetch_upcoming_invoice";
 import checkRequirement from "./verify";
 
 const NormalParamsValidator = new Validator({

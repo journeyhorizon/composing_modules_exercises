@@ -4,9 +4,9 @@ import { validateArray, validateDefaultDefinition } from "../../params_validator
 import { composePromises } from "../../utils";
 import finalise from "../update/finalise";
 import updateSub from './update_sub';
-import normaliseSubscriptionData from '../update/normalise';
-import fetchUpcomingInvoice from '../update/upcoming_invoice';
-import fetchSubscription from '../update/fetch_subscription';
+import normaliseSubscriptionData from '../common_functions/normalise_subscription_data';
+import fetchUpcomingInvoice from '../common_functions/fetch_upcoming_invoice';
+import fetchSubscription from '../common_functions/fetch_formatted_subscription';
 
 const ParamsValidator = new Validator({
   id: {

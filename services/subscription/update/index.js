@@ -2,11 +2,11 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import finalise from "./finalise";
+import finalise from "../common_functions/finalise";
 import updateSub from './update_sub';
-import normaliseSubscriptionData from './normalise';
-import fetchUpcomingInvoice from './upcoming_invoice';
-import fetchSubscription from './fetch_subscription';
+import normaliseSubscriptionData from '../common_functions/normalise_subscription_data';
+import fetchUpcomingInvoice from '../common_functions/fetch_upcoming_invoice';
+import fetchSubscription from '../common_functions/fetch_formatted_subscription';
 
 const ParamsValidator = new Validator({
   id: {
