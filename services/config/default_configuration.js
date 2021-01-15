@@ -31,6 +31,10 @@ const subscription = {
     : null,
 };
 
+const aws = {
+  region: process.env.SERVER_AWS_REGION,
+};
+
 const config = {
   env,
   nodeEnv,
@@ -38,7 +42,8 @@ const config = {
   sharetribeFlex,
   webCanonicalUrl,
   stripe,
-  subscription
+  subscription,
+  aws
 }
 
 export default config;
