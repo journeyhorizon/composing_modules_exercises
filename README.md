@@ -4,15 +4,15 @@ This service is tested with current Stripe version `2020-08-27`
 
 ## Precondition
 Remember to setup these things before using this service
-- Register `invoice.created` event to Stripe's account webhook
+- Register `invoice.created` event to [Stripe's account webhook](https://stripe.com/docs/webhooks)
 - Register for Stripe's beta test to use `on_behalf_of` for `invoice`
 - Remember to check your Stripe's api version.
+- Setup your `.env` file
 
 ## Install
 ```js
 npm install
 ```
-
 ## Run for development
 ```js
 npm run dev
