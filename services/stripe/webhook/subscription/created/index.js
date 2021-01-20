@@ -20,7 +20,7 @@ const handleCreateEvent = async ({
     };
   }
 
-  const currentUser = await getUserData({ userId: companyId });
+  const currentUser = await getUserData({ userId });
 
   //TODO: Put logic for handling subscription logic hook here
 

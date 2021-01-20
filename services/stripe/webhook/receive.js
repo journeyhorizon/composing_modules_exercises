@@ -41,13 +41,14 @@ const receive = async (
         subscription: object
       });
     }
+    case 'invoice.payment_action_required':
     case 'invoice.payment_failed': {
       return invoiceEventHandler.failed({
         invoice: object
       });
     }
-    case 'invoice.payment_action_required': {
-      return invoiceEventHandler.failed({
+    case 'invoice.created': {
+      return invoiceEventHandler.created({
         invoice: object
       });
     }

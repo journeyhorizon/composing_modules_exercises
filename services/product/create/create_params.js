@@ -3,7 +3,7 @@ const createProductParams = async (listing) => {
   return {
     id: listing.id.uuid,
     name: listing.attributes.title,
-  }      
+}      
 }
 
 export default createProductParams; 

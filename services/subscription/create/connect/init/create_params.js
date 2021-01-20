@@ -76,6 +76,8 @@ const createSubscriptionParams = async ({
       protectedData: protectedData ? JSON.stringify(protectedData) : {},
       'sharetribe-user-id': customer.id.uuid,
       'sharetribe-provider-id': provider.id.uuid,
+      'stripe-destination': provider.stripeAccount.attributes.stripeAccountId,
+      'stripe-customer': customer.stripeCustomer.id,
     },
     // on_behalf_of: provider.stripeAccount.attributes.stripeAccountId
   };
