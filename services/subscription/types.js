@@ -1,6 +1,3 @@
-export const OCEAN_PLAN = 'OCEAN_PLAN';
-export const ENTERPRISE_PLAN = 'ENTERPRISE_PLAN';
-
 // Subscription status
 export const SUBSCRIPTION_CANCELLED_STATE = 'canceled';
 export const SUBSCRIPTION_TRIAL_STATE = 'trialing';
