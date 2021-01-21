@@ -3,7 +3,7 @@ import Validator from "../../params_validator";
 import { validatePrimitiveArray } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
 import fetchStripeSubscription from "./fetch";
-import finalise from "../common_functions/finalise";
+import finalise from "../../common/finalise";
 import { INVOICES_INCLUDE, UPCOMING_INVOICE_INCLUDE } from "./includable";
 import fetchInvoiceHistory from "./invoices";
 import fetchUpcomingInvoice from "./upcoming_invoices";

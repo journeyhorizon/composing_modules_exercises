@@ -4,7 +4,7 @@ import { validateArray, validateDefaultDefinition } from "../../params_validator
 import { composePromises } from "../../utils";
 import handleCreateSubscriptionForConnect from "./connect";
 import fetchCustomer from "../common_functions/fetch_user_with_stripe_customer";
-import finalise from "../common_functions/finalise";
+import finalise from "../../common/finalise";
 import init from "./init";
 import normaliseSubscriptionData from "../common_functions/normalise_subscription_data";
 import fetchUpcomingInvoice from "../common_functions/fetch_upcoming_invoice";

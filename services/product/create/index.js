@@ -2,10 +2,10 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { getListingData } from "../../sharetribe_admin";
 import { composePromises } from "../../utils";
-import finalise from "./finalise";
 import createProductParams from "./create_params";
 import createProductOnStripe from "./create";
 import normaliseProductData from "./normalise";
+import finalise from "../../common/finalise";
 
 const ParamsValidator = new Validator({
   id: {

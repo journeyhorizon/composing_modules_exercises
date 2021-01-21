@@ -2,7 +2,7 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateArray, validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import finalise from "../common_functions/finalise";
+import finalise from "../../common/finalise";
 import updateSub from './update_sub';
 import normaliseSubscriptionData from '../common_functions/normalise_subscription_data';
 import fetchUpcomingInvoice from '../common_functions/fetch_upcoming_invoice';
