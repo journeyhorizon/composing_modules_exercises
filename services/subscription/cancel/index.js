@@ -2,10 +2,10 @@ import { createFlexErrorObject } from "../../error";
 import Validator from "../../params_validator";
 import { validateDefaultDefinition } from "../../params_validator/validate_fnc";
 import { composePromises } from "../../utils";
-import finalise from "../common_functions/finalise";
 import cancelSub from './update_sub';
 import normaliseSubscriptionData from '../common_functions/normalise_subscription_data';
 import fetchSubscription from '../common_functions/fetch_formatted_subscription';
+import finalise from "../../common/finalise";
 
 const ParamsValidator = new Validator({
   id: {
