@@ -49,16 +49,3 @@ export const ensureListing = listing => {
   };
   return { ...empty, ...listing };
 };
-
-export const OWNER_TYPE = 'owner';
-export const RENTER_TYPE = 'renter';
-
-export const isProvider = user => {
-  const currentUser = ensureUser(user);
-  const { publicData: { accountType } } = currentUser.attributes.profile;
-  return accountType === OWNER_TYPE;
-}
-
-export const canCreateSubscription = tx => {
-  return true;
-}

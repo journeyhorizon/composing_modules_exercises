@@ -82,6 +82,9 @@ We would compose a list of functions to show in a clear way what we are trying t
 
 # Change log
 
+## 1.0.1
+- Remove unused variable
+- Change show logic to make it more default
 ## 1.0.0
 - Subscription service for main account with customer
 - Subscription service between connected account & customer
