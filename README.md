@@ -81,7 +81,8 @@ const handleSubscriptionNotification = composePromises(
 We would compose a list of functions to show in a clear way what we are trying to achieve, each developer should be responsible for their own function modules.
 
 # Change log
-
+## 2.0.0
+- Stripe now support using `on_behalf_of` for subscription directly, update to use it
 ## 1.0.1
 - Remove unused variable
 - Change show logic to make it more default

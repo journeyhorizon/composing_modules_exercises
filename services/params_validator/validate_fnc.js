@@ -81,7 +81,7 @@ export const validateDefaultDefinition = (options = {}) => (value, currentDeclar
 
 export const validateDate = value => {
   const date = new Date(value);
-  const valid = isNaN(date.getTime());
+  const valid = !isNaN(date.getTime());
   return valid
     ? {
       valid,

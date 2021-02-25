@@ -35,6 +35,10 @@ const aws = {
   region: process.env.SERVER_AWS_REGION,
 };
 
+const payoutService = {
+  dynamoDbTableName: process.env.PAYOUT_DYNAMODB_TABLE_NAME,
+}
+
 const config = {
   env,
   nodeEnv,
@@ -43,7 +47,8 @@ const config = {
   webCanonicalUrl,
   stripe,
   subscription,
-  aws
+  aws,
+  payoutService
 }
 
 export default config;
