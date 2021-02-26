@@ -35,5 +35,6 @@ router.get('/', handleAsyncWrapper(async (req, res, next) => {
 }, { retries: config.retries }));
 
 router.use('/v1', require('./flex'));
+router.use('/jh/v1/api', require('./internalApi'));
 
 module.exports = router;
