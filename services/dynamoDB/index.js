@@ -24,4 +24,8 @@ const createSdkInstance = tableName => Object.entries(sdk)
     return currentSdkSection;
   }, {});
 
-export const createInstance = createSdkInstance;
+const dynamoDBSdk = {
+  createInstance: createSdkInstance
+}
+
+export default dynamoDBSdk;
