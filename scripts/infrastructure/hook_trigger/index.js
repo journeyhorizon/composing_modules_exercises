@@ -14,8 +14,7 @@ exports.handler = async (event, context) => {
   if (!fireHookResult.ok) {
     await handleRescheduledFailedEvents({
       result: fireHookResult,
-      //TODO: Need to fetch the tablename from some where instead of hard code them
-      tableName: 'yogatime-subscription-payout-queue'
+      tableName: process.env.SCHEDULER_TABLE_NAME
     });
   }
 
