@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:12.16.3
+      - image: circleci/node:16.13.1
 #    machine: true
     steps:
       - setup_remote_docker:
