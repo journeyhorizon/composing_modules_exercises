@@ -1,4 +1,3 @@
-const SUBSCRIPTION_BILLING_REASON = "subscription_create";
 const COMMON_IGNORE_INVOICE_MESSAGE = 'Message received, this invoice does not need update';
 
 const checkSubscriptionInvoiceNeedUpdate = async ({

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import config from '../../../../config';
 import {
   createFlexErrorObject,
   LISTING_TYPE_IS_NOT_SUBSCRIPTION
@@ -47,11 +48,15 @@ const createInternalSubscriptionParams = ({ params, transaction }) => {
 
   const duration = parseInt(subscriptionDuration.split('M').join(), 10);
 
+  const periodByEnv = config.env !== 'production'
+    ? 'day' //For fast testing
+    : 'month';
+
   return {
     ...params,
     //First payment is processed on Flex already, so the subscription start date is 1 month after the current date
-    bookingStartTime: parseInt(dayjs(createdAt.getTime()).add(1, 'months').valueOf() / 1000, 10),
-    bookingEndTime: parseInt(dayjs(createdAt.getTime()).add(duration, 'months').valueOf() / 1000, 10),
+    bookingStartTime: parseInt(dayjs(createdAt.getTime()).add(1, `${periodByEnv}s`).valueOf() / 1000, 10),
+    bookingEndTime: parseInt(dayjs(createdAt.getTime()).add(duration, `${periodByEnv}s`).valueOf() / 1000, 10),
     commissionPercentage: calculateCommissionPercentage({
       payoutTotalAmount,
       payinTotalAmount
@@ -62,7 +67,7 @@ const createInternalSubscriptionParams = ({ params, transaction }) => {
         priceData: {
           listingId,
           interval: {
-            period: 'month',
+            period: periodByEnv,
             count: 1
           },
           price: {
