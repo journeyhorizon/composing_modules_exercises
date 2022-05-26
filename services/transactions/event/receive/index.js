@@ -1,7 +1,13 @@
 import config from "../../../config";
 import { INVALID_TOKEN } from "../../../error";
 import productStripeSdk from "../../../product";
-import { EVENT_LISTING_CREATED, EVENT_TRANSACTION_TRANSITIONED } from "./event_type";
+import {
+  EVENT_LISTING_CREATED,
+  EVENT_TRANSACTION_TRANSITIONED,
+  EVENT_SCHEDULY_PAYOUT
+} from "./event_type";
+import handleTransactionTransitioned from './handle_tranasction_transitioned';
+import handleSchedulilyPayout from './handle_schedulily_payout'
 
 const receive = (event, signature) => {
   if (signature !== config.aws.lambda.secretSignature) {
@@ -29,6 +35,9 @@ const receive = (event, signature) => {
     }
     case EVENT_TRANSACTION_TRANSITIONED: {
       return handleTransactionTransitioned(resource);
+    }
+    case EVENT_SCHEDULY_PAYOUT: {
+      return handleSchedulilyPayout(resource);
     }
   }
 }
