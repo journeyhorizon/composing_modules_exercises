@@ -25,6 +25,8 @@ const receive = async (
   // Handle the event
   const { account, data: { object } } = event;
 
+  //TODO: Add logic to mark transaction completed when the subscription is finished
+
   switch (event.type) {
     case 'customer.subscription.created': {
       return subscriptionEventHandler.created({
