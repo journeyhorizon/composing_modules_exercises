@@ -11,7 +11,7 @@ const fetchExistingSubscription = async (defaultParams) => {
     limit: 100,
     starting_after: null
   }
-  const customerSubscriptions = {};
+  const providerSubscriptions = {};
   
   while (hasMore) {
     const subscriptions = await stripe.subscriptions.list(queryParams);
@@ -21,17 +21,21 @@ const fetchExistingSubscription = async (defaultParams) => {
     }
 
     subscriptions.data.forEach((subscription) => {
-      const { customer, items: subscriptionItems, id, ...rest } = subscription;
+      const { metadata, items: subscriptionItems, id, ...rest } = subscription;
+      const providerId = metadata['sharetribe-provider-id'];
+      const providerStripeAccId = metadata['stripe-destination'];
+
       if (subscriptionItems.data?.length > 0) {
-        const existingSubscriptions = customerSubscriptions[customer] || [];
-        customerSubscriptions[customer] = existingSubscriptions.concat(subscriptionItems.data);
+        const existingSubscriptions = providerSubscriptions[providerId].subscriptions || [];
+        providerSubscriptions[providerId].subscriptions = existingSubscriptions.concat(subscriptionItems.data);
+        providerSubscriptions[providerId].stripeAccountId = providerStripeAccId;
       }
     })
     hasMore = response.has_more;
     queryParams.starting_after = hasMore && id;
   }
 
-  return customerSubscriptions;
+  return providerSubscriptions;
 }
 
 export default fetchExistingSubscription;

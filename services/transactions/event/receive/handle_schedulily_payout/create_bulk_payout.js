@@ -1,9 +1,10 @@
 import { stripe } from "../../../../stripe";
 
-const createBulkPayout = (customerPayouts) => {
+const createBulkPayout = (providerPayouts) => {
   const bulkPayout = [];
-  for (const customer in customerPayouts) {
-    const payout = stripe.payouts.create(customerPayouts[customer]);
+  for (const providerId in providerPayouts) {
+    const { payoutParams, extendParams } = providerPayouts[providerId];
+    const payout = stripe.payouts.create(payoutParams, extendParams);
     bulkPayout.push(payout);
   }
 

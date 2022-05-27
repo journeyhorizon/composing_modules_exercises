@@ -1,16 +1,18 @@
-import { stripe } from "../../../../stripe";
+const createPayoutParams = async (providerSubscriptions) => {
+  const providerPayouts = {};
 
-const createPayoutParams = async (customerSubscriptions) => {
-  const customerPayouts = {};
-  for (const customer in customerSubscriptions) {
-    const { default_source, currency } = await stripe.customers.retrieve(customer);
-    const totalPayoutAmount = customerSubscriptions[customer].reduce((total, items) => {
-      return total + items.price.unit_amount;
-    }, 0);
-    customerPayouts[customer] = { destination: default_source, amount: totalPayoutAmount, currency };
+  for (const providerId in providerSubscriptions) {
+    const { subscriptions, stripeAccountId } = providerSubscriptions[providerId];
+    const totalPayout = subscriptions.reduce((total, items) => {
+      const { amount = 0 } = total;
+      const { unit_amount: priceUnitAmount, currency} = items.price;
+
+      return { amount: amount + priceUnitAmount, currency };
+    }, {});
+    providerPayouts[providerId] = { payoutParams: totalPayout, extendParams: { stripeAccount: stripeAccountId } };
   }
 
-  return customerPayouts;
+  return providerPayouts;
 }
 
 export default createPayoutParams;
