@@ -1,5 +1,4 @@
 import { composePromises } from "../../../../utils";
-import createStripeSubQueryParams from './create_stripe_sub_query_params';
 import fetchExistingSubscription from './fetch_existing_subscription';
 import createPayoutParams from './create_payout_params';
 import createBulkPayout from './create_bulk_payout';
@@ -13,7 +12,6 @@ const handleSchedulilyPayout = () => {
    * Initiate Payout
    */
   return composePromises(
-    createStripeSubQueryParams,
     fetchExistingSubscription,
     createPayoutParams,
     createBulkPayout
