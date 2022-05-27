@@ -17,7 +17,7 @@ const wrappedSubscriptionCreate = async ({
         });
       }
       return {
-        subscription: res.data,
+        subscription: res.data.data,
         trustedSdk,
       };
     });

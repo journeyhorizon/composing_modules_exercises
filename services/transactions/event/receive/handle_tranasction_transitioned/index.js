@@ -12,7 +12,7 @@ const handleTransactionTransitioned = async (tx) => {
 
   if (txIsCanceled(tx)) {
     await subscriptionSdk.cancel({
-      id: tx.attributes.protectedData.subscription.id,
+      id: tx.attributes.protectedData.subscriptionId,
     })
   }
 
