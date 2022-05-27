@@ -9,7 +9,7 @@ echo -e "${COLOR}:::::::::::::CircleCI Detected::::::::::::::${NC}"
   export AWS_PRIVATE_KEY_PATH='permission.pem'
   cp Dockerfile_ci Dockerfile
 
-if [[ "$CIRCLE_BRANCH" == "master" ]] || [[ "$CIRCLE_BRANCH" == "production" ]] ; then
+if [[ "$CIRCLE_BRANCH" == "main" ]] || [[ "$CIRCLE_BRANCH" == "production" ]] ; then
   # todo: set up aws credentials for getting the env file
   mkdir ~/.aws
   touch ~/.aws/config
@@ -29,7 +29,7 @@ if [[ "$CIRCLE_BRANCH" == "master" ]] || [[ "$CIRCLE_BRANCH" == "production" ]] 
   # todo: decode the encoded permission file
   echo -e "${COLOR}::::Decoding permission file::::${NC}"
 
-  if [[ "$CIRCLE_BRANCH" == "master" ]]; then
+  if [[ "$CIRCLE_BRANCH" == "main" ]]; then
     echo ${ENCODED_STAGING_PEM} | base64 --decode > ${AWS_PRIVATE_KEY_PATH}
   else
     echo ${ENCODED_PRODUCTION_PEM} | base64 --decode > ${AWS_PRIVATE_KEY_PATH}

@@ -12,17 +12,15 @@ export ENV_FILE_PATH='.env'
 export ENV_NAME='STAGING'
 
 # todo: REPLACE HERE: environment for Test instance
-export AWS_PRIVATE_KEY_PATH=
-export AWS_ECR_REPO_URL=""
-export AWS_INSTANCE_URL=''
-export AWS_INSTANCE_REGION=''
-export AWS_SECURITY_GROUP_ID=''
-export AWS_ACCESS_KEY_PATH=
-export AWS_ENV_USER_ACCESS_KEY_PATH=
+export AWS_ECR_REPO_URL="027248772204.dkr.ecr.eu-west-2.amazonaws.com/lof-server-test:${TAG_NAME}"
+export AWS_INSTANCE_URL='ubuntu@3.10.244.58'
+export AWS_INSTANCE_REGION='eu-west-2'
+export AWS_SECURITY_GROUP_ID='sg-054b68c664da76d61'
 export ENV_FILE_PATH='.env.staging'
 export ENV_NAME='STAGING'
-export AWS_ENV_SECRET_NAME=''
+export AWS_ENV_SECRET_NAME='lof/server/staging/ayyD3OXr0zLtC4FkrBu7yg'
 export AWS_INSTANCE_DEPLOY_SCRIPT='./deploy-server.sh'
+export AWS_ACCOUNT_ID='027248772204'
 
 if [ "$CIRCLECI" != "true" ]; then
   cp .env.staging .env
@@ -31,14 +29,12 @@ fi
 if [ "$ENV" == "production" ] || [ "$CIRCLE_BRANCH" == "production" ]; then
   echo -e "${COLOR}:::::::::::::Setting environment for PRODUCTION::::::::::::::${NC}"
   # todo: REPLACE HERE: environment for Production instance
-  export AWS_PRIVATE_KEY_PATH=
-  export AWS_ECR_REPO_URL=""
-  export AWS_INSTANCE_URL=''
-  export AWS_INSTANCE_REGION=''
-  export AWS_SECURITY_GROUP_ID=''
+  export AWS_ECR_REPO_URL="027248772204.dkr.ecr.eu-west-2.amazonaws.com/lof-server-test:${TAG_NAME}"
+  export AWS_INSTANCE_REGION='eu-west-2'
   export ENV_FILE_PATH='.env.prod'
   export ENV_NAME='PRODUCTION'
-  export AWS_ENV_SECRET_NAME=''
+  # Remember to fill manually
+  export AWS_ENV_SECRET_NAME='lof/server/staging/ayyD3OXr0zLtC4FkrBu7yg'
 
   if [ "$CIRCLECI" != "true" ]; then
     cp .env.prod .env
@@ -52,7 +48,7 @@ if [ "$CIRCLECI" == "true" ]; then
   echo -e "${COLOR}:::::::::::::Deploying by the CIRCLE CI::::::::::::::${NC}"
   export AWS_PRIVATE_KEY_PATH='permission.pem'
 
-  if [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "production" ]; then
+  if [ "$CIRCLE_BRANCH" != "main" ] && [ "$CIRCLE_BRANCH" != "production" ]; then
     echo -e "${COLOR}:::::::::Current branch $CIRCLE_BRANCH will not be deployed from the CI:::::::::${NC}"
     echo -e "${COLOR}:::::::::Exiting:::::::::${NC}"
     exit 0
