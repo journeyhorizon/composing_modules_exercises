@@ -1,15 +1,29 @@
 import { stripe } from "../../../../stripe";
 
-const DAYS = 3 * (24 * 60 * 60 * 1000);
+const DAYS = 3 * (24 * 60 * 60); // Seconds
 
-const fetchExistingSubscription = async (defaultParams) => {
+const fetchExistingSubscription = async (currentDate) => {
   let hasMore = true;
+  const currentDate = Math.round(Date.now() / 1000);
+  const lastDate = new Date(currentDate);
+  
+  if (currentDate.getDate() === 1) {
+    lastDate.setMonth(lastDate.getMonth() - 1);
+    lastDate.setDate(15);
+  }
+  else {
+    lastDate.setDate(1);
+  }
   const queryParams = {
     created: {
-      lte: Date.now() - DAYS
+      lte: currentDate - DAYS
     },
     limit: 100,
-    starting_after: null
+    starting_after: null,
+    current_period_start: {
+      lt: currentDate,
+      gte: Math.round(lastDate.now() / 1000)
+    }
   }
   const providerSubscriptions = {};
   
@@ -21,7 +35,7 @@ const fetchExistingSubscription = async (defaultParams) => {
     }
 
     subscriptions.data.forEach((subscription) => {
-      const { metadata, items: subscriptionItems, id, ...rest } = subscription;
+      const { metadata, items: subscriptionItems, id } = subscription;
       const providerId = metadata['sharetribe-provider-id'];
       const providerStripeAccId = metadata['stripe-destination'];
 
