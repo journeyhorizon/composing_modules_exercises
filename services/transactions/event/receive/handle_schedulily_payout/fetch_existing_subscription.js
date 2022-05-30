@@ -2,9 +2,10 @@ import { stripe } from "../../../../stripe";
 
 const DAYS = 3 * (24 * 60 * 60); // Seconds
 
-const fetchExistingSubscription = async (currentDate) => {
+const fetchExistingSubscription = async () => {
   let hasMore = true;
-  const currentDate = Math.round(Date.now() / 1000);
+  const currentDate = Date.now();
+  const currentDateTimestamp = Math.round(currentDate / 1000);
   const lastDate = new Date(currentDate);
   
   if (currentDate.getDate() === 1) {
@@ -14,6 +15,7 @@ const fetchExistingSubscription = async (currentDate) => {
   else {
     lastDate.setDate(1);
   }
+  const lastDateTimestamp = Math.round(lastDate.getTime() / 1000);
   const queryParams = {
     created: {
       lte: currentDate - DAYS
@@ -21,32 +23,35 @@ const fetchExistingSubscription = async (currentDate) => {
     limit: 100,
     starting_after: null,
     current_period_start: {
-      lt: currentDate,
-      gte: Math.round(lastDate.now() / 1000)
+      lt: currentDateTimestamp,
+      gte: lastDateTimestamp
     }
   }
   const providerSubscriptions = {};
   
   while (hasMore) {
     const subscriptions = await stripe.subscriptions.list(queryParams);
+    
+    const { data: subscriptionDetails = [], has_more: hasMore } = subscriptions;
 
-    if (subscriptions.data?.length === 0) {
+    if (subscriptionDetails.length === 0) {
       break;
     }
 
-    subscriptions.data.forEach((subscription) => {
-      const { metadata, items: subscriptionItems, id } = subscription;
+    subscriptionDetails.forEach((subscription) => {
+      const { metadata } = subscription;
       const providerId = metadata['sharetribe-provider-id'];
       const providerStripeAccId = metadata['stripe-destination'];
 
-      if (subscriptionItems.data?.length > 0) {
-        const existingSubscriptions = providerSubscriptions[providerId].subscriptions || [];
-        providerSubscriptions[providerId].subscriptions = existingSubscriptions.concat(subscriptionItems.data);
-        providerSubscriptions[providerId].stripeAccountId = providerStripeAccId;
-      }
+      const currentSubscriptions = providerSubscriptions[providerId].subscriptions || [];
+      providerSubscriptions[providerId].subscriptions = currentSubscriptions.concat(subscription);
+      providerSubscriptions[providerId].stripeAccountId = providerStripeAccId;
     })
-    hasMore = response.has_more;
-    queryParams.starting_after = hasMore && id;
+
+    if (hasMore) {
+      const lastObjectId = subscriptionDetails.slice(-1)[0].id;
+      queryParams.starting_after = lastObjectId;
+    }
   }
 
   return providerSubscriptions;
