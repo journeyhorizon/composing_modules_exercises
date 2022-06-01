@@ -25,6 +25,7 @@ const createRawInputParams = async ({
     listingId: currentTx.listing.id.uuid,
     customerId: currentTx.customer.id.uuid,
     providerId: currentTx.provider.id.uuid,
+    transactionId: currentTx.id.uuid,
     params: createInternalSubscriptionParams({ params, transaction: currentTx }),
   };
 

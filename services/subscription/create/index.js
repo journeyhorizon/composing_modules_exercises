@@ -51,6 +51,9 @@ const ConnectParamsValidator = new Validator({
     type: 'string',
     required: true
   },
+  transactionId: {
+    type: 'string',
+  },
   params: {
     type: 'custom',
     required: true,

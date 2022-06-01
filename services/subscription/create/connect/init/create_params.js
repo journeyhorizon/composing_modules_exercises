@@ -61,7 +61,8 @@ const createSubscriptionParams = async ({
       bookingStartTime,
       bookingEndTime,
       commissionPercentage,
-    }
+    },
+    transactionId
   } = fnParams;
 
   const items = createItems(lineItems);
@@ -81,6 +82,10 @@ const createSubscriptionParams = async ({
     },
     // on_behalf_of: provider.stripeAccount.attributes.stripeAccountId
   };
+
+  if (transactionId) {
+    params.metadata['sharetribe-transaction-id'] = transactionId;
+  }
 
   if (bookingStartTime) {
     params.trial_end = bookingStartTime;

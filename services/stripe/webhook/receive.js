@@ -28,16 +28,6 @@ const receive = async (
   //TODO: Add logic to mark transaction completed when the subscription is finished
 
   switch (event.type) {
-    case 'customer.subscription.created': {
-      return subscriptionEventHandler.created({
-        subscription: object
-      });
-    }
-    case 'customer.subscription.updated': {
-      return subscriptionEventHandler.updated({
-        subscription: object
-      });
-    }
     case 'customer.subscription.deleted': {
       return subscriptionEventHandler.deleted({
         subscription: object
