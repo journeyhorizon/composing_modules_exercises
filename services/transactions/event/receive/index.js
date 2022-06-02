@@ -6,7 +6,7 @@ import {
   EVENT_TRANSACTION_TRANSITIONED,
   EVENT_SCHEDULY_PAYOUT
 } from "./event_type";
-import handleTransactionTransitioned from './handle_tranasction_transitioned';
+import handleTransactionTransitioned from './handle_transaction_transitioned';
 import handleSchedulyPayout from './handle_scheduly_payout'
 
 const receive = (event, signature) => {
