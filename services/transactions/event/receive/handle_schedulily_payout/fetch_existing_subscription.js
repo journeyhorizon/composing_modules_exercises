@@ -1,24 +1,22 @@
 import { stripe } from "../../../../stripe";
+import dayjs from "dayjs";
 
 const DAYS = 3 * (24 * 60 * 60); // Seconds
 
 const fetchExistingSubscription = async () => {
   let hasMore = true;
-  const currentDate = Date.now();
-  const currentDateTimestamp = Math.round(currentDate / 1000);
-  const lastDate = new Date(currentDate);
+  const currentDate = dayjs();
+  const lastDate = currentDate.date() === 1
+    ? dayjs(currentDate)
+      .set('date', 15)
+      .set('month', currentDate.month() - 1)
+    : dayjs(currentDate).set('date', 1);
+  const currentDateTimestamp = Math.round(currentDate.valueOf() / 1000);
+  const lastDateTimestamp = Math.round(lastDate.valueOf() / 1000);
   
-  if (currentDate.getDate() === 1) {
-    lastDate.setMonth(lastDate.getMonth() - 1);
-    lastDate.setDate(15);
-  }
-  else {
-    lastDate.setDate(1);
-  }
-  const lastDateTimestamp = Math.round(lastDate.getTime() / 1000);
   const queryParams = {
     created: {
-      lte: currentDate - DAYS
+      lte: currentDateTimestamp - DAYS
     },
     limit: 100,
     starting_after: null,
