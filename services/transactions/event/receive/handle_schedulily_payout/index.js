@@ -3,7 +3,7 @@ import fetchExistingSubscription from './fetch_existing_subscription';
 import createPayoutParams from './create_payout_params';
 import createBulkPayout from './create_bulk_payout';
 
-const handleSchedulilyPayout = () => {
+const handleSchedulyPayout = () => {
   /**
    * TODO: Fetch all existing sub, filter by created date, should be created earlier than 3 days from now
    * Because Stripe will need couple of days to process payment
@@ -18,4 +18,4 @@ const handleSchedulilyPayout = () => {
   )();
 }
 
-export default handleSchedulilyPayout;
+export default handleSchedulyPayout;

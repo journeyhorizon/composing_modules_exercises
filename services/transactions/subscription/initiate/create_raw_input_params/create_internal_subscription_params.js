@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import config from '../../../../config';
 import {
   createFlexErrorObject,
-  LISTING_TYPE_IS_NOT_SUBSCRIPTION
+  LISTING_TYPE_IS_NOT_SUBSCRIPTION_ERROR
 } from "../../../../error";
 import calculateCommissionPercentage from './calculate_commission_percentage';
 
@@ -41,7 +41,7 @@ const createInternalSubscriptionParams = ({ params, transaction }) => {
       code: 400,
       data: createFlexErrorObject({
         code: 400,
-        message: LISTING_TYPE_IS_NOT_SUBSCRIPTION
+        message: LISTING_TYPE_IS_NOT_SUBSCRIPTION_ERROR
       })
     });
   }

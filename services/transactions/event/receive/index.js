@@ -7,7 +7,7 @@ import {
   EVENT_SCHEDULY_PAYOUT
 } from "./event_type";
 import handleTransactionTransitioned from './handle_tranasction_transitioned';
-import handleSchedulilyPayout from './handle_schedulily_payout'
+import handleSchedulyPayout from './handle_scheduly_payout'
 
 const receive = (event, signature) => {
   if (signature !== config.aws.lambda.secretSignature) {
@@ -37,7 +37,7 @@ const receive = (event, signature) => {
       return handleTransactionTransitioned(resource);
     }
     case EVENT_SCHEDULY_PAYOUT: {
-      return handleSchedulilyPayout(resource);
+      return handleSchedulyPayout(resource);
     }
   }
 }
