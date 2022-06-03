@@ -1,3 +1,5 @@
+import { LISTING_TYPE } from "../../util";
+
 const transitionFlexTransaction = ({
   params,
   id,
@@ -14,10 +16,11 @@ const transitionFlexTransaction = ({
 
     body.params.protectedData = {
       ...body.params.protectedData,
-      subscriptionId: subscription.id,
+      subscriptionId: subscription.id.uuid,
       subscriptionObject: {
         timestamp: (new Date).getTime(),
       },
+      type: LISTING_TYPE.SUBSCRIPTION
     };
 
     return trustedSdk.transactions.transition(body, {

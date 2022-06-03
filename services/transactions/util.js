@@ -1,6 +1,6 @@
 import { ensureTransaction } from '../validator';
 
-const LISTING_TYPE = {
+export const LISTING_TYPE = {
   PREPACKAGED: 'prepackaged',
   SUBSCRIPTION: 'subscription'
 }
