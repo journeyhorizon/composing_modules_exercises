@@ -12,7 +12,12 @@ const EVENT_TYPE_TRANSACTION_TRANSITIONED = 'transaction/transitioned';
 
 // Axios configuration
 const serverUrl = process.env.EXTERNAL_SERVER_URL;
-const config = { headers: { 'Content-Type': 'application/json' } };
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    'authentication-signature': process.env.AUTHENTICATION_SIGNATURE
+  }
+};
 
 // Create new SDK instance
 const integrationSdk = sharetribeIntegrationSdk.createInstance({
