@@ -12,7 +12,12 @@ const EVENT_TYPE_TRANSACTION_TRANSITIONED = 'transaction/transitioned';
 
 // Axios configuration
 const serverUrl = process.env.EXTERNAL_SERVER_URL;
-const config = { headers: { 'Content-Type': 'application/json' } };
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    'authentication-signature': process.env.AUTHENTICATION_SIGNATURE
+  }
+};
 
 // Create new SDK instance
 const integrationSdk = sharetribeIntegrationSdk.createInstance({
@@ -22,16 +27,15 @@ const integrationSdk = sharetribeIntegrationSdk.createInstance({
 
 const queryEventData = (params) => integrationSdk.events.query(params);
 
-const getPromise = (lastTransition) => {
+const getPromise = ({
+  lastTransition,
+  event
+}) => {
   switch (lastTransition) {
-    case TRANSITION_CANCEL_REFUND_SUBSCRIPTION: {
-      return axios.post(axios.post(serverUrl + '/', {}, config));
-    }
-    case TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED: {
-      return axios.post(axios.post(serverUrl + '/', {}, config));
-    }
+    case TRANSITION_CANCEL_REFUND_SUBSCRIPTION:
+    case TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED:
     case TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION: {
-      return axios.post(axios.post(serverUrl + '/', {}, config));
+      return axios.post(axios.post(serverUrl + '/', event, config));
     }
   }
 }
@@ -40,7 +44,10 @@ const getSubscriptionCancellationPromises = (events) => {
   return events.data.data.reduce((promises, event) => {
     const { lastTransition } = event.attributes.resource.attributes;
     const isCancelSubscriptionTx = CANCEL_TRANSITIONS.includes(lastTransition);
-    const promise = isCancelSubscriptionTx && getPromise(lastTransition);
+    const promise = isCancelSubscriptionTx && getPromise({
+      lastTransition,
+      event
+    });
     return promise ? [...promises, promise] : promises;
   }, []);
 }

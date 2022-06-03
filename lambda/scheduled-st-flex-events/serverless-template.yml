@@ -19,6 +19,7 @@ functions:
       EXTERNAL_SERVER_URL: ${self:custom.externalServerUrl.${self:provider.stage}}
       INTEGRATION_CLIENT_ID: ${self:custom.integrationClientId.${self:provider.stage}}
       INTEGRATION_CLIENT_SECRET: ${self:custom.integrationClientSecret.${self:provider.stage}}
+      AUTHENTICATION_SIGNATURE: ${self:custom.authenticationSignature.${self:provider.stage}}
   cronPayoutHandler:
     handler: handler.triggerPayout
     events:
@@ -26,6 +27,7 @@ functions:
       - schedule: cron(0 0 1,15 * ? *)
     environment:
       EXTERNAL_SERVER_URL: ${self:custom.externalServerUrl.${self:provider.stage}}
+      AUTHENTICATION_SIGNATURE: ${self:custom.authenticationSignature.${self:provider.stage}}
 
 #Custom ENV declare depends on stage
 
@@ -40,6 +42,9 @@ custom:
     test:
     prod:
   integrationClientSecret:
+    test:
+    prod:
+  authenticationSignature:
     test:
     prod:
 
