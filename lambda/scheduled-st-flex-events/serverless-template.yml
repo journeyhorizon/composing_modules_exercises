@@ -6,6 +6,8 @@ provider:
   name: aws
   runtime: nodejs16.x
   stage: ${opt:stage,'test'}
+  profile: life-on-fitness
+  region: eu-west-2
 
 functions:
   stFlexEventHandler:
@@ -14,20 +16,20 @@ functions:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)
     environment:
-      EXTERNAL_SERVER_URL:
-      INTEGRATION_CLIENT_ID:
-      INTEGRATION_CLIENT_SECRET:
+      EXTERNAL_SERVER_URL: ${self:custom.externalServerUrl.${self:provider.stage}}
+      INTEGRATION_CLIENT_ID: ${self:custom.integrationClientId.${self:provider.stage}}
+      INTEGRATION_CLIENT_SECRET: ${self:custom.integrationClientSecret.${self:provider.stage}}
   cronPayoutHandler:
     handler: handler.triggerPayout
     events:
       # Invoke Lambda function at 00:00 on 1st and 15th every month
       - schedule: cron(0 0 1,15 * ? *)
     environment:
-      EXTERNAL_SERVER_URL:
+      EXTERNAL_SERVER_URL: ${self:custom.externalServerUrl.${self:provider.stage}}
 
 #Custom ENV declare depends on stage
 
-stageBasedEnv:
+custom:
   stages:
     - test
     - prod
