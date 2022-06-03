@@ -15,7 +15,7 @@ module.exports.triggerPayout = async (event, context) => {
       'authentication-signature': process.env.AUTHENTICATION_SIGNATURE
     }
   };
-  await axios.post(serverUrl + '/', {
+  await axios.post(serverUrl + '/api/webhook/flex/event', {
     attributes: {
       eventType: SCHEDULY_PAYOUT_EVENT,
       resource: {},

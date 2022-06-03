@@ -9,6 +9,9 @@ const whitelist = [
   'https://journeyh.io',
   'http://localhost:3000',
   'https://flex-console.sharetribe.com',
+  'https://test.lifeonfitness.com',
+  'https://www.lifeonfitness.com',
+  'https://lifeonfitness.com',
 ];
 
 
