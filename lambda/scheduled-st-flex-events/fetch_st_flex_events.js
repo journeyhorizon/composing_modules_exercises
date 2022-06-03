@@ -35,7 +35,7 @@ const getPromise = ({
     case TRANSITION_CANCEL_REFUND_SUBSCRIPTION:
     case TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED:
     case TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION: {
-      return axios.post(axios.post(serverUrl + '/', event, config));
+      return axios.post(serverUrl + '/', event, config);
     }
   }
 }
