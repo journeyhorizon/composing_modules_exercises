@@ -18,9 +18,9 @@ const receive = (event, signature) => {
   }
   const {
     attributes: {
-      eventType
+      eventType,
+      resource
     },
-    resource,
   } = event;
 
   switch (eventType) {
@@ -37,7 +37,7 @@ const receive = (event, signature) => {
       return handleTransactionTransitioned(resource);
     }
     case EVENT_SCHEDULY_PAYOUT: {
-      return handleSchedulyPayout(resource);
+      return handleSchedulyPayout();
     }
   }
 }

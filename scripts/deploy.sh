@@ -13,7 +13,7 @@ docker build -t ${AWS_ECR_REPO_URL} .
 
 echo -e "${COLOR}::::login aws::::${NC}"
 
-$(aws ecr get-login --no-include-email --region ${AWS_INSTANCE_REGION} ${AWS_PROFILE_PARAM})
+docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_INSTANCE_REGION} ${AWS_PROFILE_PARAM})  ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_INSTANCE_REGION}.amazonaws.com
 
 echo -e "${COLOR}::::pushing to aws repo::::${NC}"
 docker push ${AWS_ECR_REPO_URL}
