@@ -35,6 +35,7 @@ custom:
   stages:
     - test
     - prod
+    - local
   externalServerUrl:
     test:
     prod:

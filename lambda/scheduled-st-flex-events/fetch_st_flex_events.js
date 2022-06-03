@@ -1,5 +1,6 @@
 const axios = require('axios');
 const sharetribeIntegrationSdk = require('sharetribe-flex-integration-sdk');
+const dayjs = require('dayjs');
 
 // TRANSITIONS
 const TRANSITION_CANCEL_REFUND_SUBSCRIPTION = 'transition/cancel-refund-subscription';
@@ -35,7 +36,7 @@ const getPromise = ({
     case TRANSITION_CANCEL_REFUND_SUBSCRIPTION:
     case TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED:
     case TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION: {
-      return axios.post(serverUrl + '/', event, config);
+      return axios.post(serverUrl + '/api/webhook/flex/event', event, config);
     }
   }
 }
@@ -53,8 +54,10 @@ const getSubscriptionCancellationPromises = (events) => {
 }
 
 module.exports = async (event, context) => {
+  const timestampToQuery = dayjs().subtract(1, 'hour').toISOString();
   const events = await queryEventData({
-    eventTypes: EVENT_TYPE_TRANSACTION_TRANSITIONED
+    eventTypes: EVENT_TYPE_TRANSACTION_TRANSITIONED,
+    createdAtStart: timestampToQuery
   });
   await Promise.all(getSubscriptionCancellationPromises(events));
 };

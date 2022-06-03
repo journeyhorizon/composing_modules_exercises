@@ -22,10 +22,8 @@ router.post('/api/webhook/stripe/connect', express.raw({ type: 'application/json
     return res.status(result.code).send(result.data);
   }, { retries: config.retries }));
 
-router.post('/api/webhook/flex/event', express.raw({ type: 'application/json' }),
+router.post('/api/webhook/flex/event', express.json(),
   handleAsyncWrapper(async (req, res, next) => {
-    //TODO: Erase this after we have register the event on AWS Cloudwatch
-    console.log('webhook event', req.body);
     const result = await wrappedFlexSdk.event.receive(req.body,
       req.headers['authentication-signature']);
     return res.status(result.code).send(result.data);
