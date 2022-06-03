@@ -1,4 +1,4 @@
-import { composePromises, traceAsync } from "../../../../utils";
+import { composePromises } from "../../../../utils";
 import createSubscriptionParams from "./create_params";
 import { stripe } from "../../../../stripe";
 import { STRIPE_INVALID_REQUEST_ERROR } from "../../../../error";

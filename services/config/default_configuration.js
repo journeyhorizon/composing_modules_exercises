@@ -33,6 +33,9 @@ const subscription = {
 
 const aws = {
   region: process.env.SERVER_AWS_REGION,
+  lambda: {
+    secretSignature: process.env.AWS_LAMBDA_SECRET_SIGNATURE,
+  }
 };
 
 const payoutService = {

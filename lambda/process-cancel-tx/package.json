@@ -1,0 +1,14 @@
+{
+  "name": "subscription-service",
+  "type": "module",
+  "version": "1.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "sharetribe-flex-integration-sdk": "^1.4.0"
+  }
+}

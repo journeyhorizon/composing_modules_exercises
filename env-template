@@ -40,5 +40,9 @@ AWS_SECRET_ACCESS_KEY=
 SERVER_AWS_REGION=
 
 #----------------------------------------------
+#Lambda event service 
+AWS_LAMBDA_SECRET_SIGNATURE=
+
+#----------------------------------------------
 #Payout service 
 PAYOUT_DYNAMODB_TABLE_NAME
