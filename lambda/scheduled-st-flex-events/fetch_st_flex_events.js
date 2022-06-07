@@ -5,7 +5,7 @@ const dayjs = require('dayjs');
 // TRANSITIONS
 const TRANSITION_CANCEL_REFUND_SUBSCRIPTION = 'transition/cancel-refund-subscription';
 const TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED = 'transition/auto-cancel-subscription-not-delivered';
-const TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION = 'transtition/cancel-ongoing-subscription';
+const TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION = 'transition/cancel-ongoing-subscription';
 const CANCEL_TRANSITIONS = [TRANSITION_CANCEL_REFUND_SUBSCRIPTION, TRANSACTION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED, TRANSACTION_CANCEL_ONGOING_SUBSCRIPTION];
 
 // EVENT TYPES
