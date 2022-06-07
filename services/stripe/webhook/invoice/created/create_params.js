@@ -19,7 +19,7 @@ const createSubscriptionInvoiceUpdateParams = async ({
   if (applicationFeePercent) {
     const { total } = invoice;
     const percentage = parseFloat(applicationFeePercent);
-    params.application_fee_amount = total / 100 * percentage;
+    params.application_fee_amount = parseInt(total / 100 * percentage, 10);
   }
 
   return params;
