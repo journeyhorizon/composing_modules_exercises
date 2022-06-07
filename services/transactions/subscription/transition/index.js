@@ -1,54 +1,52 @@
 import { denormalisedResponseEntities, sdk } from "../../../sharetribe";
 import {
-  SUBSCRIPTION_NOT_FOUND_ERROR,
   INVALID_TRANSITION_ERROR
 } from '../../../error';
-import subscriptionSdk from "../../../subscription";
-import {
-  TRANSITION_CANCEL_SUBSCRIPTION,
-  TRANSITION_RESTART_SUBSCRIPTION,
-  TRANSITION_UPDATE_SUBSCRIPTION
-} from "../transitions";
 import { createFlexErrorObject } from "../../../error";
+import { TRANSITION_CONFIRM_UPDATE_SAVED_PAYMENT_SUBSCRIPTION } from "../../util";
+import { integrationSdk } from "../../../sharetribe_admin";
 
 const transition = async ({
   data,
   clientTokenStore,
 }) => {
   const trustedSdk = await sdk.jh.getTrustedSdk(clientTokenStore);
-  const currentUserRes = await trustedSdk.currentUser.show();
+  const currentUserRes = await trustedSdk.currentUser.show({
+    include: [
+      'stripeCustomer.defaultPaymentMethod'
+    ]
+  });
   const currentUser = denormalisedResponseEntities(currentUserRes)[0];
 
   const {
     transition,
-    params
+    id
   } = data;
 
-  const fnParams = {
-    customerId: currentUser.id.uuid,
-    params
-  };
 
-  switch (transition) {
-    case TRANSITION_UPDATE_SUBSCRIPTION: {
-      return subscriptionSdk.update(fnParams);
-    }
-    case TRANSITION_CANCEL_SUBSCRIPTION: {
-      return subscriptionSdk.cancel(fnParams);
-    }
-    case TRANSITION_RESTART_SUBSCRIPTION: {
-      return subscriptionSdk.resume(fnParams);
-    }
-    default: {
-      return {
-        code: 400,
-        data: createFlexErrorObject({
-          status: 400,
-          message: INVALID_TRANSITION_ERROR
-        })
-      }
+  const hasDefaultPaymentMethod = !!(
+    currentUser.stripeCustomer.attributes.stripeCustomerId &&
+    currentUser.stripeCustomer.defaultPaymentMethod.id
+  );
+
+
+  if (transition !== TRANSITION_CONFIRM_UPDATE_SAVED_PAYMENT_SUBSCRIPTION || !hasDefaultPaymentMethod) {
+    return {
+      code: 400,
+      data: createFlexErrorObject({
+        status: 400,
+        message: INVALID_TRANSITION_ERROR
+      })
     }
   }
+
+  return integrationSdk.transactions.updateMetadata({
+    id: id,
+    metadata: {
+      paymentMethodNeedUpdate: false
+    }
+  });
+
 }
 
 export default transition;

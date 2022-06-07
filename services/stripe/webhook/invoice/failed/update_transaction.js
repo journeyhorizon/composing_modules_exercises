@@ -7,7 +7,7 @@ const updateTransaction = subscription => {
     } = {}
   } = subscription;
 
-  return integrationSdk.transactions.update({
+  return integrationSdk.transactions.updateMetadata({
     id: sharetribeTransactionId,
     metadata: {
       paymentMethodNeedUpdate: true
