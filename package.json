@@ -12,7 +12,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "aws-sdk": "^2.654.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.3",
     "core-js": "^3.6.5",
@@ -23,12 +22,11 @@
     "dotenv": "^7.0.0",
     "express": "~4.17.0",
     "http": "0.0.0",
-    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "morgan": "~1.9.0",
     "node-fetch": "^2.6.0",
     "regenerator-runtime": "^0.13.7",
-    "sharetribe-flex-integration-sdk": "^1.4.0",
+    "sharetribe-flex-integration-sdk": "^1.8.0",
     "sharetribe-flex-sdk": "^1.11.0-alpha",
     "stripe": "^8.126.0",
     "transit-js": "^0.8.861",

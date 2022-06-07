@@ -92,6 +92,9 @@ export const TRANSITION_REQUEST_PAYMENT_SUBSCRIPTION_AFTER_ENQUIRY = 'transition
 export const TRANSITION_CONFIRM_PAYMENT_SUBSCRIPTION = 'transition/confirm-payment-subscription';
 export const TRANSITION_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION = 'transition/confirm-saved-payment-subscription';
 
+//Pseudo transition name for the transition that is used to mark customer has update payment method
+export const TRANSITION_CONFIRM_UPDATE_SAVED_PAYMENT_SUBSCRIPTION = 'transition/confirm-update-saved-payment-subscription';
+
 // If the payment is not confirmed in the time limit set in transaction process (by default 15min)
 // the transaction will expire automatically.
 export const TRANSITION_EXPIRE_PAYMENT_SUBSCRIPTION = 'transition/expire-payment-subscription';
@@ -101,7 +104,7 @@ export const TRANSITION_EXPIRE_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION = 'transition/
 export const TRANSITION_MARK_DELIVERED_SUBSCRIPTION = 'transition/mark-delivered-subscription';
 
 // Automatic cancellation happens if none marks the delivery happened
-export const TRANSITION_AUTO_CANCEL_SUBSCRIPTION = 'transition/auto-cancel-subscription-not-delivered';
+export const TRANSITION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED = 'transition/auto-cancel-subscription-not-delivered';
 
 // Operator can cancel the purchase before product has been marked as delivered / received
 export const TRANSITION_CANCEL_REFUND_SUBSCRIPTION = 'transition/cancel-refund-subscription';
@@ -109,13 +112,12 @@ export const TRANSITION_CANCEL_ONGOING_SUBSCRIPTION = 'transition/cancel-ongoing
 
 // If provider has marked the product delivered (e.g. shipped),
 // customer can then mark the product received
-export const TRANSITION_MARK_RECEIVED_SUBSCRIPTION = 'transition/confirm-delivered-subscription';
+export const TRANSITION_CONFIRM_DELIVERED_SUBSCRIPTION = 'transition/confirm-delivered-subscription';
 
 // If customer doesn't mark the product received manually, it can happen automatically
-export const TRANSITION_AUTO_MARK_RECEIVED_SUBSCRIPTION = 'transition/auto-confirm-delivered-subscription';
+export const TRANSITION_AUTO_CONFIRM_DELIVERED_SUBSCRIPTION = 'transition/auto-confirm-delivered-subscription';
 
 export const TRANSITION_COMPLETE_SUBSCRIPTION = 'transition/complete-subscription';
-
 
 /**
  * Actors
@@ -160,10 +162,10 @@ const STATE_REVIEWED_BY_CUSTOMER = 'reviewed-by-customer';
 const STATE_REVIEWED_BY_PROVIDER = 'reviewed-by-provider';
 
 const STATE_PENDING_PAYMENT_SUBSCRIPTION = 'pending-payment-subscription';
-const STATE_PENDING_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION = 'pending-confirm-saved-payment-subscription';
+const STATE_PENDING_PAYMENT_SUBSCRIPTION_PAYMENT_METHOD_CONFIRMATION = 'pending-payment-subscription-payment-method-confirmation';
 const STATE_PURCHASED_SUBSCRIPTION = 'purchased-subscription';
-const STATE_DELIVERED_SUBSCRIPTION = 'delivered-subscription';
-const STATE_COMPLETED_SUBSCRIPTION = 'subscription-completed'
+const STATE_MARK_DELIVERED_SUBSCRIPTION = 'mark-delivered-subscription';
+const STATE_COMPLETED_SUBSCRIPTION = 'completed-subscription';
 
 
 /**
@@ -207,19 +209,23 @@ const stateDescription = {
     },
     [STATE_PENDING_PAYMENT_SUBSCRIPTION]: {
       on: {
+        [TRANSITION_CONFIRM_PAYMENT_SUBSCRIPTION]: STATE_PENDING_PAYMENT_SUBSCRIPTION_PAYMENT_METHOD_CONFIRMATION,
         [TRANSITION_EXPIRE_PAYMENT_SUBSCRIPTION]: STATE_PAYMENT_EXPIRED,
-        [TRANSITION_CONFIRM_PAYMENT_SUBSCRIPTION]: STATE_PENDING_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION,
       },
     },
-
-    [STATE_PENDING_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION]: {
+    [STATE_PENDING_PAYMENT_SUBSCRIPTION_PAYMENT_METHOD_CONFIRMATION]: {
       on: {
-        [TRANSITION_EXPIRE_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION]: STATE_PAYMENT_EXPIRED,
         [TRANSITION_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION]: STATE_PURCHASED_SUBSCRIPTION,
+        [TRANSITION_EXPIRE_CONFIRM_SAVED_PAYMENT_SUBSCRIPTION]: STATE_PAYMENT_EXPIRED,
       },
     },
-
     [STATE_PAYMENT_EXPIRED]: {},
+    [STATE_PURCHASED_SUBSCRIPTION]: {
+      on: {
+        [TRANSITION_MARK_DELIVERED_SUBSCRIPTION]: STATE_MARK_DELIVERED_SUBSCRIPTION,
+        [TRANSITION_AUTO_CANCEL_SUBSCRIPTION_NOT_DELIVERED]: STATE_CANCELED,
+      },
+    },
     [STATE_PURCHASED]: {
       on: {
         [TRANSITION_MARK_DELIVERED]: STATE_DELIVERED,
@@ -228,20 +234,13 @@ const stateDescription = {
         [TRANSITION_CANCEL]: STATE_CANCELED,
       },
     },
-    [STATE_PURCHASED_SUBSCRIPTION]: {
+    [STATE_MARK_DELIVERED_SUBSCRIPTION]: {
       on: {
-        [TRANSITION_MARK_DELIVERED_SUBSCRIPTION]: STATE_DELIVERED_SUBSCRIPTION,
-        [TRANSITION_AUTO_CANCEL_SUBSCRIPTION]: STATE_CANCELED,
-      },
-    },
-    [STATE_DELIVERED_SUBSCRIPTION]: {
-      on: {
-        [TRANSITION_MARK_RECEIVED_SUBSCRIPTION]: STATE_COMPLETED,
-        [TRANSITION_AUTO_MARK_RECEIVED_SUBSCRIPTION]: STATE_COMPLETED,
         [TRANSITION_CANCEL_REFUND_SUBSCRIPTION]: STATE_CANCELED,
-      },
+        [TRANSITION_CONFIRM_DELIVERED_SUBSCRIPTION]: STATE_COMPLETED,
+        [TRANSITION_AUTO_CONFIRM_DELIVERED_SUBSCRIPTION]: STATE_COMPLETED
+      }
     },
-
     [STATE_CANCELED]: {},
 
     [STATE_DELIVERED]: {
@@ -289,11 +288,11 @@ const stateDescription = {
     },
     [STATE_REVIEWED]: {
       on: {
-        [TRANSITION_CANCEL_ONGOING_SUBSCRIPTION]: STATE_CANCELED,
         [TRANSITION_COMPLETE_SUBSCRIPTION]: STATE_COMPLETED_SUBSCRIPTION,
-      },
+        [TRANSITION_CANCEL_ONGOING_SUBSCRIPTION]: STATE_CANCELED
+      } 
     },
-    [STATE_COMPLETED_SUBSCRIPTION]: { type: 'final' },
+    [STATE_COMPLETED_SUBSCRIPTION]: { type: 'final' }
   },
 };
 
