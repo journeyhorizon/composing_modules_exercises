@@ -2,8 +2,9 @@ import { composePromises } from "../../../../utils"
 import fetchData from './fetch_data';
 import checkSubscriptionInvoiceNeedUpdate from './check_requirements_invoice';
 import createSubscriptionInvoiceUpdateParams from './create_params';
-import updateInvoice from './update_invoice';
+import fakePayCurrentInvoice from './fake_pay_current_invoice';
 import finalise from "../../../../common/finalise";
+import createSeparateCharge from "./create_separate_charge";
 
 
 const handleInvoiceCreated = async ({ invoice }) => {
@@ -11,7 +12,8 @@ const handleInvoiceCreated = async ({ invoice }) => {
     fetchData,
     checkSubscriptionInvoiceNeedUpdate,
     createSubscriptionInvoiceUpdateParams,
-    updateInvoice(invoice.id),
+    fakePayCurrentInvoice(invoice.id),
+    createSeparateCharge(invoice),
     finalise
   )(invoice);
 }

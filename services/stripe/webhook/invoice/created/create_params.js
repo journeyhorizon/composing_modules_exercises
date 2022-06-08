@@ -1,6 +1,7 @@
 const createSubscriptionInvoiceUpdateParams = async ({
   invoice,
-  subscription
+  subscription,
+  customerPaymentMethod
 }) => {
   const {
     metadata: {
@@ -22,7 +23,7 @@ const createSubscriptionInvoiceUpdateParams = async ({
     params.application_fee_amount = parseInt(total / 100 * percentage, 10);
   }
 
-  return params;
+  return { subscription, params, customerPaymentMethod };
 }
 
 export default createSubscriptionInvoiceUpdateParams;

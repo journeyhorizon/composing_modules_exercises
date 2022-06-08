@@ -8,14 +8,19 @@ const fetchSubscription = (id) => stripe.subscriptions.retrieve(id)
   .then(res => convertObjToCamelCase(res));
 
 const fetchData = async (rawInvoice) => {
-  const [invoice, subscription] = await Promise.all([
+  const [invoice, subscription, customerPaymentMethodList] = await Promise.all([
     fetchInvoice(rawInvoice.id),
-    fetchSubscription(rawInvoice.subscription)
+    fetchSubscription(rawInvoice.subscription),
+    stripe.customers.listPaymentMethods(
+      rawInvoice.customer,
+      { type: 'card' }
+    )
   ]);
 
   return {
     invoice,
-    subscription
+    subscription,
+    customerPaymentMethod: customerPaymentMethodList.data[0]?.id
   };
 }
 

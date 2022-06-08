@@ -2,7 +2,8 @@ const COMMON_IGNORE_INVOICE_MESSAGE = 'Message received, this invoice does not n
 
 const checkSubscriptionInvoiceNeedUpdate = async ({
   invoice,
-  subscription
+  subscription,
+  customerPaymentMethod
 }) => {
   const {
     total,
@@ -33,7 +34,8 @@ const checkSubscriptionInvoiceNeedUpdate = async ({
 
   return {
     invoice,
-    subscription
+    subscription,
+    customerPaymentMethod
   };
 }
 

@@ -44,6 +44,7 @@ const receive = async (
         invoice: object
       });
     }
+
     default: {
       return {
         code: 200,
