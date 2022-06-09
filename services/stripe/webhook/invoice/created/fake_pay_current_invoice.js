@@ -1,6 +1,6 @@
 import { stripe } from "../../..";
 
-const fakePayCurrentInvoice = id => async ({ params }) => {
+const fakePayCurrentInvoice = id => async (params) => {
   await stripe.invoices.update(
     id,
     { auto_advance: false }
@@ -11,7 +11,7 @@ const fakePayCurrentInvoice = id => async ({ params }) => {
     { auto_advance: false }
   );
 
-  return stripe.invoices.pay(
+  await stripe.invoices.pay(
     id,
     {
       paid_out_of_band: true
