@@ -15,8 +15,9 @@ const fakePayCurrentInvoice = id => async (params) => {
     id,
     {
       paid_out_of_band: true
-    })
-    .then(() => params);
+    });
+
+  return params
 }
 
 export default fakePayCurrentInvoice;
