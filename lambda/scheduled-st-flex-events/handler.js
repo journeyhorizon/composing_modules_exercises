@@ -1,6 +1,6 @@
 'use strict';
 
-const SCHEDULY_PAYOUT_EVENT = 'SCHEDULY_PAYOUT';
+const SCHEDULY_PAYOUT_EVENT = 'scheduly/payout';
 
 
 module.exports.fetchStFlexEvents = require('./fetch_st_flex_events');

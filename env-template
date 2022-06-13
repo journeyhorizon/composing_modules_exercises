@@ -46,3 +46,5 @@ AWS_LAMBDA_SECRET_SIGNATURE=
 #----------------------------------------------
 #Payout service 
 PAYOUT_DYNAMODB_TABLE_NAME
+CURRENCY_EXCHANGE_RATES_HOST_URL=
+BASE_CURRENCY=

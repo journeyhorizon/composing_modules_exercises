@@ -13,24 +13,23 @@ const fetchExistingSubscription = async () => {
     : dayjs(currentDate).set('date', 1);
   const currentDateTimestamp = Math.round(currentDate.valueOf() / 1000);
   const lastDateTimestamp = Math.round(lastDate.valueOf() / 1000);
-  
+
   const queryParams = {
     created: {
       lte: currentDateTimestamp - DAYS
     },
     limit: 100,
-    starting_after: null,
     current_period_start: {
       lt: currentDateTimestamp,
       gte: lastDateTimestamp
     }
   }
   const providerSubscriptions = {};
-  
+
   while (hasMore) {
     const subscriptions = await stripe.subscriptions.list(queryParams);
-    
-    const { data: subscriptionDetails = [], has_more: hasMore } = subscriptions;
+
+    const { data: subscriptionDetails = [], has_more } = subscriptions;
 
     if (subscriptionDetails.length === 0) {
       break;
@@ -40,18 +39,22 @@ const fetchExistingSubscription = async () => {
       const { metadata } = subscription;
       const providerId = metadata['sharetribe-provider-id'];
       const providerStripeAccId = metadata['stripe-destination'];
-
-      const currentSubscriptions = providerSubscriptions[providerId].subscriptions || [];
+      if (!providerSubscriptions[providerId]) {
+        providerSubscriptions[providerId] = {
+          subscriptions: [],
+          stripeAccountId: providerStripeAccId
+        };
+      }
+      const currentSubscriptions = providerSubscriptions[providerId].subscriptions;
       providerSubscriptions[providerId].subscriptions = currentSubscriptions.concat(subscription);
-      providerSubscriptions[providerId].stripeAccountId = providerStripeAccId;
     })
 
+    hasMore = has_more;
     if (hasMore) {
       const lastObjectId = subscriptionDetails.slice(-1)[0].id;
       queryParams.starting_after = lastObjectId;
     }
   }
-
   return providerSubscriptions;
 }
 

@@ -2,6 +2,9 @@ import { composePromises } from "../../../../utils";
 import fetchExistingSubscription from './fetch_existing_subscription';
 import createPayoutParams from './create_payout_params';
 import createBulkPayout from './create_bulk_payout';
+import finalise from "../../../../common/finalise";
+import fetchProvidersCurrencyRate from "./fetch_provider_currency_rate";
+import calculateExchangedPayoutAmount from "./calculate_exchanged_payout_amount";
 
 const handleSchedulyPayout = () => {
   /**
@@ -14,7 +17,10 @@ const handleSchedulyPayout = () => {
   return composePromises(
     fetchExistingSubscription,
     createPayoutParams,
-    createBulkPayout
+    fetchProvidersCurrencyRate,
+    calculateExchangedPayoutAmount,
+    createBulkPayout,
+    finalise
   )();
 }
 

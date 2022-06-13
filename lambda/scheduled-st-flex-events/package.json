@@ -7,6 +7,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "dayjs": "^1.11.2",
+    "node-cache": "^5.1.2",
     "sharetribe-flex-integration-sdk": "^1.8.0"
   },
   "devDependencies": {
