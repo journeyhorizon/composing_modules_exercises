@@ -42,6 +42,13 @@ const payoutService = {
   dynamoDbTableName: process.env.PAYOUT_DYNAMODB_TABLE_NAME,
 }
 
+const sendgridService = {
+  defaultSender: {
+    email: 'noreply@em8865.lifeonfitness.com',
+    name: nodeEnv === 'production' ? 'LIFE ON FITNESS' : 'LIFE ON FITNESS TEST'
+  }
+}
+
 const config = {
   env,
   nodeEnv,
@@ -51,7 +58,8 @@ const config = {
   stripe,
   subscription,
   aws,
-  payoutService
+  payoutService,
+  sendgridService
 }
 
 export default config;

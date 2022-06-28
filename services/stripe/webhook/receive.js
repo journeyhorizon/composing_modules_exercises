@@ -23,7 +23,7 @@ const receive = async (
   }
 
   // Handle the event
-  const { account, data: { object } } = event;
+  const { account, data: { object, previous_attributes } } = event;
 
   //TODO: Add logic to mark transaction completed when the subscription is finished
 
@@ -31,6 +31,12 @@ const receive = async (
     case 'customer.subscription.deleted': {
       return subscriptionEventHandler.deleted({
         subscription: object
+      });
+    }
+    case 'customer.subscription.updated': {
+      return subscriptionEventHandler.updated({
+        subscription: object,
+        previousAttributes: previous_attributes
       });
     }
     case 'invoice.payment_action_required':
