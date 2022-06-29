@@ -2,7 +2,7 @@ import { convertObjToCamelCase } from "../../../../utils";
 import { processNewPeriod } from "./processNewPeriod";
 import { EVENT_TYPE_NEW_PERIOD } from './types';
 
-const getUpdateEvent = (subscription, previousAttributes) => {
+const getUpdateEventType = (subscription, previousAttributes) => {
   const { currentPeriodEnd: prevPeriodEnd, currentPeriodStart: prevPeriodStart } = previousAttributes;
   const { currentPeriodEnd, currentPeriodStart, status } = subscription;
   if (
@@ -33,7 +33,7 @@ const handleUpdateEvent = async ({
     };
   }
 
-  const eventType = getUpdateEvent(subscription, previousAttributes);
+  const eventType = getUpdateEventType(subscription, previousAttributes);
 
   switch(eventType) {
     case EVENT_TYPE_NEW_PERIOD: {
