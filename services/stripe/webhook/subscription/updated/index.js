@@ -1,6 +1,20 @@
-import { getUserData } from "../../../../sharetribe_admin";
 import { convertObjToCamelCase } from "../../../../utils";
 import { processNewPeriod } from "./processNewPeriod";
+import { EVENT_TYPE_NEW_PERIOD } from './types';
+
+const getUpdateEvent = (subscription, previousAttributes) => {
+  const { currentPeriodEnd: prevPeriodEnd, currentPeriodStart: prevPeriodStart } = previousAttributes;
+  const { currentPeriodEnd, currentPeriodStart, status } = subscription;
+  if (
+    prevPeriodEnd && 
+    prevPeriodStart && 
+    prevPeriodEnd !== currentPeriodEnd && 
+    prevPeriodEnd === currentPeriodStart && 
+    status === 'active'
+  ) {
+    return EVENT_TYPE_NEW_PERIOD;
+  }
+}
 
 const handleUpdateEvent = async ({
   subscription: subscriptionInUnderscore,
@@ -8,53 +22,24 @@ const handleUpdateEvent = async ({
 }) => {
   const subscription = convertObjToCamelCase(subscriptionInUnderscore);
   const previousAttributes = previousAttributesInUnderscore ? convertObjToCamelCase(previousAttributesInUnderscore) : {};
-  const { currentPeriodEnd: prevPeriodEnd, currentPeriodStart: prevPeriodStart } = previousAttributes;
-  const {
-    metadata,
-    currentPeriodEnd,
-    currentPeriodStart,
-    status
-  } = subscription;
-  const providerId = metadata.sharetribeProviderId;
-  const customerId = metadata.sharetribeUserId;
-  const txId = metadata.sharetribeTransactionId
-
-  if (!providerId || !customerId) {
-    console.error(new Error(`Can not find sharetribe provider id or customer id for subscription ${subscription.id}`));
-    return {
-      code: 200,
-      data: 'received'
-    };
-  }
+  const { sharetribeTransactionId: txId } = subscription.metadata;
 
   if (!txId) {
-    console.error(new Error(`Can not find txId id for subscription ${subscription.id}`));
     return {
-      code: 200,
-      data: 'received'
+      code: 404,
+      data: {
+        error: `Can not find txId id for subscription ${subscription.id}`
+      }
     };
   }
 
-  // Check whether the subscription is renewal to send notifications via email
-  if (prevPeriodEnd && prevPeriodStart
-    && prevPeriodEnd !== currentPeriodEnd 
-    && prevPeriodEnd === currentPeriodStart
-    && status === 'active'
-  ) {
-    const [provider, customer] = await Promise.all([
-      getUserData({ userId: providerId }), 
-      getUserData({ userId: customerId })
-    ]);
-    const { attributes: { email: providerEmail, profile: { displayName: providerDisplayName } } } = provider || {};
-    const { attributes: { email: customerEmail, profile: { displayName: customerDisplayName } } } = customer || {};
-    const params = {
-      providerEmail,
-      providerName: providerDisplayName,
-      customerEmail,
-      customerName: customerDisplayName,
-      transactionId: txId
+  const eventType = getUpdateEvent(subscription, previousAttributes);
+
+  switch(eventType) {
+    case EVENT_TYPE_NEW_PERIOD: {
+      await processNewPeriod({ transactionId: txId });
+      break;
     }
-    await processNewPeriod(params);
   }
 
   return {

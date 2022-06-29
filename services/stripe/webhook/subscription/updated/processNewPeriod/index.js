@@ -4,7 +4,7 @@ import { generateEmailParams } from "./generate_email_params";
 
 export const processNewPeriod = async (params) => {
   return composePromises(
-    generateEmailParams, 
+    generateEmailParams,
     sendNotifyEmails
-  )({...params});
+  )(params);
 };

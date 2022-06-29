@@ -44,8 +44,8 @@ const payoutService = {
 
 const sendgridService = {
   defaultSender: {
-    email: 'noreply@em8865.lifeonfitness.com',
-    name: nodeEnv === 'production' ? 'LIFE ON FITNESS' : 'LIFE ON FITNESS TEST'
+    email: process.env.SENDER_EMAIL,
+    name: env === 'production' ? 'LIFE ON FITNESS' : 'LIFE ON FITNESS TEST'
   }
 }
 
