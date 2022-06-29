@@ -2,6 +2,7 @@ import { transform, set, camelCase } from 'lodash'
 import {
   isArray, isObjectLike, isPlainObject, map,
 } from 'lodash/fp'
+import fs from 'fs';
 
 export const traceAsync = flag => async (data) => {
   console.log(flag, data);
@@ -87,3 +88,15 @@ const createHumps = (keyConverter) => {
 }
 
 export const convertObjToCamelCase = createHumps(camelCase);
+
+export const getTextFileContent = (path) => {
+  return fs.readFileSync(path, "utf8");
+}
+
+export const convertToMonetaryUnit = (amount) => {
+  if (typeof amount !== 'number') {
+    throw Error('This is not a number');
+  }
+  const actualAmount = amount / 100;
+  return (Math.round(actualAmount * 100) / 100);
+}
