@@ -14,6 +14,7 @@ const getUpdateEventType = (subscription, previousAttributes) => {
   ) {
     return EVENT_TYPE_NEW_PERIOD;
   }
+  return null;
 }
 
 const handleUpdateEvent = async ({
