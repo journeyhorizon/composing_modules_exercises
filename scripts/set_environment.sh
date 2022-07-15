@@ -29,12 +29,12 @@ fi
 if [ "$ENV" == "production" ] || [ "$CIRCLE_BRANCH" == "production" ]; then
   echo -e "${COLOR}:::::::::::::Setting environment for PRODUCTION::::::::::::::${NC}"
   # todo: REPLACE HERE: environment for Production instance
-  export AWS_ECR_REPO_URL="027248772204.dkr.ecr.eu-west-2.amazonaws.com/lof-server-test:${TAG_NAME}"
+  export AWS_ECR_REPO_URL="027248772204.dkr.ecr.eu-west-2.amazonaws.com/lof-server-prod:latest"
   export AWS_INSTANCE_REGION='eu-west-2'
   export ENV_FILE_PATH='.env.prod'
   export ENV_NAME='PRODUCTION'
   # Remember to fill manually
-  export AWS_ENV_SECRET_NAME='lof/server/staging/ayyD3OXr0zLtC4FkrBu7yg'
+  export AWS_ENV_SECRET_NAME='lof/server/prod'
 
   if [ "$CIRCLECI" != "true" ]; then
     cp .env.prod .env
