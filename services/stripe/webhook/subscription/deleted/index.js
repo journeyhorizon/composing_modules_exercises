@@ -33,7 +33,7 @@ const handleDeleteEvent = async ({
   await integrationSdk.transactions.transition({
     id: txId,
     transition: TRANSITION_COMPLETE_SUBSCRIPTION,
-    body: {}
+    params: {}
   });
 
   //TODO: Put logic for handling subscription deletion callback here
