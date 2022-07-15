@@ -34,7 +34,7 @@ if [ "$ENV" == "production" ] || [ "$CIRCLE_BRANCH" == "production" ]; then
   export ENV_FILE_PATH='.env.prod'
   export ENV_NAME='PRODUCTION'
   # Remember to fill manually
-  export AWS_ENV_SECRET_NAME='lof/server/prod'
+  export AWS_ENV_SECRET_NAME='lof/server/production'
 
   if [ "$CIRCLECI" != "true" ]; then
     cp .env.prod .env
