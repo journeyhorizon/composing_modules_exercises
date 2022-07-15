@@ -8,14 +8,18 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-ENV NODE_ENV "production"
-
 # RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
 
 # Bundle app source
 COPY . .
+
+RUN npm install && npm run build
+
+# TODO: Need to configure npm run build else since prod build does not include babel
+
+ENV NODE_ENV "production"
 
 EXPOSE 3001 443
 CMD ["npm", "run", "start"]
