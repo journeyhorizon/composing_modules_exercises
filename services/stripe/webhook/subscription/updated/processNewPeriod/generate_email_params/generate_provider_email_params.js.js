@@ -2,7 +2,8 @@ import { getTextFileContent, convertToMonetaryUnit } from "../../../../../../uti
 import config from "../../../../../../config";
 
 export const generateProviderEmailParams = ({ transaction }) => {
-  const { attributes: { payoutTotal, lineItems }, listing, provider, customer } = transaction;
+  const { webCanonicalUrl, currencyConfig } = config;
+  const { attributes: { payoutTotal, lineItems }, listing, provider, customer, id: txId } = transaction;
   const { title: listingTitle } = listing.attributes;
   const { email: providerEmail, profile: { displayName: providerName } } = provider.attributes;
   const { profile: { displayName: customerName } } = customer.attributes;
@@ -11,11 +12,13 @@ export const generateProviderEmailParams = ({ transaction }) => {
   const unitPrice = convertToMonetaryUnit(unitPriceLineItem.unitPrice.amount);
   const providerCommissionFee = convertToMonetaryUnit(providerCommissionLineItem.lineTotal.amount);
   const payoutTotalAmount = convertToMonetaryUnit(payoutTotal.amount);
-  const baseCurrency = payoutTotal.currency || config.currencyConfig.baseCurrency;
+  const baseCurrency = payoutTotal.currency || currencyConfig.baseCurrency;
+  const saleTxUrl = `${webCanonicalUrl}/sale/${txId.uuid}/details`
   
   const subject = 
     getTextFileContent('email-templates/subscription/new-month-payment/new-month-payment-to-provider-subject.txt')
-    .replace('CUSTOMER_DISPLAY_NAME', customerName);
+    .replace('CUSTOMER_DISPLAY_NAME', customerName)
+    .replace('LISTING_TITLE', listingTitle);
 
   const html = 
     getTextFileContent('email-templates/subscription/new-month-payment/new-month-payment-to-provider.html')
@@ -23,7 +26,8 @@ export const generateProviderEmailParams = ({ transaction }) => {
     .replaceAll('CUSTOMER_DISPLAY_NAME', customerName)
     .replaceAll('PAYOUT_TOTAL', `${payoutTotalAmount} ${baseCurrency}`)
     .replaceAll('UNIT_PRICE', `${unitPrice} ${baseCurrency}`)
-    .replaceAll('PROVIDER_COMMISSION_FEE', `${providerCommissionFee} ${baseCurrency}`);
+    .replaceAll('PROVIDER_COMMISSION_FEE', `${providerCommissionFee} ${baseCurrency}`)
+    .replaceAll('SUBSCRIPTION_URL', saleTxUrl);
 
   return {
     toName: providerName,

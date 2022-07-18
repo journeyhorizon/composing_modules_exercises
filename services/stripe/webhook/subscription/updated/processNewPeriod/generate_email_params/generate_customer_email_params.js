@@ -2,7 +2,8 @@ import { convertToMonetaryUnit, getTextFileContent } from "../../../../../../uti
 import config from "../../../../../../config";
 
 export const generateCustomerEmailParams = ({ transaction }) => {
-  const { attributes: { payinTotal, lineItems }, listing, customer, provider } = transaction;
+  const { webCanonicalUrl, currencyConfig } = config;
+  const { attributes: { payinTotal, lineItems }, listing, customer, provider, id: txId } = transaction;
   const { title: listingTitle } = listing.attributes;
   const { email: customerEmail, profile: { displayName: customerName } } = customer.attributes;
   const { profile: { displayName: providerName } } = provider.attributes;
@@ -11,7 +12,8 @@ export const generateCustomerEmailParams = ({ transaction }) => {
   const unitPrice = convertToMonetaryUnit(unitPriceLineItem.unitPrice.amount);
   const customerCommissionFee = convertToMonetaryUnit(customerCommissionLineItem.lineTotal.amount);
   const payinTotalAmount = convertToMonetaryUnit(payinTotal.amount);
-  const baseCurrency = payinTotal.currency || config.currencyConfig.baseCurrency;
+  const baseCurrency = payinTotal.currency || currencyConfig.baseCurrency;
+  const orderTxUrl = `${webCanonicalUrl}/order/${txId.uuid}/details`
   
   const subject = 
     getTextFileContent('email-templates/subscription/new-month-payment/new-month-payment-to-customer-subject.txt')
