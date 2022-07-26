@@ -12,6 +12,7 @@ const whitelist = [
   'https://test.lifeonfitness.com',
   'https://www.lifeonfitness.com',
   'https://lifeonfitness.com',
+  'https://beta.lifeonfitness.com',
 ];
 
 
